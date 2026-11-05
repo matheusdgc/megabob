@@ -1,0 +1,242 @@
+# Megabob: lista de tarefas
+
+> Plano: [plan.md](plan.md) · Spec: [SPEC.md](../SPEC.md)
+> Toda tarefa só fecha com: `npm test` ✔ · `npm run typecheck` ✔ · `npm run build` ✔ · sem erro no console · commit.
+
+---
+
+## Fase 1: Fundação
+
+### T1: Scaffold do projeto [S] ✅
+Vite + Phaser 3 + TypeScript strict + Vitest. Config do Phaser em 256×224 com escala inteira, `pixelArt: true` e física Arcade a 60 Hz. BootScene vazia e `.gitignore`.
+- [x] `npm run dev` abre uma tela 256×224 escalada sem borrão
+- [x] Os scripts `dev`, `build`, `preview`, `test` e `typecheck` funcionam
+- [x] Existe 1 teste Vitest de exemplo e ele passa
+
+**Verificar:** os 5 comandos e abrir no navegador · **Dep.:** nenhuma
+**Arquivos:** `package.json`, `tsconfig.json`, `vite.config.ts`, `index.html`, `src/main.ts`, `src/scenes/BootScene.ts`
+
+### T2: Input e placeholders [S]
+Mapeamento de teclado (setas/WASD, Z, X, C, Q/E, Enter) e de gamepad numa interface única (`isDown`, `justPressed`), com buffer de pulo. Manifesto de assets e gerador de texturas placeholder com as chaves e tamanhos finais.
+- [ ] Teclado e gamepad disparam as mesmas ações
+- [ ] Os placeholders do Bob (quadros 48×48) e dos tiles 16×16 aparecem com as chaves do manifesto
+
+**Verificar:** cena de debug mostrando as ações ativas · **Dep.:** T1
+**Arquivos:** `src/systems/input.ts`, `src/data/assets.ts`, `src/systems/placeholders.ts`
+
+### T3: Movimento base do Bob [M]
+Máquina de estados pura (`idle/run/jump/fall/land`) com testes. Andar, pulo variável, coyote time e gravidade. Mapa ASCII de teste com colisão de tiles e câmera seguindo.
+- [ ] Testes cobrem as transições idle ↔ run ↔ jump → fall → land e o corte do pulo ao soltar o botão
+- [ ] O Bob anda e pula no mapa de teste sem atravessar tiles
+- [ ] Todas as constantes ficam em `tuning.ts`
+
+**Verificar:** `npm test` e jogar o mapa de teste · **Dep.:** T2
+**Arquivos:** `src/systems/playerState.ts`, `src/entities/Player.ts`, `src/data/tuning.ts`, `src/stages/test.ts`, `src/scenes/StageScene.ts`, `tests/playerState.test.ts`
+
+### T4: Parede e dash [M]
+Deslizar na parede, pulo da parede (com uma pequena trava de input horizontal) e dash no chão com duração e cancelamento. O dash no ar fica por trás da flag `hasTurboBoots`.
+- [ ] Testes: wall slide só ao segurar contra a parede durante a queda, wall jump empurra para longe, dash no ar bloqueado sem botas e limitado a 1×/pulo com botas
+- [ ] Dá para subir um poço vertical alternando paredes
+
+**Verificar:** `npm test` e um poço vertical no mapa de teste · **Dep.:** T3
+**Arquivos:** `src/systems/playerState.ts`, `src/entities/Player.ts`, `src/data/tuning.ts`, `tests/playerState.test.ts`
+
+### T4a: Pipeline de sprites [M]
+`tools/sprites.py`: lê `art/raw/<cat>/*.png`, remove o fundo transparente ou magenta e detecta os quadros por componentes e colunas vazias. Normaliza pela linha do chão e pelo centro, reduz com nearest-neighbor até a altura alvo e quantiza na paleta global. Gera `public/assets/<cat>/<nome>.png` + `.json` (formato de spritesheet do Phaser) e uma imagem de prévia com a grade, para conferir.
+- [ ] B1 e B2 viram spritesheets com a quantidade certa de quadros, alinhados pela linha do chão
+- [ ] A prévia em `art/preview/` mostra os quadros lado a lado em 4×
+- [ ] O jogo carrega o sheet real no lugar do placeholder sem mudar código
+
+**Verificar:** rodar `python tools/sprites.py bob` e ver a prévia e o jogo · **Dep.:** T2
+**Arquivos:** `tools/sprites.py`, `tools/palette.py`, `src/data/assets.ts`
+
+### T4b: Integração contínua de arte (recorrente)
+A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar as animações no manifesto. Os quadros ruins vão para uma lista de regeneração em `art/REGENERATE.md`.
+
+## ✅ Checkpoint 1: sensação de jogo
+- [ ] Testes, typecheck e build passam
+- [ ] **Você joga o mapa de teste** e aprova pulo, dash e parede (ou me passa os ajustes de `tuning.ts`)
+
+---
+
+## Fase 2: Combate
+
+### T5: Tiro do Bob [M]
+Tiro básico com no máximo 3 na tela, carga em 2 níveis (com o nível 3 atrás de `hasCompilerCannon`), aura de carga e pool de projéteis. Tiro em todos os estados (no chão, no ar, correndo, na parede, no dash).
+- [ ] Testes: o nível de carga depende do tempo segurado e o 4º tiro é bloqueado
+- [ ] Os sprites de tiro aparecem certos em cada estado
+
+**Verificar:** `npm test` e jogar · **Dep.:** T4
+**Arquivos:** `src/systems/charge.ts`, `src/entities/Projectile.ts`, `src/entities/Player.ts`, `tests/charge.test.ts`
+
+### T6: Vida, dano e morte [M]
+HP, i-frames com piscar, recuo e espinhos com morte instantânea. Morte com o efeito "decompile", respawn no checkpoint e no máximo 3 vidas. HUD com a barra de vida.
+- [ ] Testes do módulo de dano (incluindo `hasFirewallPlating` ÷ 2)
+- [ ] Morrer volta ao checkpoint, e acabar as vidas dispara o evento de game over
+
+**Verificar:** `npm test` e jogar · **Dep.:** T5
+**Arquivos:** `src/systems/damage.ts`, `src/entities/Player.ts`, `src/ui/Hud.ts`, `tests/damage.test.ts`
+
+### T7: Inimigos base e itens [M]
+Classe base `Enemy` (HP, dano por contato, drop) com Pixel Mite e Spam Drone. Itens de vida pequena/grande, energia e vida extra, com tabela de drop.
+- [ ] Os 2 inimigos se comportam como descrito e morrem com explosão
+- [ ] Os itens caem, piscam antes de sumir e aplicam o efeito
+
+**Verificar:** jogar o mapa de teste com inimigos · **Dep.:** T6
+**Arquivos:** `src/entities/Enemy.ts`, `src/entities/enemies/PixelMite.ts`, `src/entities/enemies/SpamDrone.ts`, `src/entities/Pickup.ts`, `src/data/drops.ts`
+
+### T8: Seções, checkpoint e porta [M]
+Câmera por seções com transição, terminal de checkpoint, porta do chefe que trava a câmera e os inimigos voltando ao reentrar numa seção.
+- [ ] A câmera nunca mostra fora da seção atual
+- [ ] Passar pela porta trava a sala e dispara o evento `bossIntro`
+
+**Verificar:** jogar o mapa de teste completo · **Dep.:** T7
+**Arquivos:** `src/systems/camera.ts`, `src/entities/Checkpoint.ts`, `src/entities/BossDoor.ts`, `src/stages/test.ts`
+
+## ✅ Checkpoint 2
+- [ ] Testes, typecheck e build passam
+- [ ] O mapa de teste é jogável do início à porta do chefe, com inimigos, itens, morte e checkpoint
+
+---
+
+## Fase 3: Primeira fatia vertical (Memory Leak)
+
+### T9: Chefe base e Memory Leak [M]
+Classe base `Boss`: máquina de estados, barra de vida que enche na entrada, i-frames, derrota com explosão grande e evento `bossDefeated`. IA do Memory Leak: bolhas de lodo que viram poças, afundar e emergir, e a fúria que sobe o lodo.
+- [ ] O chefe tem os 3 padrões descritos e escolhe entre eles
+- [ ] Derrotar o chefe dispara o evento de vitória
+
+**Verificar:** lutar no mapa de teste · **Dep.:** T8
+**Arquivos:** `src/entities/Boss.ts`, `src/entities/bosses/MemoryLeak.ts`, `src/ui/BossHealthBar.ts`
+
+### T10: Sistema de armas e Garbage Collector [M]
+Tabela de armas e fraquezas com testes. Energia por arma, troca com Q/E, troca de paleta do Bob, tela "arma ganha" e a arma Garbage Collector.
+- [ ] Testes: fraqueza = 3×, energia consome e recarrega, troca de arma pula as que não foram ganhas
+- [ ] Depois do Memory Leak, o Garbage Collector está equipável e funcionando
+
+**Verificar:** `npm test` e jogar · **Dep.:** T9
+**Arquivos:** `src/data/weapons.ts`, `src/systems/weapons.ts`, `src/entities/weapons/GarbageCollector.ts`, `src/scenes/WeaponGetScene.ts`, `tests/weapons.test.ts`
+
+### T11: Áudio: pipeline de música, player e SFX [M]
+`tools/music.py` normaliza as 10 faixas de [docs/soundtrack.md](../docs/soundtrack.md) (RMS ≈ −14 dB, pico ≤ −1 dB) e gera OGG + MP3 em `public/assets/music/`. Manifesto `src/data/music.ts` com `loopStart`/`loopEnd`. Player WebAudio com loop sem emenda, crossfade e desbloqueio do áudio no primeiro input. SFX sintetizados (pulo, tiro, tiro carregado, dano, explosão, item, porta) e jingles.
+- [ ] As 10 faixas saem convertidas, com volume parecido entre si, e o total fica abaixo de ~20 MB
+- [ ] A música toca em loop sem emenda audível e os SFX não cortam a música
+- [ ] Existe um controle de volume (mudo com M)
+
+**Verificar:** rodar `python tools/music.py` e jogar com som · **Dep.:** T1
+**Arquivos:** `tools/music.py`, `src/data/music.ts`, `src/audio/musicPlayer.ts`, `src/audio/sfx.ts`, `src/audio/jingles.ts`
+
+### T12: Fase Memory Leak [M]
+Mapa ASCII completo (cerca de 4 seções, 1 checkpoint), inimigos Drip e Heap Crab, perigo do lodo que sobe, tiles e fundo (placeholder ou real).
+- [ ] Dá para terminar a fase do início até o chefe derrotado
+- [ ] O padrão de fase (arquivo de dados + inimigos próprios) fica documentado no topo de `src/stages/README.md`, para replicar nas outras fases
+
+**Verificar:** uma partida completa · **Dep.:** T10, T11
+**Arquivos:** `src/stages/memoryLeak.ts`, `src/entities/enemies/Drip.ts`, `src/entities/enemies/HeapCrab.ts`, `src/stages/README.md`
+
+## ✅ Checkpoint 3 (fim do dia 1)
+- [ ] Testes, typecheck e build passam
+- [ ] **Você joga a Memory Leak de ponta a ponta** e ganha o Garbage Collector
+
+---
+
+## Fase 4: Fluxo do jogo
+
+### T13: Título, seleção, save e pausa [M]
+Tela de título, seleção de fases com retratos (fortaleza travada até 3/3), save versionado e testado, game over voltando para a seleção e menu de pausa (troca de arma e peças coletadas).
+- [ ] Testes do save: round-trip, versão inválida volta ao padrão, liberação da fortaleza
+- [ ] O fluxo título → seleção → fase → seleção funciona, e o progresso persiste ao recarregar
+
+**Verificar:** `npm test` e recarregar o navegador no meio do jogo · **Dep.:** T12
+**Arquivos:** `src/systems/save.ts`, `src/scenes/TitleScene.ts`, `src/scenes/StageSelectScene.ts`, `src/scenes/PauseScene.ts`, `tests/save.test.ts`
+
+---
+
+## Fase 5: Outras fases (podem rodar em paralelo)
+
+### T14: Race Condition (fase, inimigos, chefe, Mutex Lock) [M]
+Esteiras e plataformas rápidas, Thread Runner e Clock Spike, chefe com dashes, clones fora de sincronia e arremesso, e a arma Mutex Lock (congela os inimigos).
+- [ ] Dá para terminar a fase, e o chefe recebe 3× de dano do Null Pointer
+- [ ] O Mutex Lock congela os inimigos comuns por um tempo fixo, e os chefes por menos tempo
+
+**Verificar:** uma partida completa · **Dep.:** T13
+**Arquivos:** `src/stages/raceCondition.ts`, `src/entities/enemies/{ThreadRunner,ClockSpike}.ts`, `src/entities/bosses/RaceCondition.ts`, `src/entities/weapons/MutexLock.ts`
+
+### T15: Null Pointer (fase, inimigos, chefe, arma Null Pointer) [M]
+Blocos que somem e reaparecem, Void Eye e Dangling Ref, chefe com teleporte, setas, chão que some e cópias falsas, e a arma Null Pointer (atravessa paredes finas).
+- [ ] Dá para terminar a fase, e o chefe recebe 3× de dano do Garbage Collector
+- [ ] O tiro Null Pointer atravessa tiles marcados como "finos"
+
+**Verificar:** uma partida completa · **Dep.:** T13
+**Arquivos:** `src/stages/nullPointer.ts`, `src/entities/enemies/{VoidEye,DanglingRef}.ts`, `src/entities/bosses/NullPointer.ts`, `src/entities/weapons/NullPointerShot.ts`
+
+## ✅ Checkpoint 4
+- [ ] Testes, typecheck e build passam
+- [ ] Os 3 chefes podem ser vencidos em qualquer ordem, o ciclo de fraquezas funciona e a fortaleza libera com 3/3
+
+---
+
+## Fase 6: Armadura Firmware
+
+### T16: Sistema de upgrades [M]
+Tabela de peças com testes, Update Terminal, tela de "upgrade instalado", efeitos (botas, placas, visor e canhão) e o sprite do Bob em camadas.
+- [ ] Testes: cada flag liga o efeito certo e o save guarda as peças
+- [ ] O sprite do Bob mostra só as peças coletadas, nos quadros certos (ou o plano B, se o alinhamento falhar)
+
+**Verificar:** `npm test` e um mapa de teste com os 4 terminais · **Dep.:** T13
+**Arquivos:** `src/data/upgrades.ts`, `src/systems/upgrades.ts`, `src/entities/UpdateTerminal.ts`, `src/entities/Player.ts`, `tests/upgrades.test.ts`
+
+### T17: Peças nas fases [S]
+Colocar os 4 terminais conforme o spec, com o Compiler Cannon atrás do vão que exige dash no ar, e as passagens escondidas que o Debug Visor revela.
+- [ ] As 4 peças podem ser coletadas, e o Compiler Cannon é inalcançável sem as Turbo Boots
+
+**Verificar:** buscar as 4 peças · **Dep.:** T14, T15, T16
+**Arquivos:** `src/stages/{memoryLeak,raceCondition,nullPointer}.ts`
+
+---
+
+## Fase 7: Final
+
+### T18: Fortaleza e Tech Debt fase 1 [M]
+A fase da fortaleza (Legacy Turret e Deprecated Bot com escudo), o chefe como mainframe parede (gavetas, cartões perfurados, invocação de bots) e o CRT como ponto fraco.
+- [ ] Dá para terminar a fortaleza até o fim da fase 1 do chefe
+
+**Verificar:** uma partida completa · **Dep.:** T17
+**Arquivos:** `src/stages/techDebt.ts`, `src/entities/enemies/{LegacyTurret,DeprecatedBot}.ts`, `src/entities/bosses/TechDebt.ts`
+
+### T19: Tech Debt fase 2 e créditos [M]
+O núcleo voador com laser de CRT e os "patches" (ataques rápidos dos 3 chefes), a explosão final e a cena de créditos.
+- [ ] Vencer a fase 2 leva aos créditos, e o save marca o jogo como zerado
+
+**Verificar:** uma partida completa · **Dep.:** T18
+**Arquivos:** `src/entities/bosses/TechDebtCore.ts`, `src/scenes/CreditsScene.ts`
+
+### T20: Música em todas as cenas e créditos de áudio [S]
+Ligar cada cena à sua faixa do manifesto, incluindo a troca de música entre as fases 1 e 2 do Tech Debt, e listar autor, fonte e licença de cada faixa na tela de créditos.
+- [ ] Toda cena tem a música certa, e as transições não sobrepõem duas músicas
+- [ ] A tabela de licenças em `docs/soundtrack.md` está completa e aparece nos créditos
+
+**Verificar:** percorrer todas as cenas · **Dep.:** T11, T19
+**Arquivos:** `src/data/music.ts`, `src/scenes/*.ts`, `src/scenes/CreditsScene.ts`
+
+## ✅ Checkpoint 5
+- [ ] **Partida completa, do título aos créditos**, sem travar
+
+---
+
+## Fase 8: Polimento e entrega
+
+### T21: Arte real em tudo [M]
+Trocar os placeholders que sobraram, calibrar hitboxes conforme os sprites reais e conferir as animações contra o inventário do `art-prompts.md`.
+- [ ] Nenhum placeholder visível no jogo
+**Verificar:** percorrer o jogo · **Dep.:** T4b
+
+### T22: Performance e balanceamento [M]
+Medir os fps no pior caso, ajustar vida e dano dos chefes, conferir os drops e corrigir os bugs da partida completa.
+- [ ] 60 fps estáveis no pior caso, e cada chefe leva de 30 s a 2 min
+**Verificar:** contador de fps de debug e uma partida completa · **Dep.:** Checkpoint 5
+
+### T23: Build e deploy [S]
+Build de produção, `base` do Vite correto para o host escolhido e deploy (GitHub Pages ou itch.io, **com o seu OK antes**).
+- [ ] O link público abre e roda o jogo
+**Verificar:** abrir o link numa aba anônima · **Dep.:** T22
