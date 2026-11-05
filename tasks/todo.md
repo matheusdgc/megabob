@@ -16,10 +16,10 @@ Vite + Phaser 3 + TypeScript strict + Vitest. Config do Phaser em 256×224 com e
 **Verificar:** os 5 comandos e abrir no navegador · **Dep.:** nenhuma
 **Arquivos:** `package.json`, `tsconfig.json`, `vite.config.ts`, `index.html`, `src/main.ts`, `src/scenes/BootScene.ts`
 
-### T2: Input e placeholders [S]
+### T2: Input e placeholders [S] ✅
 Mapeamento de teclado (setas/WASD, Z, X, C, Q/E, Enter) e de gamepad numa interface única (`isDown`, `justPressed`), com buffer de pulo. Manifesto de assets e gerador de texturas placeholder com as chaves e tamanhos finais.
-- [ ] Teclado e gamepad disparam as mesmas ações
-- [ ] Os placeholders do Bob (quadros 48×48) e dos tiles 16×16 aparecem com as chaves do manifesto
+- [x] Teclado e gamepad disparam as mesmas ações (teclado verificado no navegador; gamepad mapeado, mas ainda sem teste com controle físico)
+- [x] Os placeholders do Bob (quadros 48×48) e dos tiles 16×16 aparecem com as chaves do manifesto
 
 **Verificar:** cena de debug mostrando as ações ativas · **Dep.:** T1
 **Arquivos:** `src/systems/input.ts`, `src/data/assets.ts`, `src/systems/placeholders.ts`
