@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+# raw music is large; processed tracks go to public/assets/music
+art/raw/soundtrack/
+# sprite pipeline previews
+art/preview/
