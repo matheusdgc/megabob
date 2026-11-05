@@ -1,0 +1,12 @@
+Use case: stylized-concept. Asset for the original 16-bit side-scrolling platformer Megabob.
+The FIRST attached image is the APPROVED B1 Bob character sheet and is the authoritative identity, palette, scale and anatomy reference. This is the SAME Bob in every frame, without redesign. Preserve the large rounded rectangular white robot head, compact articulated white/grey torso and limbs, blue coding </> symbol on the chest, grey segmented side ear, friendly expressive black eye(s) with white catchlight, small smile, blue construction hard hat with central ridge, broad brim and restrained purple accent, and compact blue boots. Match the approved head/body ratio and helmet size. No extra armor.
+STYLE: authentic SNES / Mega Drive-era pixel art, chunky hard-edged square pixels and compact clusters, dark #161616 outline about one logical pixel thick, no more than four shades per color ramp, light from top-left. Readable at approximately 32 logical pixels tall before enlargement. IBM blues #001D6C #0043CE #0F62FE #4589FF #A6C8FF, white/cool grey and restrained flat purple accent. No antialiasing, smooth gradients, blur, soft shadow, glow, dithering, noise, vector look, or 3D rendering.
+LAYOUT: ONE horizontal row, equal-size cells, evenly spaced anchors, consistent scale and ground baseline (airborne poses raised within their cell), generous empty gutters, no overlap, no cropping of helmet or extremities. Actual TRANSPARENT PNG: everything outside the specified sprites fully empty, opaque white inside the robot, clean alpha without clouds, halos or stray marks. No floor, cast shadows, scenery, grid, frame borders, numbering, captions, watermark or text. The chest coding symbol is allowed. No unrequested props or effects.
+
+SPECIFIC SHEET B6_dash:
+Exactly FOUR full-body frames facing RIGHT:
+1 DASH START: very low crouched launch, knees bent and torso leaning forward.
+2 DASH: low fast forward-leaning glide, body close to horizontal, rear limbs trailing LEFT. Preserve the large head and hard hat, do not stretch the character.
+3 DASH STOP: braking, feet ahead, torso leaning backward LEFT, recovering to standing.
+4 DASH SHOOT: same low glide as frame 2, but right hand / tiny blue wrist blaster extended horizontally RIGHT.
+Convey speed ONLY through pose. No dust, trails, streaks, projectiles, muzzle flash, explosions or effects. Four distinctly different readable silhouettes.

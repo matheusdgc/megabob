@@ -1,0 +1,21 @@
+Use case: stylized-concept.
+Asset type: B3_run, a six-frame looping running animation for the original platform game Megabob.
+The attached image is the APPROVED B1 Bob character sheet, the only visual reference. Preserve this EXACT Bob design, camera, head/body proportions, mechanical articulation, colors and pixel-art appearance. Use its running sprite (second from left) as the action/anatomy reference, and its neutral sprite to preserve the correct proportions. Do not reproduce the attached sheet's four-pose layout.
+
+Create EXACTLY SIX full-body animation frames of the SAME Bob RUNNING TO THE RIGHT, arranged chronologically left-to-right in ONE horizontal row. A smooth cycle:
+1) RIGHT FOOT CONTACT: right foot reaches forward to touch the ground, left leg extended behind, opposite arm swing.
+2) DOWN / COMPRESS: body lowered slightly, right knee bent supporting weight, left leg begins swinging through.
+3) PASSING, LEFT LEG FORWARD: torso rises slightly; right supporting foot passes below hips, left knee swings forward, left foot lifted.
+4) LEFT FOOT CONTACT: left foot reaches forward to touch ground, right leg extended behind, arm swing opposite to frame 1.
+5) DOWN / COMPRESS: body lowered slightly, left knee bent supporting weight, right leg begins swinging through.
+6) PASSING, RIGHT LEG FORWARD: torso rises slightly; left supporting foot passes below hips, right knee swings forward, right foot lifted. The motion of frame 6 must continue naturally into frame 1.
+Show clearly distinct contact, compression and passing silhouettes, with visible alternation of near and far legs and arms. Slightly shade the far limbs darker to distinguish them. No duplicated contact poses. Lean the torso slightly forward throughout, cheerful determined face, consistent helmet and head orientation. The body and head bob only by approximately one logical pixel, not large bouncing. No whole-character rotation, no moonwalking, no side-to-side mirroring. No ground movement trails, no action effects.
+
+IDENTITY:
+Cute white robot with large rounded rectangular head, right-facing profile camera as in approved B1, single large black visible eye with white catchlight, friendly small smile, grey segmented side ear, small white torso with blue </> coding emblem, short articulated white/grey arms and legs, blue boots. Same blue construction hard hat with central ridge, broad brim and restrained purple accent on right. Exact same head/body ratio and helmet scale in all SIX frames. Both arms are for running; no blaster. No additional armor.
+
+STYLE:
+Authentic 16-bit SNES / Mega Drive-era game pixel art, crisp hard-edged square pixels, compact clusters, one-logical-pixel dark #161616 outline, at most four shades per color ramp, light from top left. Readable at approximately 32 logical pixels tall, enlarged with nearest-neighbor pixel appearance. White/cool-grey shell; IBM blues #001D6C #0043CE #0F62FE #4589FF #A6C8FF; restrained flat purple accents. No anti-aliasing, gradients, soft shadows, glow, blur, noise, dithering, 3D render or smooth vector drawing.
+
+LAYOUT:
+Wide landscape transparent PNG with exactly SIX equal-width cells in ONE single horizontal row. Every sprite centered on its own equal-spaced anchor at identical scale; consistent ground baseline for contacting feet. Enough cell width for the full extended stride and arms; transparent separation between frames. Generous transparent margins above and below. No overlap or cropping. All pixels outside the six character silhouettes must be fully TRANSPARENT, keep white shell opaque, clean alpha with no halos or scattered colored marks. No floor, cast shadows, scenery, colored backdrop, grid, borders, numbering, captions, text, watermark, projectiles, effects, props, extra characters or extra frames.

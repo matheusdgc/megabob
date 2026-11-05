@@ -1,0 +1,15 @@
+Use case: stylized-concept. Asset: A1_armor_sheet, concept anchor for Bob's modular FIRMWARE ARMOR in Megabob.
+The attached B1 is the approved ORIGINAL Bob. Preserve EXACTLY his large white rounded rectangular head, friendly face, small articulated robot body, head/body ratio, blue-purple construction hard hat, blue coding chest symbol, compact limbs and boots. Add close-fitting modular hardware armor OVER him. Do not redesign or replace the mascot. Face and eye remain readable; if a face is seen from the front/three-quarter, it must have TWO eyes.
+
+Design a coherent ORIGINAL armor inspired by SERVER HARDWARE: slim rack-mount plates, rectangular vent slits, thin blue LED status strips, tiny heatsink fins and cable ports. Four modules:
+HEAD / Debug Visor: slim side-mounted scan lens and thin visor hardware integrated with the existing construction helmet, without hiding the face or changing the hard-hat silhouette. NO forehead jewel, NO new helmet crest.
+ARM / Compiler Cannon: compact RECTANGULAR forearm cannon casing, white shell, IBM-blue panels, small dark heatsink fins and square muzzle.
+BODY / Firewall Plating: close-fitting chest and small shoulder rack plates with vent slits; KEEP the blue coding emblem visible on the white chest.
+LEGS / Turbo Boots: compact angular plates over the existing boots, small heel thruster vents. NO oversized round boots or gauntlets.
+Keep armor thin enough to fit the SAME base pose silhouettes closely.
+
+LAYOUT exactly TWO ROWS:
+TOP ROW: two full-body Bob sprites at the SAME scale, facing RIGHT: (1) full armor, neutral standing, (2) full armor, shooting RIGHT with the Compiler Cannon extended horizontally.
+BOTTOM ROW: four ISOLATED floating armor modules arranged evenly left-to-right: (1) head visor/helmet attachment ONLY (no Bob face), (2) Compiler Cannon forearm module, (3) chest/shoulder armor module, (4) pair of Turbo Boots.
+Exactly two complete characters and four separate equipment items. Clear transparent spacing. No projectile, muzzle flash, energy effect or extra props. Full limbs and helmet uncropped.
+Authentic 16-bit console pixel art matching the attached Bob sheet. Crisp square pixels, compact readable clusters, dark #161616 one-logical-pixel outline, top-left light, limited flat ramps (max four shades each). White/cool greys and IBM blues #001D6C #0043CE #0F62FE #4589FF #A6C8FF, with Bob's existing restrained purple accent. No antialiasing, gradients, soft shadows, glow, blur, dithering or noise. Actual transparent PNG background, opaque white on objects, clean alpha, no clouds, fringes, stray marks, scenery, floor, cast shadows, grid, borders, captions, labels, numbering, watermark or text. Bob's chest coding symbol is allowed. Original designs only.

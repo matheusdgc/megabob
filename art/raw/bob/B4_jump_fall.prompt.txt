@@ -1,0 +1,13 @@
+Use case: stylized-concept. Asset for the original 16-bit side-scrolling platformer Megabob.
+The FIRST attached image is the APPROVED B1 Bob character sheet and is the authoritative identity, palette, scale and anatomy reference. This is the SAME Bob in every frame, without redesign. Preserve the large rounded rectangular white robot head, compact articulated white/grey torso and limbs, blue coding </> symbol on the chest, grey segmented side ear, friendly expressive black eye(s) with white catchlight, small smile, blue construction hard hat with central ridge, broad brim and restrained purple accent, and compact blue boots. Match the approved head/body ratio and helmet size. No extra armor.
+STYLE: authentic SNES / Mega Drive-era pixel art, chunky hard-edged square pixels and compact clusters, dark #161616 outline about one logical pixel thick, no more than four shades per color ramp, light from top-left. Readable at approximately 32 logical pixels tall before enlargement. IBM blues #001D6C #0043CE #0F62FE #4589FF #A6C8FF, white/cool grey and restrained flat purple accent. No antialiasing, smooth gradients, blur, soft shadow, glow, dithering, noise, vector look, or 3D rendering.
+LAYOUT: ONE horizontal row, equal-size cells, evenly spaced anchors, consistent scale and ground baseline (airborne poses raised within their cell), generous empty gutters, no overlap, no cropping of helmet or extremities. Actual TRANSPARENT PNG: everything outside the specified sprites fully empty, opaque white inside the robot, clean alpha without clouds, halos or stray marks. No floor, cast shadows, scenery, grid, frame borders, numbering, captions, watermark or text. The chest coding symbol is allowed. No unrequested props or effects.
+
+SPECIFIC SHEET B4_jump_fall:
+Exactly FIVE full-body frames facing RIGHT in the approved side-view camera, left to right:
+1 TAKEOFF: crouched, knees bent, about to spring upward.
+2 RISING: body stretched upward, knees tucked slightly, arms helping upward motion.
+3 APEX: airborne, body curling gently, transition from rise to fall.
+4 FALLING: limbs slightly raised, body compressed, boots below the hips ready for landing.
+5 LANDING: feet on baseline, knees visibly bent absorbing impact.
+Make all five silhouettes distinctly readable while retaining the SAME proportions. These are five phases of ONE jump, not five unrelated action poses. No blaster, projectile, speed lines, dust or background.

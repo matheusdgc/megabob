@@ -1,0 +1,19 @@
+Create the final B1 character sheet for the original platformer Megabob, incorporating the three reference images.
+INPUT ROLES:
+Image 1: the official Bob mascot; authoritative identity, white rounded rectangular head, friendly eyes, blue construction hard hat with a central ridge and purple accent, small white torso with blue coding symbol, white short segmented arms and legs, blue boots. Keep his cute compact robot proportions.
+Image 2: the additional "robot programmer sprite sheet"; this is the primary pixel-art character-design reference. Closely match its Bob design, head-to-body proportions, cheek and side ear shapes, visible small mechanical joints, compact segmented torso and limbs, articulated action poses, dark outline, and clean pixel clusters. The new sheet is especially important for the anatomy. Use its poses as drawing references without copying the white background, grid or effects. Preserve a natural helmet-to-head scale; do not enlarge the helmet disproportionately.
+Image 3: action-game sprite sheet; movement/readability reference only. Do not use its humanoid hero's armor, helmet, face, body proportions or costume.
+
+DELIVERABLE:
+Exactly FOUR full-body Bob sprites in ONE horizontal row, all facing RIGHT, in the same right-facing side-view camera as the right-facing sprites of image 2:
+1. Neutral standing.
+2. Running mid-stride, energetic with opposite arm/leg swing.
+3. Jumping, knees slightly tucked, slightly raised inside its cell.
+4. Standing shooting, right hand extended straight right at chest height. Use the existing hand / a tiny blue integrated wrist blaster. NO projectile or muzzle flash.
+These are the same character with identical head/body proportions and colors in every pose. Four equally sized square cells, same scale, consistent anchors and ground baseline except the raised jump. Generous transparent empty gutters; full helmet, arms and boots must fit without cropping. Landscape sheet, no visible cell boundaries.
+
+STYLE:
+Authentic 16-bit console game PIXEL ART, chunky hard-edged discrete square pixels, readable silhouette at approximately 32 logical pixels tall. Clean compact pixel clusters enlarged with nearest-neighbor appearance. Dark #161616 outline about one logical pixel thick, maximum four shades per color ramp, top-left lighting. White shell, flat grey shading, IBM-blue boots and helmet #001D6C #0043CE #0F62FE #4589FF #A6C8FF with limited purple accent as flat clusters. The blue coding symbol on the chest should remain visible where the side-view angle permits, no other text.
+
+BACKGROUND AND EDGES:
+Actual transparent PNG background, pristine alpha, every pixel outside the four clean sprite silhouettes completely empty. No backdrop of any color, no floor, no drop shadows, no grey/white clouds, no mottling, no noise, no halo, no scattered color fragments. Preserve opaque white inside the robot. No antialiasing, no gradients, no soft light, no blur, no glow, no dithering. No text, labels, numbering, watermark, grid, borders, projectiles, energy effects, bonus poses or props.

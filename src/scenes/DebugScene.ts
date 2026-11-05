@@ -1,16 +1,25 @@
 import Phaser from 'phaser';
-import { SHEETS, TILE } from '../data/assets';
+import { ARMOR_BITS, BOB_ANIMS, BOB_FRAME, type BobAnim, bobKey, TILE } from '../data/assets';
 import { ACTIONS, type Action } from '../systems/actions';
 import { GameInput } from '../systems/input';
 
 const FONT = { fontFamily: 'monospace', fontSize: '8px', color: '#a8a8a8' };
+const PART_KEYS: [string, number][] = [
+  ['ONE', ARMOR_BITS.head],
+  ['TWO', ARMOR_BITS.arm],
+  ['THREE', ARMOR_BITS.body],
+  ['FOUR', ARMOR_BITS.legs],
+];
 
-/** Dev-only: shows every sheet animating and which input actions are active. */
+/** Dev-only: every Bob animation (keys 1-4 toggle armor parts) and live input state. */
 export class DebugScene extends Phaser.Scene {
   private input$!: GameInput;
   private labels = new Map<Action, Phaser.GameObjects.Text>();
   private padText!: Phaser.GameObjects.Text;
   private bufferText!: Phaser.GameObjects.Text;
+  private armorText!: Phaser.GameObjects.Text;
+  private bobs: [BobAnim, Phaser.GameObjects.Sprite][] = [];
+  private armor = 0;
 
   constructor() {
     super('Debug');
@@ -19,35 +28,47 @@ export class DebugScene extends Phaser.Scene {
   create(): void {
     this.input$ = new GameInput(this);
 
-    const bobs = SHEETS.filter((s) => s.key.startsWith('bob_'));
-    bobs.forEach((s, i) => {
+    (Object.keys(BOB_ANIMS) as BobAnim[]).forEach((anim, i) => {
       const x = 4 + (i % 5) * 50;
       const y = 4 + Math.floor(i / 5) * 60;
-      if (!this.anims.exists(s.key)) {
-        this.anims.create({
-          key: s.key,
-          frames: this.anims.generateFrameNumbers(s.key, {}),
-          frameRate: 6,
-          repeat: -1,
-        });
-      }
-      this.add.rectangle(x, y, s.frameWidth, s.frameHeight).setOrigin(0).setStrokeStyle(1, 0x262626);
-      this.add.sprite(x, y, s.key).setOrigin(0).play(s.key);
-      this.add.text(x, y + s.frameHeight + 1, s.key.replace('bob_', ''), FONT);
+      this.add.rectangle(x, y, BOB_FRAME, BOB_FRAME).setOrigin(0).setStrokeStyle(1, 0x262626);
+      this.bobs.push([anim, this.add.sprite(x, y, bobKey(anim)).setOrigin(0)]);
+      this.add.text(x, y + BOB_FRAME + 1, anim, FONT);
     });
+    this.playAll();
 
-    const tiles = SHEETS.find((s) => s.key === 'tiles_test');
-    if (tiles) {
-      for (let f = 0; f < tiles.frames; f++) this.add.image(4 + f * (TILE + 2), 128, tiles.key, f).setOrigin(0);
+    for (let f = 0; f < 4; f++) this.add.image(204 + f * (TILE + 2), 128, 'tiles_test', f).setOrigin(0);
+
+    const kb = this.input.keyboard!;
+    for (const [name, bit] of PART_KEYS) {
+      kb.on(`keydown-${name}`, () => {
+        this.armor ^= bit;
+        this.playAll();
+      });
     }
 
     ACTIONS.forEach((a, i) => {
-      const t = this.add.text(4 + (i % 5) * 50, 152 + Math.floor(i / 5) * 12, a, FONT);
-      this.labels.set(a, t);
+      this.labels.set(a, this.add.text(4 + (i % 5) * 50, 152 + Math.floor(i / 5) * 12, a, FONT));
     });
+    this.armorText = this.add.text(4, 128, '', FONT);
     this.bufferText = this.add.text(4, 182, '', FONT);
     this.padText = this.add.text(4, 194, '', FONT);
-    this.add.text(4, 210, 'Z jump X shoot C dash Q/E weapon Enter pause', { ...FONT, color: '#6f6f6f' });
+    this.add.text(4, 210, 'Z jump X shoot C dash Q/E weapon  1-4 armor', { ...FONT, color: '#6f6f6f' });
+  }
+
+  private playAll(): void {
+    for (const [anim, sprite] of this.bobs) {
+      const key = bobKey(anim, this.armor);
+      if (!this.anims.exists(key)) {
+        this.anims.create({ key, frames: this.anims.generateFrameNumbers(key, {}), frameRate: 6, repeat: -1 });
+      }
+      const progress = sprite.anims.currentFrame?.index ?? 0;
+      sprite.play({ key, startFrame: Math.max(0, progress - 1) });
+    }
+    const parts = Object.entries(ARMOR_BITS)
+      .filter(([, bit]) => this.armor & bit)
+      .map(([p]) => p);
+    this.armorText?.setText(`armor a${this.armor}: ${parts.join('+') || 'none'}`);
   }
 
   update(): void {

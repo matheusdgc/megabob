@@ -1,0 +1,18 @@
+Use case: stylized-concept.
+Asset type: B2_idle, three-frame idle animation sprite sheet for the original platformer Megabob.
+REFERENCE: The attached image is the APPROVED B1 Bob character sheet. It is the authoritative design, palette and camera reference. Use the FIRST sprite (neutral standing at the far left) as the exact base for all three idle frames. The running, jumping and shooting sprites are identity context only and MUST NOT appear in this new sheet.
+
+Create EXACTLY THREE full-body Bob idle frames in ONE horizontal row of THREE equal-size square cells:
+Frame 1: neutral standing, matching the first sprite of the approved sheet.
+Frame 2: subtle breathing motion: lower the head and torso by ONE logical pixel while slightly compressing the legs. Keep both feet planted at the same ground line. Same expression.
+Frame 3: return to frame 1's posture, with the visible eye CLOSED in a brief friendly blink, a short dark horizontal pixel line. Keep the smile and everything else unchanged.
+The animation should feel calm and restrained, no waving, walking, jumping or shooting. Arms hang naturally in the neutral position. No blaster; both hands as in the approved neutral pose.
+
+IDENTITY LOCK:
+Same cute white robot, large rounded rectangular head, right-facing side view as the approved neutral sprite, large black eye with white catchlight except blink frame, small friendly smile, grey segmented side ear, small white torso with the blue </> coding emblem, short articulated white/grey arms and legs, compact blue boots. Same blue construction hard hat with a central ridge, broad brim and purple accent on the right. EXACTLY the approved head/body ratio, limb lengths, helmet scale and shell shapes. All three frames face RIGHT with identical camera, colors, scale and proportions. No redesign and no armor additions.
+
+PIXEL ART:
+Match the approved sheet's authentic 16-bit console pixel-art style, hard-edged square pixels, compact clusters, dark #161616 outline approximately one logical pixel thick, top-left light. Approximately 32 logical pixels tall, enlarged with crisp nearest-neighbor appearance. Flat limited color ramps: white, cool grey, IBM blue and restrained purple. Keep the chest symbol legible. No smooth gradients, antialiasing, soft shading, blur, glow, dithering or 3D rendering.
+
+LAYOUT AND ALPHA:
+Wide landscape transparent PNG. Three evenly spaced equal-size square cells in ONE horizontal row. The characters must be identically positioned within their cells, same ground baseline, generous transparent margins and gutters, no overlap, no cropping of helmet, hands or feet. No visible cell borders. All pixels outside the three clean sprite silhouettes must be completely TRANSPARENT. Keep white body parts inside the silhouettes opaque. Clean alpha edges, no grey/white clouds, no noise, no halos, no color fragments. No background, floor, cast shadows, frame borders, grid, words, labels, numbers, watermark, props, projectiles, effects, extra characters or extra frames.

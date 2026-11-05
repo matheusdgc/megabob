@@ -41,14 +41,16 @@ Deslizar na parede, pulo da parede (com uma pequena trava de input horizontal) e
 **Verificar:** `npm test` e um poço vertical no mapa de teste · **Dep.:** T3
 **Arquivos:** `src/systems/playerState.ts`, `src/entities/Player.ts`, `src/data/tuning.ts`, `tests/playerState.test.ts`
 
-### T4a: Pipeline de sprites [M]
+### T4a: Pipeline de sprites [M] ✅
 `tools/sprites.py`: lê `art/raw/<cat>/*.png`, remove o fundo transparente ou magenta e detecta os quadros por componentes e colunas vazias. Normaliza pela linha do chão e pelo centro, reduz com nearest-neighbor até a altura alvo e quantiza na paleta global. Gera `public/assets/<cat>/<nome>.png` + `.json` (formato de spritesheet do Phaser) e uma imagem de prévia com a grade, para conferir.
-- [ ] B1 e B2 viram spritesheets com a quantidade certa de quadros, alinhados pela linha do chão
-- [ ] A prévia em `art/preview/` mostra os quadros lado a lado em 4×
-- [ ] O jogo carrega o sheet real no lugar do placeholder sem mudar código
+- [x] B1 e B2 viram spritesheets com a quantidade certa de quadros, alinhados pela linha do chão
+- [x] A prévia em `art/preview/` mostra os quadros lado a lado em 4×
+- [x] O jogo carrega o sheet real no lugar do placeholder sem mudar código
 
 **Verificar:** rodar `python tools/sprites.py bob` e ver a prévia e o jogo · **Dep.:** T2
 **Arquivos:** `tools/sprites.py`, `tools/palette.py`, `src/data/assets.ts`
+
+> Feito: escala por folha pela largura do capacete, chroma key magenta com tolerância, armadura ajustada por sobreposição de silhueta (0,84–0,96) e as 15 combinações de peças pré-compostas (`bob_<anim>_a<N>`, N = bitmask cabeça=1 braço=2 corpo=4 pernas=8). A prévia fica em `art/preview/`.
 
 ### T4b: Integração contínua de arte (recorrente)
 A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar as animações no manifesto. Os quadros ruins vão para uma lista de regeneração em `art/REGENERATE.md`.
