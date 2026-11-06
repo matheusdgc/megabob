@@ -72,7 +72,7 @@ São 4 peças, cada uma liberada num **Update Terminal** escondido numa fase. S�
 - **Arte:** gerada no ChatGPT pelos prompts de [docs/art-prompts.md](docs/art-prompts.md) (Bob, inimigos, chefes, cenários, efeitos, UI). As imagens brutas ficam em `art/raw/`. Um script de pós-processamento (`tools/`) remove o fundo, reduz com nearest-neighbor, trava as cores na paleta global e monta os spritesheets em `public/assets/`. Enquanto a arte não chega, o jogo usa placeholders geométricos do mesmo tamanho.
 - **Música:** 10 faixas livres de direitos autorais, escolhidas em [docs/soundtrack.md](docs/soundtrack.md): título, seleção, 3 fases, chefes, fortaleza, Tech Debt fase 1 e 2, e créditos. As faixas são normalizadas e convertidas para OGG + MP3 por script, e tocam com loop sem emenda via WebAudio, com pontos de loop num manifesto.
 - **SFX e jingles:** sintetizados em código com WebAudio. Os jingles são: início da fase, entrada do chefe, arma ganha, upgrade instalado e game over.
-- **Resolução interna:** 256×224 (proporção de 16 bits), escala inteira, `pixelArt: true`
+- **Resolução interna:** 480×270 (16:9), escala inteira, `pixelArt: true`. Era 256×224, mas a câmera ficava próxima demais: em tela cheia o zoom 4× deixava os pixels grandes e os defeitos da arte evidentes. Em dev, `?view=LxA` testa outro enquadramento (por exemplo, `?view=640x360`)
 - **Testes:** Vitest
 
 ## Comandos

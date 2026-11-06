@@ -36,7 +36,7 @@ Toda tarefa só fecha com `npm test`, `npm run typecheck` e `npm run build` pass
 - **Assets:** o manifesto `src/data/assets.ts` declara a chave e os quadros de cada sheet. O que não tiver arquivo vira placeholder gerado no Boot com o mesmo layout. `tests/assets.test.ts` confere se cada arquivo declarado existe com a largura certa.
 - **Bob e a armadura:** a chave da textura é `bobKey(anim, armor)`. `armor` é um bitmask: cabeça=1, braço=2, corpo=4, pernas=8, e 15 é a armadura completa. O pipeline já gera as 15 combinações pré-compostas (`bob_<anim>_a<N>.png`).
 - **Fases:** mapas ASCII em `src/stages/*.ts`, interpretados por `parseMap` (`src/stages/map.ts`). Legenda: `#` sólido, `=` plataforma de mão única, `^` espinho, `-` parede de fundo, `.` vazio, `P` início.
-- **Quadros:** o Bob tem quadros de 48×48, com os pés na última linha e origin `(0.5, 1)`. A caixa de colisão é 14×30, e os tiles são 16×16. A tela interna é 256×224, com escala inteira.
+- **Quadros:** o Bob tem quadros de 48×48, com os pés na última linha e origin `(0.5, 1)`. A caixa de colisão é 14×30, e os tiles são 16×16. A tela interna é 480×270 (`src/config.ts`), com escala inteira. Em dev, `?view=640x360` testa outro enquadramento sem rebuild.
 
 ## Memória do projeto (ai-memory)
 

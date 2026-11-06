@@ -13,6 +13,7 @@
 | T3 | Movimento base (correr, pulo variável, coyote time), parser de mapa ASCII e mapa de teste |
 | T4 | Deslize e chute na parede, dash, dash-jump e dash no ar (com as Turbo Boots) |
 | T4b | Job `python tools/sprites.py fx`: recorta as folhas de efeitos por grade e gera `public/assets/fx/` (tiros, auras, flash, impactos e os efeitos das 3 armas) |
+| Enquadramento | Resolução interna de 256×224 para 480×270, a pedido do usuário (câmera estava próxima demais). `?view=LxA` compara opções em dev |
 | T5 | Tiro: básico (máx. 3 na tela), carga em 2 níveis (3 com o bit de braço), aura, flash do cano, pose de tiro em todos os estados |
 
 São 224 testes passando, e o typecheck e o build também passam.

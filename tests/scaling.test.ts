@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { integerZoom } from '../src/systems/scaling';
+import { integerZoom, parseView } from '../src/systems/scaling';
 
 describe('integerZoom', () => {
   it('picks the largest integer scale that fits both axes', () => {
@@ -14,5 +14,21 @@ describe('integerZoom', () => {
   it('never goes below 1', () => {
     expect(integerZoom(100, 100, 256, 224)).toBe(1);
     expect(integerZoom(0, 0, 256, 224)).toBe(1);
+  });
+});
+
+describe('parseView', () => {
+  const fallback = { width: 480, height: 270 };
+
+  it('reads ?view=WxH', () => {
+    expect(parseView('?view=640x360', fallback)).toEqual({ width: 640, height: 360 });
+    expect(parseView('?sprites&view=256x224', fallback)).toEqual({ width: 256, height: 224 });
+  });
+
+  it('falls back when missing, malformed or out of range', () => {
+    expect(parseView('', fallback)).toEqual(fallback);
+    expect(parseView('?view=big', fallback)).toEqual(fallback);
+    expect(parseView('?view=64x64', fallback)).toEqual(fallback);
+    expect(parseView('?view=4000x2000', fallback)).toEqual(fallback);
   });
 });
