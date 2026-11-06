@@ -12,13 +12,13 @@ import { Pickup } from '../entities/Pickup';
 import type { Projectile } from '../entities/Projectile';
 import { Player } from '../entities/Player';
 import { type MapEnemy, parseMap, T } from '../stages/map';
-import { TEST_MAP, TEST_SECTIONS } from '../stages/test';
+import { bossRoomIndex, DEFAULT_STAGE, type StageDef, type StageId, STAGES } from '../stages/stages';
 import { type Action, ActionState } from '../systems/actions';
 import { cameraScroll, type Section, sectionAt, sectionOf, sectionsFromTiles } from '../systems/camera';
 import { heal, loseLife } from '../systems/damage';
 import { GameInput } from '../systems/input';
 import { grant, newArsenal, refill } from '../systems/weapons';
-import { BOSS_WEAPON, type BossId, damageFor, WEAPON_MAX_ENERGY, WEAPONS } from '../data/weapons';
+import { BOSS_WEAPON, damageFor, WEAPON_MAX_ENERGY, WEAPONS } from '../data/weapons';
 import { GcOrb } from '../entities/weapons/GarbageCollector';
 import { OWNED_WEAPONS } from './WeaponGetScene';
 import { BossHealthBar } from '../ui/BossHealthBar';
@@ -29,9 +29,6 @@ import { Hud } from '../ui/Hud';
  * them by type: returns [the one matching `is`, the other].
  */
 const pick = <A>(a: unknown, b: unknown, is: (o: unknown) => o is A): [A, unknown] => (is(a) ? [a, b] : [b as A, a]);
-
-/** The boss of this stage (the test map uses Memory Leak). */
-const BOSS_ID: BossId = 'memoryLeak';
 
 /** Camera looks this far above Bob's feet, so he sits slightly below screen center. */
 const CAMERA_LOOK_UP = 24;
@@ -44,59 +41,68 @@ interface RespawnPoint {
   section: number;
 }
 
+/** Scene events that must not outlive one run of the stage (Phaser keeps them across restarts). */
+const RUN_EVENTS = ['bossIntro', 'bossDefeated', 'bossRoomUnlocked', 'gameOver'] as const;
+
 /**
- * A playable stage built from an ASCII map and its camera sections (for now: the test map).
+ * A playable stage, built from its `StageDef` (map, camera sections, boss, tileset).
+ * Start it with `scene.start('Stage', { stage })`; all per-run state is reset in `init()`.
  * Dev keys: R back to the respawn point, F2 hitboxes + state readout, 1-4 armor parts
  * (4 = Turbo Boots: air dash), H take a 4-point hit from the front, G grant the Garbage Collector.
  * Emits `bossIntro` when the boss door shuts behind Bob, `gameOver` on the last life.
  */
 export class StageScene extends Phaser.Scene {
+  // Per-run state. The scene instance is reused on restart, so all of it is set in init().
+  private def!: StageDef;
   private controls!: GameInput;
   /** Input fed to Bob while the boss door walks him through. */
-  private readonly scripted = new ActionState();
+  private scripted!: ActionState;
   private player!: Player;
-  private worldHeight = 0;
+  private worldHeight!: number;
   private readout?: Phaser.GameObjects.Text;
   private layer!: Phaser.Tilemaps.TilemapLayer;
   private hud!: Hud;
 
-  private sections: Section[] = [];
-  private section = 0;
-  private respawnAt: RespawnPoint = { x: 0, y: 0, section: 0 };
-  private checkpoints: Checkpoint[] = [];
+  private sections!: Section[];
+  private section!: number;
+  private bossRoom!: number;
+  private respawnAt!: RespawnPoint;
+  private checkpoints!: Checkpoint[];
   private door?: BossDoor;
 
-  private mapEnemies: (MapEnemy & { section: number })[] = [];
+  private mapEnemies!: (MapEnemy & { section: number })[];
   /** Live enemies and pickups of the current section; stepped on the fixed logic tick. */
   private enemies!: Phaser.GameObjects.Group;
   private pickups!: Phaser.GameObjects.Group;
 
   private boss?: Boss;
   private bossHealthBar?: BossHealthBar;
-  /** The X centre of the boss room (section 2 of the test map). */
-  private bossSpawnX = 0;
-  private bossSpawnY = 0;
 
   constructor() {
     super('Stage');
   }
 
-  create(): void {
-    const parsed = parseMap(TEST_MAP);
-    this.sections = sectionsFromTiles(TEST_SECTIONS, TILE);
-    this.worldHeight = parsed.rows * TILE;
-    this.respawnAt = { ...parsed.spawn, section: Math.max(0, sectionOf(this.sections, parsed.spawn.x, parsed.spawn.y)) };
+  init(data: { stage?: StageId }): void {
+    this.def = STAGES[data.stage ?? DEFAULT_STAGE];
+    this.scripted = new ActionState();
+    this.readout = undefined;
+    this.section = 0;
+    this.bossRoom = bossRoomIndex(this.def);
     this.checkpoints = [];
     this.door = undefined;
     this.boss = undefined;
     this.bossHealthBar = undefined;
-    // Boss room centre: section 2 spans columns 80-109, place boss at col 94, top row 11
-    const bossSection = TEST_SECTIONS[2];
-    this.bossSpawnX = (bossSection.x + bossSection.w / 2) * TILE;
-    this.bossSpawnY = (bossSection.y + bossSection.h - 2) * TILE; // feet on the floor (2 floor rows)
+  }
+
+  create(): void {
+    const parsed = parseMap(this.def.map);
+    this.sections = sectionsFromTiles(this.def.sections, TILE);
+    this.worldHeight = parsed.rows * TILE;
+    this.respawnAt = { ...parsed.spawn, section: Math.max(0, sectionOf(this.sections, parsed.spawn.x, parsed.spawn.y)) };
 
     const map = this.make.tilemap({ data: parsed.tiles, tileWidth: TILE, tileHeight: TILE });
-    const tileset = map.addTilesetImage('tiles_test', 'tiles_test', TILE, TILE, 0, 0);
+    const key = this.def.tileset;
+    const tileset = map.addTilesetImage(key, key, TILE, TILE, 0, 0);
     if (!tileset) throw new Error('tileset missing');
     const layer = map.createLayer(0, tileset, 0, 0);
     if (!layer) throw new Error('tile layer missing');
@@ -144,8 +150,7 @@ export class StageScene extends Phaser.Scene {
 
     // Boss spawns when the door shuts behind Bob
     this.events.once('bossIntro', () => this.spawnBoss());
-    // When boss is defeated, unlock boss room so Bob can exit
-    this.events.on('bossDefeated', () => this.onBossDefeated());
+    this.events.once('bossDefeated', () => this.onBossDefeated());
 
     this.controls = new GameInput(this);
     const kb = this.input.keyboard!;
@@ -165,7 +170,10 @@ export class StageScene extends Phaser.Scene {
     // every display refresh (which is 120-240 Hz on many monitors).
     const world = this.physics.world;
     world.on(Phaser.Physics.Arcade.Events.WORLD_STEP, this.tick, this);
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => world.off(Phaser.Physics.Arcade.Events.WORLD_STEP, this.tick, this));
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      world.off(Phaser.Physics.Arcade.Events.WORLD_STEP, this.tick, this);
+      for (const e of RUN_EVENTS) this.events.off(e);
+    });
   }
 
   /** One fixed logic step, right after each physics step. */
@@ -310,10 +318,12 @@ export class StageScene extends Phaser.Scene {
 
   private spawnBoss(): void {
     if (this.boss) return; // already spawned (shouldn't happen, but be safe)
+    // centre of the boss room, feet on its floor (the bottom two rows are ground)
+    const room = this.sections[this.bossRoom]!;
     const boss = new MemoryLeak(
       this,
-      this.bossSpawnX,
-      this.bossSpawnY,
+      room.x + room.w / 2,
+      room.y + room.h - 2 * TILE,
       this.worldHeight,
       () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
     );
@@ -323,7 +333,7 @@ export class StageScene extends Phaser.Scene {
     this.physics.add.overlap(this.player.shots, boss, (a, b) => {
       const shot = pick(a, b, isBoss)[1] as Projectile;
       if (!shot.active || !boss.active) return;
-      const killed = boss.hurt(damageFor(BOSS_ID, shot.weapon, shot.damage));
+      const killed = boss.hurt(damageFor(this.def.boss, shot.weapon, shot.damage));
       playOnce(this, shot.level === 3 ? 'fx_compiler_hit' : 'fx_hit', shot.x, shot.y, 20);
       if (!(killed && shot.level >= 2)) shot.disableBody(true, true);
     });
@@ -331,7 +341,7 @@ export class StageScene extends Phaser.Scene {
     const isOrb = (o: unknown): o is GcOrb => o instanceof GcOrb;
     this.physics.add.overlap(this.player.specials, boss, (a, b) => {
       const orb = pick(a, b, isOrb)[0];
-      if (orb.active && boss.active && orb.firstHit(boss)) boss.hurt(damageFor(BOSS_ID, orb.weapon, orb.damage));
+      if (orb.active && boss.active && orb.firstHit(boss)) boss.hurt(damageFor(this.def.boss, orb.weapon, orb.damage));
     });
     this.physics.add.overlap(this.player.specials, boss.gooGroup, (a, b) => {
       const goo = pick(a, b, isOrb)[1] as { active: boolean; deactivate(): void };
@@ -352,7 +362,6 @@ export class StageScene extends Phaser.Scene {
     });
     // Goo collides with the tile layer so it lands on the floor
     this.physics.add.collider(boss.gooGroup, this.layer, undefined, (g) => !(g as unknown as { isPuddle: boolean }).isPuddle, this);
-    const room = this.sections[2]!;
     boss.setArena(room.x, room.x + room.w);
     this.bossHealthBar = new BossHealthBar(this, 'MEMORY LEAK');
     boss.startIntro();
@@ -363,8 +372,11 @@ export class StageScene extends Phaser.Scene {
     this.bossHealthBar = undefined;
     this.events.emit('bossRoomUnlocked');
     // after the explosion: the weapon-get screen, which then returns to the stage (T13: select)
-    const weapon = BOSS_WEAPON[BOSS_ID];
-    this.time.delayedCall(2500, () => (weapon ? this.scene.start('WeaponGet', { weapon, next: 'Stage' }) : this.scene.restart()));
+    const weapon = BOSS_WEAPON[this.def.boss];
+    const stage = { stage: this.def.id };
+    this.time.delayedCall(2500, () =>
+      weapon ? this.scene.start('WeaponGet', { weapon, next: 'Stage', nextData: stage }) : this.scene.restart(stage),
+    );
   }
 
   /** Death animation over: spend a life and respawn. */

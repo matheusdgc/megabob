@@ -12,21 +12,25 @@ const AUTO_MS = 6000;
 
 /**
  * "Weapon get" screen after a boss: Bob absorbs the weapon, its name and how to use it.
- * Records the weapon in the registry, then starts `next` (the stage, until T13's select).
+ * Records the weapon in the registry, then starts `next` with `nextData` (the stage, until T13's select).
  */
 export class WeaponGetScene extends Phaser.Scene {
   private weapon: WeaponId = 'garbageCollector';
   private next = 'Stage';
-  private started = 0;
+  private nextData?: object;
+  /** Set once MIN_MS has passed. (Not `time.now`: on a scene's first run it is stale until the first update.) */
+  private ready = false;
   private controls!: GameInput;
 
   constructor() {
     super('WeaponGet');
   }
 
-  init(data: { weapon?: WeaponId; next?: string }): void {
+  init(data: { weapon?: WeaponId; next?: string; nextData?: object }): void {
     this.weapon = data.weapon ?? 'garbageCollector';
     this.next = data.next ?? 'Stage';
+    this.nextData = data.nextData;
+    this.ready = false;
   }
 
   create(): void {
@@ -59,20 +63,22 @@ export class WeaponGetScene extends Phaser.Scene {
     const prompt = this.add.text(w / 2, h / 2 + 48, 'PRESS Z', { ...font, fontSize: '8px' }).setOrigin(0.5).setVisible(false);
 
     this.controls = new GameInput(this);
-    this.started = this.time.now;
-    this.time.delayedCall(MIN_MS, () => prompt.setVisible(true));
+    this.time.delayedCall(MIN_MS, () => {
+      this.ready = true;
+      prompt.setVisible(true);
+    });
     this.time.delayedCall(AUTO_MS, () => this.leave());
   }
 
   update(): void {
     const s = this.controls.poll();
-    if (this.time.now - this.started >= MIN_MS && (s.justPressed('jump') || s.justPressed('pause') || s.justPressed('shoot'))) {
+    if (this.ready && (s.justPressed('jump') || s.justPressed('pause') || s.justPressed('shoot'))) {
       this.leave();
     }
   }
 
   private leave(): void {
     if (!this.scene.isActive()) return;
-    this.scene.start(this.next);
+    this.scene.start(this.next, this.nextData);
   }
 }
