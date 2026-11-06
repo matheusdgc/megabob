@@ -33,10 +33,10 @@ Máquina de estados pura (`idle/run/jump/fall/land`) com testes. Andar, pulo var
 **Verificar:** `npm test` e jogar o mapa de teste · **Dep.:** T2
 **Arquivos:** `src/systems/playerState.ts`, `src/entities/Player.ts`, `src/data/tuning.ts`, `src/stages/test.ts`, `src/scenes/StageScene.ts`, `tests/playerState.test.ts`
 
-### T4: Parede e dash [M]
+### T4: Parede e dash [M] ✅
 Deslizar na parede, pulo da parede (com uma pequena trava de input horizontal) e dash no chão com duração e cancelamento. O dash no ar fica por trás da flag `hasTurboBoots`.
-- [ ] Testes: wall slide só ao segurar contra a parede durante a queda, wall jump empurra para longe, dash no ar bloqueado sem botas e limitado a 1×/pulo com botas
-- [ ] Dá para subir um poço vertical alternando paredes
+- [x] Testes: wall slide só ao segurar contra a parede durante a queda, wall jump empurra para longe, dash no ar bloqueado sem botas e limitado a 1×/pulo com botas
+- [x] Dá para subir um poço vertical alternando paredes
 
 **Verificar:** `npm test` e um poço vertical no mapa de teste · **Dep.:** T3
 **Arquivos:** `src/systems/playerState.ts`, `src/entities/Player.ts`, `src/data/tuning.ts`, `tests/playerState.test.ts`

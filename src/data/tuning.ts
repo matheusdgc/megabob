@@ -25,6 +25,25 @@ export const TAKEOFF_FRAMES = 3;
 /** |vy| below this counts as the apex pose. */
 export const APEX_SPEED = 60;
 
+// --- Walls ---
+/** Max fall speed while sliding down a wall. */
+export const WALL_SLIDE_SPEED = 80;
+export const WALL_JUMP_SPEED = 300;
+/** After a wall kick, horizontal input is ignored this long (Bob is pushed away). */
+export const WALL_LOCK_FRAMES = 8;
+
+// --- Dash ---
+export const DASH_SPEED = 210;
+/** Ground dash length when the button is held (26 frames ≈ 5.7 tiles). */
+export const DASH_FRAMES = 26;
+/** Releasing dash ends it, but never before this. */
+export const DASH_MIN_FRAMES = 6;
+export const AIR_DASH_FRAMES = 20;
+/** First frames of a dash that show the launch pose. */
+export const DASH_START_FRAMES = 3;
+/** Braking pose duration when a dash ends standing still. */
+export const BRAKE_FRAMES = 6;
+
 // --- Bob hitbox (inside the 48x48 sprite cell, feet on the bottom row) ---
 export const BOB_BODY_W = 14;
 export const BOB_BODY_H = 30;

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { TILE } from '../data/assets';
+import { ARMOR_BITS, TILE } from '../data/assets';
 import { Player } from '../entities/Player';
 import { parseMap, T } from '../stages/map';
 import { TEST_MAP } from '../stages/test';
@@ -10,7 +10,8 @@ const CAMERA_LOOK_UP = 24;
 
 /**
  * A playable stage built from an ASCII map. For now: the movement test map.
- * Dev keys: R respawn, F2 toggle hitboxes + state readout.
+ * Dev keys: R respawn, F2 toggle hitboxes + state readout, 1-4 toggle armor parts
+ * (4 = Turbo Boots: air dash).
  */
 export class StageScene extends Phaser.Scene {
   private controls!: GameInput;
@@ -51,6 +52,13 @@ export class StageScene extends Phaser.Scene {
     const kb = this.input.keyboard!;
     kb.on('keydown-R', () => this.player.respawn(this.spawn.x, this.spawn.y));
     kb.on('keydown-F2', () => this.toggleDebug());
+    const parts: [string, number][] = [
+      ['ONE', ARMOR_BITS.head],
+      ['TWO', ARMOR_BITS.arm],
+      ['THREE', ARMOR_BITS.body],
+      ['FOUR', ARMOR_BITS.legs],
+    ];
+    for (const [key, bit] of parts) kb.on(`keydown-${key}`, () => (this.player.armor ^= bit));
   }
 
   update(): void {
@@ -63,7 +71,8 @@ export class StageScene extends Phaser.Scene {
       const m = this.player.motion;
       this.readout.setText(
         `${m.state} f${m.stateFrames}\nvx ${b.velocity.x.toFixed(0)} vy ${b.velocity.y.toFixed(0)}\n` +
-          `ground ${b.blocked.down ? 'Y' : 'n'} coyote ${m.coyote}`,
+          `ground ${b.blocked.down ? 'Y' : 'n'} wall ${b.blocked.left ? 'L' : b.blocked.right ? 'R' : '-'} coyote ${m.coyote}\n` +
+          `armor a${this.player.armor} airdash ${m.canAirDash ? (m.airDashUsed ? 'used' : 'ready') : 'no boots'}`,
       );
     }
   }

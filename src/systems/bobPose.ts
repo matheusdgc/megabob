@@ -1,14 +1,18 @@
-import type { BobAnim } from '../data/assets';
-import { APEX_SPEED, TAKEOFF_FRAMES } from '../data/tuning';
+import { type BobAnim, bobKey, FULL_ARMOR } from '../data/assets';
+import { APEX_SPEED, DASH_START_FRAMES, TAKEOFF_FRAMES } from '../data/tuning';
 import type { Motion } from './motion';
 
-/** Looping animation, or a single fixed frame of a sheet. */
-export type BobPose = { anim: BobAnim; loop: true } | { anim: BobAnim; loop: false; frame: number };
+type PoseAnim = BobAnim | 'airdash';
 
-// bob_jump frames: 0 takeoff, 1 rise, 2 apex, 3 fall, 4 land
+/** Looping animation, or a single fixed frame of a sheet; `facing` is the sprite direction. */
+export type BobPose =
+  | { anim: PoseAnim; loop: true; facing: 1 | -1 }
+  | { anim: PoseAnim; loop: false; frame: number; facing: 1 | -1 };
+
+// frame numbers inside each sheet (docs/art-prompts.md inventory)
 const JUMP = { takeoff: 0, rise: 1, apex: 2, fall: 3, land: 4 } as const;
-
-const still = (anim: BobAnim, frame: number): BobPose => ({ anim, loop: false, frame });
+const DASH = { start: 0, dash: 1, stop: 2, shoot: 3 } as const;
+const WALL = { slide: 0, shoot: 1, kick: 2 } as const;
 
 function airFrame(vy: number): number {
   if (vy < -APEX_SPEED) return JUMP.rise;
@@ -18,18 +22,46 @@ function airFrame(vy: number): number {
 
 /** Which sprite pose shows Bob's current movement state. */
 export function bobPose(m: Motion, vy: number): BobPose {
+  const facing = m.facing;
+  const still = (anim: PoseAnim, frame: number, f: 1 | -1 = facing): BobPose => ({
+    anim,
+    loop: false,
+    frame,
+    facing: f,
+  });
   switch (m.state) {
     case 'idle':
-      return { anim: 'idle', loop: true };
+      return { anim: 'idle', loop: true, facing };
     case 'run':
-      return { anim: 'run', loop: true };
+      return { anim: 'run', loop: true, facing };
     case 'jump':
+      // wall kick: the kick frame is drawn facing the wall Bob pushes off
+      if (m.lock > 0) return still('wall', WALL.kick, m.lockDir === 1 ? -1 : 1);
       return still('jump', m.stateFrames < TAKEOFF_FRAMES ? JUMP.takeoff : airFrame(vy));
     case 'fall':
       return still('jump', airFrame(vy));
     case 'land':
       return still('jump', JUMP.land);
+    case 'wall':
+      return still('wall', WALL.slide);
+    case 'dash':
+      return still('dash', m.stateFrames < DASH_START_FRAMES ? DASH.start : DASH.dash);
+    case 'brake':
+      return still('dash', DASH.stop);
+    case 'airdash':
+      return still('airdash', m.stateFrames < DASH_START_FRAMES ? 0 : 1);
   }
+}
+
+/**
+ * Texture key + frame for a pose and armor combination. The air dash is only drawn with the
+ * full armor; with partial armor it borrows the ground dash glide frame.
+ */
+export function poseSheet(anim: PoseAnim, frame: number, armor: number): { key: string; frame: number } {
+  if (anim === 'airdash') {
+    return armor === FULL_ARMOR ? { key: bobKey('airdash', FULL_ARMOR), frame } : { key: bobKey('dash', armor), frame: DASH.dash };
+  }
+  return { key: bobKey(anim, armor), frame };
 }
 
 /** Frame sequences and speeds for the looping animations. */
