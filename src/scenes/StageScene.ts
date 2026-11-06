@@ -6,17 +6,20 @@ import type { Boss } from '../entities/Boss';
 import { MemoryLeak, MEMORY_LEAK_CONTACT } from '../entities/bosses/MemoryLeak';
 import { Checkpoint } from '../entities/Checkpoint';
 import { Enemy, type EnemyWorld } from '../entities/Enemy';
+import { EnemyShot } from '../entities/EnemyShot';
 import { playOnce } from '../entities/effects';
 import { Feedback } from '../entities/feedback';
 import { createEnemy } from '../entities/enemies';
 import { Pickup } from '../entities/Pickup';
 import type { Projectile } from '../entities/Projectile';
 import { Player } from '../entities/Player';
+import { skinTiles, solidFrames } from '../stages/autotile';
 import { type MapEnemy, parseMap, T } from '../stages/map';
 import { bossRoomIndex, DEFAULT_STAGE, type StageDef, type StageId, STAGES } from '../stages/stages';
 import { type Action, ActionState } from '../systems/actions';
 import { cameraScroll, type Section, sectionAt, sectionOf, sectionsFromTiles } from '../systems/camera';
 import { heal, loseLife } from '../systems/damage';
+import { gooTop, inGoo } from '../systems/goo';
 import { GameInput } from '../systems/input';
 import { grant, newArsenal, refill } from '../systems/weapons';
 import { BOSS_WEAPON, damageFor, WEAPON_MAX_ENERGY, WEAPONS } from '../data/weapons';
@@ -33,6 +36,10 @@ const pick = <A>(a: unknown, b: unknown, is: (o: unknown) => o is A): [A, unknow
 
 /** Camera looks this far above Bob's feet, so he sits slightly below screen center. */
 const CAMERA_LOOK_UP = 24;
+/** Body of the rising goo, under its surface tile (the hazard tile's deep teal). */
+const GOO_COLOR = 0x007d79;
+/** How fast each parallax layer scrolls with the camera, far to near. */
+const PARALLAX_SPEED = [0.15, 0.35, 0.6];
 /** Camera pan between sections; the game freezes meanwhile, like the genre. */
 const TRANSITION_MS = 450;
 
@@ -62,8 +69,15 @@ export class StageScene extends Phaser.Scene {
   private worldHeight!: number;
   private readout?: Phaser.GameObjects.Text;
   private layer!: Phaser.Tilemaps.TilemapLayer;
+  /** The logical map (`T` values): collision, hazards and enemy queries read this, never tile frames. */
+  private grid!: number[][];
   private hud!: Hud;
   private fx!: Feedback;
+  private parallax!: Phaser.GameObjects.TileSprite[];
+  /** Rising goo: its sprite, and frames since Bob entered its section. */
+  private goo?: Phaser.GameObjects.TileSprite;
+  private gooBody?: Phaser.GameObjects.Rectangle;
+  private gooFrames!: number;
 
   private sections!: Section[];
   private section!: number;
@@ -76,6 +90,7 @@ export class StageScene extends Phaser.Scene {
   /** Live enemies and pickups of the current section; stepped on the fixed logic tick. */
   private enemies!: Phaser.GameObjects.Group;
   private pickups!: Phaser.GameObjects.Group;
+  private enemyShots!: Phaser.GameObjects.Group;
 
   private boss?: Boss;
   private bossHealthBar?: BossHealthBar;
@@ -94,6 +109,9 @@ export class StageScene extends Phaser.Scene {
     this.door = undefined;
     this.boss = undefined;
     this.bossHealthBar = undefined;
+    this.goo = undefined;
+    this.gooBody = undefined;
+    this.gooFrames = 0;
   }
 
   create(): void {
@@ -103,17 +121,31 @@ export class StageScene extends Phaser.Scene {
     this.worldHeight = parsed.rows * TILE;
     this.respawnAt = { ...parsed.spawn, section: Math.max(0, sectionOf(this.sections, parsed.spawn.x, parsed.spawn.y)) };
 
-    const map = this.make.tilemap({ data: parsed.tiles, tileWidth: TILE, tileHeight: TILE });
+    this.grid = parsed.tiles;
+    const cam = this.cameras.main;
+    if (this.def.background) cam.setBackgroundColor(this.def.background);
+    this.parallax = (this.def.parallax ?? []).map((key, i) =>
+      this.add.tileSprite(0, 0, cam.width, cam.height, key).setOrigin(0).setScrollFactor(0).setDepth(-10 + i),
+    );
+    const map = this.make.tilemap({ data: skinTiles(parsed.tiles, this.def.skin), tileWidth: TILE, tileHeight: TILE });
     const key = this.def.tileset;
     const tileset = map.addTilesetImage(key, key, TILE, TILE, 0, 0);
     if (!tileset) throw new Error('tileset missing');
     const layer = map.createLayer(0, tileset, 0, 0);
     if (!layer) throw new Error('tile layer missing');
     this.layer = layer;
-    layer.setCollision([T.solid]);
+    layer.setCollision(solidFrames(this.def.skin));
     layer.forEachTile((tile) => {
-      if (tile.index === T.platform) tile.setCollision(false, false, true, false);
+      if (this.grid[tile.y]?.[tile.x] === T.platform) tile.setCollision(false, false, true, false);
     });
+
+    const goo = this.def.goo;
+    if (goo) {
+      const room = sectionsFromTiles(this.def.sections, TILE)[goo.section]!;
+      // a churning surface (the hazard tile) over a flat body down past the section's bottom
+      this.goo = this.add.tileSprite(room.x, gooTop(goo, 0), room.w, TILE, key, this.def.skin.hazard).setOrigin(0).setDepth(5);
+      this.gooBody = this.add.rectangle(room.x, gooTop(goo, 0) + TILE, room.w, room.h, GOO_COLOR).setOrigin(0).setDepth(5);
+    }
 
     for (const o of parsed.objects) {
       if (o.kind === 'checkpoint') this.checkpoints.push(new Checkpoint(this, o.x, o.y));
@@ -124,7 +156,7 @@ export class StageScene extends Phaser.Scene {
     this.player = new Player(this, this.respawnAt.x, this.respawnAt.y);
     this.physics.add.collider(this.player, layer);
     if (this.door) this.physics.add.collider(this.player, this.door);
-    this.player.solidAt = (x, y) => this.layer.getTileAtWorldXY(x, y)?.index === T.solid;
+    this.player.solidAt = (x, y) => this.cellAt(x, y) === T.solid;
     this.player.on('deathDone', () => this.afterDeath());
     this.player.on('hurt', () => this.fx.play('bobHurt'));
     this.player.on('died', () => this.fx.play('bobDeath'));
@@ -139,6 +171,20 @@ export class StageScene extends Phaser.Scene {
     this.mapEnemies = parsed.enemies.map((e) => ({ ...e, section: sectionOf(this.sections, e.x, e.y) }));
     this.enemies = this.add.group();
     this.pickups = this.add.group();
+    this.enemyShots = this.add.group();
+    const isShot = (o: unknown): o is EnemyShot => o instanceof EnemyShot;
+    const breakShot = (shot: EnemyShot) => {
+      playOnce(this, 'fx_hit', shot.x, shot.y, 20);
+      shot.destroy();
+    };
+    this.physics.add.collider(this.enemyShots, layer, (a, b) => breakShot(pick(a, b, isShot)[0]));
+    // a blinking Bob lets enemy shots pass through, like contact damage
+    this.physics.add.overlap(this.player, this.enemyShots, (a, b) => {
+      const shot = pick(a, b, isShot)[0];
+      if (shot.active && !this.player.isDead && this.player.takeHit(shot.damage, shot.x) !== 'ignored') breakShot(shot);
+    });
+    // the Garbage Collector swallows enemy projectiles
+    this.physics.add.overlap(this.player.specials, this.enemyShots, (a, b) => pick(a, b, isShot)[0].destroy());
     this.physics.add.collider(this.enemies, layer, undefined, (e) => (e as Enemy).solid, this);
     this.physics.add.collider(this.pickups, layer);
     const isEnemy = (o: unknown): o is Enemy => o instanceof Enemy;
@@ -203,7 +249,7 @@ export class StageScene extends Phaser.Scene {
       const box = new Phaser.Geom.Rectangle(b.x, b.y, b.width, b.height);
       if (b.bottom > this.worldHeight + 8) p.fallOut();
       // spikes: any spike tile under the bottom strip of the hitbox
-      else if (this.layer.getTilesWithinWorldXY(b.x, b.bottom - 4, b.width, 4).some((t) => t.index === T.spike)) {
+      else if (this.touches(b.x, b.bottom - 4, b.width, 4, T.spike)) {
         p.touchSpikes();
       }
       for (const c of this.checkpoints) {
@@ -213,6 +259,7 @@ export class StageScene extends Phaser.Scene {
       const next = sectionAt(this.sections, b.center.x, b.center.y, this.section);
       if (next !== this.section) this.enterSection(next, false);
     }
+    this.stepGoo();
     const h = p.health;
     const a = p.arsenal;
     const gauge = a.current === 'buster' ? null : { energy: a.energy[a.current], max: WEAPON_MAX_ENERGY, color: WEAPONS[a.current].color };
@@ -227,6 +274,7 @@ export class StageScene extends Phaser.Scene {
     const s = this.sections[i]!;
     this.section = i;
     this.spawnEnemies(i);
+    if (this.def.goo?.section === i) this.gooFrames = 0; // the flood starts over on every entry
     const cam = this.cameras.main;
     const attach = () => {
       cam.setBounds(s.x, s.y, s.w, s.h);
@@ -253,16 +301,31 @@ export class StageScene extends Phaser.Scene {
     });
   }
 
+  /** Logical cell (`T`) at a world point; outside the map is empty. */
+  private cellAt(x: number, y: number): number {
+    return this.grid[Math.floor(y / TILE)]?.[Math.floor(x / TILE)] ?? T.empty;
+  }
+
+  /** Does the rectangle overlap any cell of `kind`? */
+  private touches(x: number, y: number, w: number, h: number, kind: number): boolean {
+    for (let r = Math.floor(y / TILE); r <= Math.floor((y + h - 0.01) / TILE); r++) {
+      for (let c = Math.floor(x / TILE); c <= Math.floor((x + w - 0.01) / TILE); c++) if (this.grid[r]?.[c] === kind) return true;
+    }
+    return false;
+  }
+
   /** The current section's enemies, fresh (they come back each time Bob re-enters). */
   private spawnEnemies(section: number): void {
     this.enemies.clear(true, true);
+    this.enemyShots.clear(true, true);
     this.pickups.clear(true, true);
     const world: EnemyWorld = {
       floorAt: (x, y) => {
-        const t = this.layer.getTileAtWorldXY(x, y);
-        return !!t && (t.index === T.solid || t.index === T.platform);
+        const t = this.cellAt(x, y);
+        return t === T.solid || t === T.platform;
       },
       bob: () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
+      throwBlock: (x, y, vx, vy) => this.enemyShots.add(new EnemyShot(this, x, y, vx, vy)),
     };
     for (const m of this.mapEnemies) {
       if (m.section !== section) continue;
@@ -400,7 +463,21 @@ export class StageScene extends Phaser.Scene {
     }
   }
 
+  /** The goo rises while Bob is in its section, and swallows him if it catches up. */
+  private stepGoo(): void {
+    const def = this.def.goo;
+    if (!def || !this.goo || this.section !== def.section || this.player.isDead) return;
+    this.gooFrames++;
+    const top = gooTop(def, this.gooFrames);
+    this.goo.setY(top);
+    this.gooBody?.setY(top + TILE);
+    this.goo.tilePositionX += 0.25; // slow churn
+    if (inGoo(def, this.gooFrames, this.player.body.bottom)) this.player.fallOut();
+  }
+
   update(): void {
+    const cam = this.cameras.main;
+    this.parallax.forEach((layer, i) => (layer.tilePositionX = cam.scrollX * (PARALLAX_SPEED[i] ?? 1)));
     if (!this.readout) return;
     const p = this.player;
     const b = p.body;
