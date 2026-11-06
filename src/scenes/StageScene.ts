@@ -59,13 +59,23 @@ export class StageScene extends Phaser.Scene {
       ['FOUR', ARMOR_BITS.legs],
     ];
     for (const [key, bit] of parts) kb.on(`keydown-${key}`, () => (this.player.armor ^= bit));
+
+    // Game logic counts frames, so it runs on the fixed 60 Hz physics step rather than on
+    // every display refresh (which is 120-240 Hz on many monitors).
+    const world = this.physics.world;
+    world.on(Phaser.Physics.Arcade.Events.WORLD_STEP, this.tick, this);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => world.off(Phaser.Physics.Arcade.Events.WORLD_STEP, this.tick, this));
   }
 
-  update(): void {
+  /** One fixed logic step, right after each physics step. */
+  private tick(): void {
     const input = this.controls.poll();
     this.player.step(input);
     // fell out of the map (spike pit): back to spawn until damage exists (T6)
-    if (this.player.y > this.worldHeight + 32) this.player.respawn(this.spawn.x, this.spawn.y);
+    if (this.player.body.bottom > this.worldHeight + 32) this.player.respawn(this.spawn.x, this.spawn.y);
+  }
+
+  update(): void {
     if (this.readout) {
       const b = this.player.body;
       const m = this.player.motion;
