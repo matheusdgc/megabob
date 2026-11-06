@@ -30,7 +30,7 @@ Construir o jogo em **fatias jogáveis**. Primeiro o Bob se movendo com boa sens
 | ✅ Checkpoint 2 | | | Fase de teste jogável com inimigos |
 | 3. Primeira fatia vertical | T9-T12 | 06/11 | Fase Memory Leak completa: chefe, arma ganha, música e SFX |
 | ✅ Checkpoint 3 (fim do dia 1) | | | Dá para terminar a Memory Leak de ponta a ponta |
-| 4. Fluxo do jogo | T13 | manhã 07/11 | Título, seleção de fases, save, game over e pausa |
+| 4. Fluxo do jogo | T13, T13b | manhã 07/11 | Título, seleção de fases, save, game over, pausa e configuração de controles |
 | 5. Outras fases | T14-T15 | 07/11 | Race Condition e Null Pointer com chefes e armas |
 | ✅ Checkpoint 4 | | | 3 chefes em qualquer ordem, com o ciclo de fraquezas funcionando |
 | 6. Armadura | T16-T17 | 07/11 | 4 peças, Update Terminal e camadas no sprite |
@@ -64,7 +64,8 @@ Construir o jogo em **fatias jogáveis**. Primeiro o Bob se movendo com boa sens
 3. Camadas parciais da armadura → plano B (armadura completa com 4/4)
 4. Debug Visor revelando passagens → só mostra a vida do chefe
 5. Faixas próprias da fortaleza e do Tech Debt → reaproveitar a música dos chefes
-6. Suporte a gamepad
+6. Remapear o gamepad na tela de controles (T13b) → só teclado remapeável
+7. Suporte a gamepad
 
 ## Perguntas em aberto
 

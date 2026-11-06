@@ -56,8 +56,8 @@ Deslizar na parede, pulo da parede (com uma pequena trava de input horizontal) e
 A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar as animações no manifesto. Os quadros ruins vão para uma lista de regeneração em `art/REGENERATE.md`.
 
 ## ✅ Checkpoint 1: sensação de jogo
-- [ ] Testes, typecheck e build passam
-- [ ] **Você joga o mapa de teste** e aprova pulo, dash e parede (ou me passa os ajustes de `tuning.ts`)
+- [x] Testes, typecheck e build passam
+- [x] **Você joga o mapa de teste** e aprova pulo, dash e parede (aprovado em 06/11, sem ajustes)
 
 ---
 
@@ -153,6 +153,15 @@ Tela de título, seleção de fases com retratos (fortaleza travada até 3/3), s
 
 **Verificar:** `npm test` e recarregar o navegador no meio do jogo · **Dep.:** T12
 **Arquivos:** `src/systems/save.ts`, `src/scenes/TitleScene.ts`, `src/scenes/StageSelectScene.ts`, `src/scenes/PauseScene.ts`, `tests/save.test.ts`
+
+### T13b: Configuração de controles [M]
+Tela de opções (pelo título e pelo menu de pausa) que lista as ações (`ACTIONS` em `src/systems/actions.ts`) e deixa trocar a tecla e o botão do gamepad de cada uma: seleciona a ação, aperta a nova tecla ou botão. Os mapeamentos hoje fixos em `KEYS` e `PAD_BUTTONS` (`src/systems/input.ts`) passam a vir de um módulo puro de bindings, salvo no save.
+- [ ] Testes do módulo de bindings: trocar uma tecla já usada por outra ação troca as duas (sem ação sem tecla), "restaurar padrão" volta ao mapeamento de hoje, e um save inválido ou antigo cai no padrão
+- [ ] Teclas de sistema ficam reservadas (Esc sempre volta ou pausa, e F2/R/1-4 de debug não podem ser atribuídas)
+- [ ] Os mapeamentos persistem ao recarregar e valem na hora, sem reiniciar a fase
+
+**Verificar:** `npm test` e trocar o pulo para outra tecla, recarregar e jogar · **Dep.:** T13
+**Arquivos:** `src/systems/bindings.ts`, `src/systems/input.ts`, `src/scenes/OptionsScene.ts`, `src/systems/save.ts`, `tests/bindings.test.ts`
 
 ---
 

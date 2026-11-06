@@ -21,7 +21,8 @@ São 224 testes passando, e o typecheck e o build também passam.
 
 ## Pendente com o usuário
 
-- **Checkpoint 1:** o usuário ainda **não testou** a sensação de jogo (pulo, dash e parede). Pergunte de novo antes da T8. Os ajustes ficam em `src/data/tuning.ts`.
+- **Checkpoint 1:** aprovado pelo usuário em 06/11, sem ajustes em `src/data/tuning.ts`.
+- **Pedido novo:** uma tela de configuração para remapear teclas e botões. Virou a T13b em `tasks/todo.md`, depois da T13 (título, save e pausa), porque depende do save e dos menus.
 - **Arte bruta fora do git:** `art/raw/enemies/`, `fx/`, `bosses/`, `bg/` e `tiles/`. O agente de arte continua gerando. Confirme com o usuário antes de commitar essas pastas. Os sheets de efeitos já processados estão em `public/assets/fx/` (commitados).
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
 - **Licenças da trilha:** o usuário pediu para ignorar por enquanto. Faltam as faixas 05, 07, 08 e 09 em `docs/soundtrack.md`.
