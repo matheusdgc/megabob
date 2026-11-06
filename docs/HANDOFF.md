@@ -1,6 +1,6 @@
 # Handoff: estado do projeto
 
-> Atualizado em 06/11/2026, no fim da T8 (editor). Branch `dev`.
+> Atualizado em 06/11/2026, no fim da T9 (editor, IBM Bob). Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)
@@ -18,8 +18,9 @@
 | T6 | Vida (28), recuo sem controle e piscar, espinhos e poço matam, descompilação (`fx_decompile`), 3 vidas, barra de vida (`src/ui/Hud.ts`). A Firewall Plating (bit 4) corta o dano pela metade e encurta o recuo |
 | T7 | Inimigos: base `Enemy` (vida, dano por contato, flash, explosão `fx_explosion`), Pixel Mite (anda e vira em paredes e beiradas) e Spam Drone (paira e mergulha). Marcadores `m`/`d` no mapa. Itens com tabela de drop (`src/data/drops.ts`), piscam e somem. Tiros carregados (nível 2+) atravessam o inimigo que destroem |
 | T8 | Câmera por seções (`src/systems/camera.ts`, `TEST_SECTIONS` em tiles): a câmera nunca sai da seção atual, e a troca de seção desliza a câmera com o jogo congelado. Inimigos pertencem a uma seção e renascem ao reentrar. Checkpoint (`C`) muda o ponto de respawn. Porta do chefe (`B`) abre ao encostar, leva o Bob sozinho, fecha atrás e emite `bossIntro`; a sala do chefe é `locked` |
+| T9 | Chefe Memory Leak: `src/systems/boss.ts` (máquina de estados pura intro/fight/dead, dano com i-frames, 15 testes), `src/entities/Boss.ts` (sprite base, dispara `bossDefeated`), `src/entities/bosses/MemoryLeak.ts` (3 padrões: volley de bolhas → poças, afundar/emergir, fúria a 1/3 de vida), `src/ui/BossHealthBar.ts` (barra horizontal com fill na intro). StageScene spawna o chefe no `bossIntro` e reinicia no `afterDeath`. |
 
-Validação da arte de seleção: 347 testes TypeScript e 13 testes Python passando. Typecheck e build passaram numa cópia isolada da base commitada com os novos assets; a T9 está em edição pela outra sessão no checkout principal. O smoke test confere 249 texturas nas cenas Debug e Stage da base isolada, sem erros ou avisos no console/rede.
+São 362 testes TypeScript e 13 testes Python passando; typecheck e build também passam.
 
 **Mudança importante:** a lógica da fase roda no evento `worldstep` da física (60 Hz fixos), e não no `update()` da cena. Antes, em monitores de 120 Hz ou mais, tudo o que conta quadros ficava 2 a 4 vezes mais rápido. Lógica nova que conte quadros deve entrar em `StageScene.tick()`.
 
@@ -31,14 +32,16 @@ Validação da arte de seleção: 347 testes TypeScript e 13 testes Python passa
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
 - **Licenças da trilha:** o usuário pediu para ignorar por enquanto. Faltam as faixas 05, 07, 08 e 09 em `docs/soundtrack.md`.
 
-## Próximo passo: T9 (chefe base e Memory Leak)
+## Próximo passo: T10 (sistema de armas e Garbage Collector)
 
-O Checkpoint 2 está pronto para o usuário jogar: o mapa de teste vai do início à sala do chefe, com inimigos, itens, morte e checkpoint. Depois vem a T9. Pontos de partida:
+O Checkpoint 3 está desbloqueado quando o Memory Leak for derrotado. Pontos de partida:
 
-- **Entrada do chefe:** a `StageScene` emite `bossIntro` quando a porta fecha atrás do Bob. A sala do chefe do mapa de teste é a seção 2 (colunas 80-109, linhas 11-27). O chefe deve aparecer ali.
-- **Arte pronta:** `boss_memory_leak` (96×80, 8 quadros), `memory_goo` e `memory_puddle` (projéteis), `fx_boss_explosion` e `portrait_memory_leak`, todos em `src/data/processedArt.ts`.
-- **Morte na sala do chefe:** `respawnBob()` volta ao checkpoint e reabre a porta (`door.reset()`). O chefe precisa ser removido ou reiniciado nesse momento.
-- **Porta:** depois do `shut`, o corpo da porta bloqueia a volta. A porta fica na borda esquerda da sala, fora da vista da câmera.
+- **bossDefeated:** a `StageScene` emite esse evento e `onBossDefeated()` destrói a barra. Neste momento a T10 deve iniciar a transição para `WeaponGetScene` (ainda não existe).
+- **Tabela de armas:** `src/data/weapons.ts` — `WeaponId`, `WEAKNESS` e `damageFor()` como no SPEC (já há o esqueleto no SPEC.md).
+- **Energia por arma:** cada arma tem um pool separado; Q/E trocam a arma ativa (pulando as que não foram ganhas).
+- **Garbage Collector:** orbe que suga projéteis e atravessa inimigos. Energia gasta por orbe ativo.
+- **Arma ganha:** ao voltar à seleção a `StageScene` recebe via dados de cena `{ weapon: 'garbageCollector' }`.
+- **Fraqueza:** Memory Leak leva 3× do Mutex Lock (T14), mas o dano base já é injetado pelo `damageFor()` que a T10 entregará.
 
 ## Arte
 
