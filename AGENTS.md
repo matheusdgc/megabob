@@ -25,7 +25,8 @@ Pack instalado em `~/.agents/plugins/cache/awesome-gamedev-agent-skills/gamedev/
 
 Regras que o pack reforça e que já valem aqui:
 - **Medidas do Bob dimensionam o mapa.** O pulo alcança cerca de 53 px de altura (3,3 tiles) e 63 px de distância parado no chão (cerca de 4 tiles), medidos no jogo. Vãos obrigatórios devem ter no máximo uns 70% disso. Os vãos no limite ficam para caminhos opcionais.
-- **Toda fase precisa de um caminho crítico jogável do início ao chefe**, verificado em teste e no navegador, sem teletransporte.
+- **Toda fase precisa de um caminho crítico jogável do início ao chefe**, verificado em teste e no navegador, sem teletransporte. O teste já existe: `tests/reach.test.ts` roda o controle real do Bob (`src/systems/reach.ts`) em cada fase de `STAGES`, com 75% do controle aéreo e sem dash.
+- **Retorno proporcional ao evento:** congelamento, tremor e flash vêm da tabela `FEEDBACK` (`src/data/tuning.ts`), por `this.fx.play(evento)`. Ações rotineiras não tremem a tela.
 
 ## Comandos
 
@@ -54,7 +55,9 @@ Toda tarefa só fecha com `npm test`, `npm run typecheck` e `npm run build` pass
 - **Números de ajuste** ficam só em `src/data/tuning.ts`.
 - **Assets:** o manifesto `src/data/assets.ts` declara a chave e os quadros de cada sheet. O que não tiver arquivo vira placeholder gerado no Boot com o mesmo layout. `tests/assets.test.ts` confere se cada arquivo declarado existe com a largura certa.
 - **Bob e a armadura:** a chave da textura é `bobKey(anim, armor)`. `armor` é um bitmask: cabeça=1, braço=2, corpo=4, pernas=8, e 15 é a armadura completa. O pipeline já gera as 15 combinações pré-compostas (`bob_<anim>_a<N>.png`).
-- **Fases:** mapas ASCII em `src/stages/*.ts`, interpretados por `parseMap` (`src/stages/map.ts`). Legenda: `#` sólido, `=` plataforma de mão única, `^` espinho, `-` parede de fundo, `.` vazio, `P` início.
+- **Fases:** cada fase é um `StageDef` em `src/stages/stages.ts` (mapa, seções da câmera, chefe, tileset); a `StageScene` monta a que receber em `scene.start('Stage', { stage })`. Mapas ASCII em `src/stages/*.ts`, interpretados por `parseMap` (`src/stages/map.ts`). Legenda: `#` sólido, `=` plataforma de mão única, `^` espinho, `-` parede de fundo, `.` vazio, `P` início, `m`/`d` inimigos, `C` checkpoint, `B` porta do chefe.
+- **Cenas (Phaser reaproveita a instância):** estado da partida é zerado em `init()`, nunca em inicializador de campo. Listeners em `this.events` não somem no reinício: registre o evento em `RUN_EVENTS` da `StageScene`. Pausa da física só por `this.fx.hold/release(motivo)`.
+- **Controles:** a jogabilidade lê ações (`ActionState`), nunca teclas. O mapeamento é dado (`src/systems/bindings.ts`, registry `bindings`); a tela de controles (T13b) usa `rebind` e o save passa por `normalizeBindings`.
 - **Quadros:** o Bob tem quadros de 48×48, com os pés na última linha e origin `(0.5, 1)`. A caixa de colisão é 14×30, e os tiles são 16×16. A tela interna é 480×270 (`src/config.ts`), com escala inteira. Em dev, `?view=640x360` testa outro enquadramento sem rebuild.
 
 ## Memória do projeto (ai-memory)
