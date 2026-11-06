@@ -44,6 +44,18 @@ export const DASH_START_FRAMES = 3;
 /** Braking pose duration when a dash ends standing still. */
 export const BRAKE_FRAMES = 6;
 
+// --- Buster ---
+/** Basic shots allowed on screen at once; a press beyond this fires nothing. */
+export const MAX_SHOTS = 3;
+/** Frames the shoot button must be held for charge levels 1, 2 and 3 (3 needs the Compiler Cannon). */
+export const CHARGE_FRAMES = [24, 72, 130] as const;
+/** After a shot, Bob keeps the cannon pose this long. */
+export const SHOOT_POSE_FRAMES = 16;
+/** Projectile speeds (px/s) by charge level 0-3. */
+export const SHOT_SPEED = [300, 320, 340, 360] as const;
+/** Damage by charge level 0-3. */
+export const SHOT_DAMAGE = [1, 2, 3, 5] as const;
+
 // --- Bob hitbox (inside the 48x48 sprite cell, feet on the bottom row) ---
 export const BOB_BODY_W = 14;
 export const BOB_BODY_H = 30;
