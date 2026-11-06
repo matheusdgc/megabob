@@ -124,6 +124,7 @@ export class StageScene extends Phaser.Scene {
     this.player = new Player(this, this.respawnAt.x, this.respawnAt.y);
     this.physics.add.collider(this.player, layer);
     if (this.door) this.physics.add.collider(this.player, this.door);
+    this.player.solidAt = (x, y) => this.layer.getTileAtWorldXY(x, y)?.index === T.solid;
     this.player.on('deathDone', () => this.afterDeath());
     this.player.on('hurt', () => this.fx.play('bobHurt'));
     this.player.on('died', () => this.fx.play('bobDeath'));

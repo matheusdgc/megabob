@@ -19,6 +19,7 @@ import type { ActionState } from '../systems/actions';
 import { BOB_LOOPS, type BobPose, bobPose, poseSheet, shotOrigin } from '../systems/bobPose';
 import { chargeLevel, newBuster, type ShotLevel, stepBuster } from '../systems/charge';
 import { type HitResult, hit, kill, newHealth, tickHealth } from '../systems/damage';
+import { cornerNudge, type SolidAt } from '../systems/corner';
 import { newMotion, startHurt, stepMotion } from '../systems/motion';
 import { type Arsenal, cycleWeapon, newArsenal, spend } from '../systems/weapons';
 import { WEAPONS } from '../data/weapons';
@@ -60,6 +61,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   /** Live special-weapon projectiles (Garbage Collector orbs). */
   readonly specials: Phaser.Physics.Arcade.Group;
   /** Frames left of the death animation; the scene respawns Bob when it reaches 0. */
+  /** Solid-tile query from the stage, for corner correction on jumps. */
+  solidAt?: SolidAt;
   private deathFrames = 0;
   /** Frames since Bob last stood on the ground (for the landing puff). */
   private airFrames = 0;
@@ -177,6 +180,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     body.setVelocityX(out.vx);
     if (out.vy !== undefined) body.setVelocityY(out.vy);
     body.setAllowGravity(out.gravity);
+    // a jump clipping a ceiling corner by a few px slides past it instead of stopping dead
+    if (this.solidAt && body.velocity.y < 0) {
+      const dy = (body.velocity.y + (out.gravity ? GRAVITY / 60 : 0)) / 60;
+      const dx = cornerNudge(this.solidAt, body.x, body.y, body.width, body.height, dy);
+      if (dx !== 0) this.x += dx;
+    }
 
     const maxLevel = this.armorBits & ARMOR_BITS.arm ? 3 : 2;
     const hurt = this.motion.state === 'hurt';
