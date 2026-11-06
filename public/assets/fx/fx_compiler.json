@@ -1,0 +1,92 @@
+{
+  "frames": {
+    "fx_compiler_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 44,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 44,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 44,
+        "h": 16
+      }
+    },
+    "fx_compiler_1": {
+      "frame": {
+        "x": 44,
+        "y": 0,
+        "w": 44,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 44,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 44,
+        "h": 16
+      }
+    },
+    "fx_compiler_2": {
+      "frame": {
+        "x": 88,
+        "y": 0,
+        "w": 44,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 44,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 44,
+        "h": 16
+      }
+    },
+    "fx_compiler_3": {
+      "frame": {
+        "x": 132,
+        "y": 0,
+        "w": 44,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 44,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 44,
+        "h": 16
+      }
+    }
+  },
+  "meta": {
+    "image": "fx_compiler.png",
+    "size": {
+      "w": 176,
+      "h": 16
+    },
+    "scale": "1"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "moving_platform_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 16
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 48,
+        "h": 16
+      },
+      "sourceSize": {
+        "w": 48,
+        "h": 16
+      }
+    }
+  },
+  "meta": {
+    "image": "moving_platform.png",
+    "size": {
+      "w": 48,
+      "h": 16
+    },
+    "scale": "1"
+  }
+}

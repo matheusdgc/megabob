@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "boss_tech_debt_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 192
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 192
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 192
+      }
+    }
+  },
+  "meta": {
+    "image": "boss_tech_debt.png",
+    "size": {
+      "w": 256,
+      "h": 192
+    },
+    "scale": "1"
+  }
+}

@@ -533,7 +533,6 @@ FX_SHEETS = [
     ("A5_compiler_shot", 4, 3, [
         ("fx_compiler", 0, [0, 1, 2, 3], (44, 16), None),
         ("fx_compiler_hit", 1, [0, 1, 2, 3], (32, 32), None),
-        ("fx_hit", 1, [0, 1, 2], (16, 16), None),  # small impact for buster shots
         ("fx_charge3", 2, [0, 1, 2], (48, 48), (46, 46)),
     ]),
     ("FX2_weapons", 5, 3, [
@@ -546,6 +545,9 @@ FX_SHEETS = [
     ("FX4_movement", 6, 4, [
         # Bob "decompiling" into pixels on death; sized like Bob standing (~36 px)
         ("fx_decompile", 3, [0, 1, 2, 3, 4, 5], (48, 48), (36, 38)),
+    ]),
+    ("FX3_explosions", 6, 4, [
+        ("fx_hit", 0, [0, 1, 2], (16, 16), None),
     ]),
 ]
 

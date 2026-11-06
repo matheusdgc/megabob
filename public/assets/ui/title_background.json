@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "title_background_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 224
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 256,
+        "h": 224
+      },
+      "sourceSize": {
+        "w": 256,
+        "h": 224
+      }
+    }
+  },
+  "meta": {
+    "image": "title_background.png",
+    "size": {
+      "w": 256,
+      "h": 224
+    },
+    "scale": "1"
+  }
+}

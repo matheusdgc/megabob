@@ -1,3 +1,5 @@
+import { PROCESSED_ART } from './processedArt';
+
 /**
  * Asset manifest. Every spritesheet the game uses is declared here with its final key and
  * frame size. If `file` is missing (or fails to load), Boot generates a placeholder with the
@@ -95,12 +97,14 @@ const fxSheets = (): SheetDef[] =>
 export const SHEETS: SheetDef[] = [
   ...bobSheets(),
   ...fxSheets(),
+  ...PROCESSED_ART,
   // Test tiles: 0 solid, 1 background wall, 2 spike, 3 one-way platform
   {
     key: 'tiles_test',
     frameWidth: TILE,
     frameHeight: TILE,
     frames: 4,
+    file: 'assets/tiles/tiles_test.png',
     placeholder: { color: 0x6f6f6f, shape: 'tile' },
   },
 ];

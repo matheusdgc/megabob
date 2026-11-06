@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "hud_weapon_segment_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 2
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 2
+      },
+      "sourceSize": {
+        "w": 4,
+        "h": 2
+      }
+    }
+  },
+  "meta": {
+    "image": "hud_weapon_segment.png",
+    "size": {
+      "w": 4,
+      "h": 2
+    },
+    "scale": "1"
+  }
+}

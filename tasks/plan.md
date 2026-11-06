@@ -40,6 +40,17 @@ Construir o jogo em **fatias jogáveis**. Primeiro o Bob se movendo com boa sens
 
 **Contínua (paralela a tudo):** T4b, integrar cada lote de arte novo assim que ele chegar em `art/raw/`.
 
+### T4b — lote completo de arte (05/11)
+
+Reaproveitar os helpers de `tools/sprites.py` e o Pillow instalado, acrescentando um catálogo declarativo e um comando para os lotes completos. Não implementar as mecânicas T6–T20 nesta fatia.
+
+1. Testar chave magenta, quadros vazios intencionais, escala compartilhada e fechamento horizontal de fundos com imagens sintéticas em memória.
+2. Recortar efeitos, ícones, objetos, inimigos e chefes em strips PNG com metadados e prévias; dimensões e quantidade de quadros devem corresponder ao catálogo.
+3. Produzir tiles 16×16, camadas 512×224 e UI. Preservar vazios e registrar diferenças que exijam revisão visual.
+4. Registrar os novos arquivos no manifesto, conferir os hashes das fontes, testes Python, testes TS, typecheck, build e carregamento real no navegador.
+
+As fontes permanecem intactas. Conceitos usados apenas como referência não viram texturas duplicadas do jogo. Fundos recebem fechamento de bordas nas cópias processadas; as prévias mostram duas repetições para conferir. Commits desta fatia não incluem as pastas brutas que o handoff pede confirmar separadamente.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

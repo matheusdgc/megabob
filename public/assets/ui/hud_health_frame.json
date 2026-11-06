@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "hud_health_frame_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 64
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 64
+      },
+      "sourceSize": {
+        "w": 8,
+        "h": 64
+      }
+    }
+  },
+  "meta": {
+    "image": "hud_health_frame.png",
+    "size": {
+      "w": 8,
+      "h": 64
+    },
+    "scale": "1"
+  }
+}
