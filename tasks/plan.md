@@ -55,6 +55,8 @@ As fontes permanecem intactas. Conceitos usados apenas como referência não vir
 
 Corrigir a busca de encaixe para comparar a silhueta completa e aceitar apenas posições dentro dos 48×48. Aplicar uma escala compartilhada limitada pelo maior quadro no air dash. Testar o recorte nas bordas antes da correção, regenerar as saídas e comparar as prévias. Preservar fontes, resolução e a implementação de combate da outra sessão.
 
+Na revisão de composição, compartilhar o efeito neutro `compile[0]` entre as 16 combinações e anotar os limites das peças em `dash[1,3]`, com testes que preservem rosto, peito, botas e canhão. Conferir os 145 strips do Bob junto às 99 texturas do lote no navegador. T7 continua exclusivamente com a outra sessão, conforme orientação do usuário.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

@@ -1,6 +1,6 @@
 /** Local asset smoke test through an isolated headless Edge and the native DevTools protocol. */
 import { spawn } from 'node:child_process';
-import { mkdtemp, readFile, writeFile, mkdir } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
@@ -60,6 +60,14 @@ try {
   await send('Page.enable');
   await send('Emulation.setDeviceMetricsOverride', { width: 1100, height: 700, deviceScaleFactor: 1, mobile: false });
   const manifest = JSON.parse(await readFile(join(root, 'public/assets/art-manifest.json'), 'utf8'));
+  // Bob has its own importer, so include its actual strips in addition to the new catalog.
+  for (const name of await readdir(join(root, 'public/assets/bob'))) {
+    if (!name.endsWith('.png')) continue;
+    const png = await readFile(join(root, 'public/assets/bob', name));
+    const width = png.readUInt32BE(16), height = png.readUInt32BE(20);
+    if (height !== 48 || width % 48 !== 0) throw new Error(`Invalid Bob strip: ${name}`);
+    manifest.push({ key: name.slice(0, -4), frames: width / 48 });
+  }
   const scenes = [];
   for (const [query, scene] of [['?sprites', 'Debug'], ['', 'Stage']]) {
     await send('Page.navigate', { url: `http://127.0.0.1:5173/${query}` });

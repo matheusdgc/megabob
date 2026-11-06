@@ -55,10 +55,10 @@ BOB_ANIMS = [
     ("run", "B3_run", 6, {}),
     ("jump", "B4_jump_fall", 5, {}),
     ("shoot", "B5_shoot", 7, {}),
-    ("dash", "B6_dash", 4, {}),
+    ("dash", "B6_dash", 4, {"horizontal_frames": (1, 3)}),
     ("wall", "B7_wall", 3, {}),
     ("hurt", "B8_hurt", 2, {}),
-    ("compile", "B9_compile_in", 5, {"scale_from": 4, "anchor": "bbox", "baseline": "sheet"}),
+    ("compile", "B9_compile_in", 5, {"scale_from": 4, "anchor": "bbox", "baseline": "sheet", "shared_frames": (0,)}),
     ("victory", "B10_victory", 2, {}),
 ]
 # armor-only sheets (saved as the full-armor combo a15): (name, raw, frames, anim whose fit sets size)
@@ -312,7 +312,7 @@ def bounded_scale(crops, scale: float) -> float:
     return min(scale, CELL / max(c.width for c in crops), CELL / max(c.height for c in crops))
 
 
-def fit_armor(base_frames, base_offsets, base_cells, armor: RawSheet, est_scale: float):
+def fit_armor(base_frames, base_offsets, base_cells, armor: RawSheet, est_scale: float, shared_frames=()):
     """Shared armor scale + per-frame offsets maximizing silhouette overlap with the base."""
     base_masks = [row_masks(c) for c in base_cells]
     best = None
@@ -321,6 +321,12 @@ def fit_armor(base_frames, base_offsets, base_cells, armor: RawSheet, est_scale:
         frames = armor.frames(scale)
         total, picks = 0.0, []
         for i, (bf, af) in enumerate(zip(base_frames, frames)):
+            # Neutral effects have no equipped parts: every combination uses the same pixels.
+            if i in shared_frames:
+                frames[i] = bf
+                picks.append((*base_offsets[i], 1.0))
+                total += 1.0
+                continue
             bw, bh = bf.img.size
             aw, ah = af.img.size
             bdx, bdy = base_offsets[i]
@@ -346,10 +352,11 @@ def fit_armor(base_frames, base_offsets, base_cells, armor: RawSheet, est_scale:
     return best
 
 
-def region_masks(base: Image.Image) -> dict[str, list[list[bool]]]:
+def region_masks(base: Image.Image, horizontal=False) -> dict[str, list[list[bool]]]:
     """Which cell pixels belong to each armor part, from the base frame's body regions:
     head = top 56% of the figure, legs = bottom 20%, torso band split into body (center
-    column) and arm (everything left/right of it)."""
+    column) and arm (everything left/right of it). Horizontal B6 poses use annotated
+    regions in the fixed cell instead of cutting the face and trailing boots by height."""
     bpx = base.load()
     bbox = base.getchannel("A").getbbox() or (0, 0, CELL, CELL)
     top, height = bbox[1], bbox[3] - bbox[1]
@@ -360,7 +367,18 @@ def region_masks(base: Image.Image) -> dict[str, list[list[bool]]]:
     masks = {p: [[False] * CELL for _ in range(CELL)] for p in PARTS}
     for y in range(CELL):
         for x in range(CELL):
-            if y < head_end:
+            if horizontal:
+                # Annotated for the two B6 glide poses in their fixed 48px cells: the head
+                # is in front, boots trail behind, chest is central, and the cannon is right.
+                if (14 <= x < 38 and y < 37) or (23 <= x < 37 and y < 42):
+                    part = "head"
+                elif x < 14 and y >= 39:
+                    part = "legs"
+                elif 14 <= x < 24 and y >= 37:
+                    part = "body"
+                else:
+                    part = "arm"
+            elif y < head_end:
                 part = "head"
             elif y >= legs_start:
                 part = "legs"
@@ -465,7 +483,8 @@ def run_bob() -> None:
             b_h = statistics.median(c.height for c in base.crops)
             a_h = statistics.median(c.height for c in armor.crops)
             est = b_scale * b_h / a_h  # same overall height as the base
-            _, a_scale, armor_frames, picks = fit_armor(base_frames, offsets, base_cells, armor, est)
+            shared_frames = opts.get("shared_frames", ())
+            _, a_scale, armor_frames, picks = fit_armor(base_frames, offsets, base_cells, armor, est, shared_frames)
             armor_ratio[name] = a_scale / b_scale
             armor_cells = []
             for i, af in enumerate(armor_frames):
@@ -474,10 +493,15 @@ def run_bob() -> None:
                 if clipped:
                     warnings.append(f"{name}[{i}]: armor clipped by the {CELL}px cell")
                 armor_cells.append(acell)
-            masks = [region_masks(c) for c in base_cells]
+            horizontal_frames = opts.get("horizontal_frames", ())
+            masks = [region_masks(c, horizontal=i in horizontal_frames) for i, c in enumerate(base_cells)]
             scores = [p[2] for p in picks]
             entry["armor_scale"] = round(a_scale, 4)
             entry["armor_iou"] = scores
+            if shared_frames:
+                entry["shared_effect_frames"] = list(shared_frames)
+            if horizontal_frames:
+                entry["horizontal_part_frames"] = list(horizontal_frames)
             preview_rows = [armor_cells]
             for parts in ALL_COMBOS:
                 cid = combo_id(parts)

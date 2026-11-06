@@ -6,9 +6,9 @@ Correção de enquadramento concluída:
 
 - O encaixe agora compara a armadura inteira e só aceita posições dentro do quadro. Idle, salto e dash foram reprocessados; as duas poses de air dash usam uma escala compartilhada que conserva o desenho inteiro. Os seis avisos de recorte foram eliminados, mantendo os quadros 48×48 e as fontes intactas. Comparação em `art/preview/bob_bounds_comparison.png`.
 
-Pendências que continuam:
+Correção de composição concluída:
 
-- Nas poses horizontais, combinações com apenas algumas peças da armadura podem mostrar emendas porque o pipeline anterior separa regiões por altura. A armadura completa usa a fonte inteira.
-- Conferir a transição inicial de `compile` com armadura, cujo encaixe tem sobreposição menor no relatório do pipeline anterior.
+- As poses B6 `dash[1]` e `dash[3]` têm regiões anatômicas próprias para cabeça, peito, braços e botas; deixaram de usar cortes horizontais por altura. A mesma arte é usada pelo air dash com armadura parcial. Comparação em `art/preview/bob_parts_comparison.png`.
+- `compile[0]` é um efeito neutro de partículas, sem partes do corpo. Agora todas as 16 combinações usam os mesmos pixels e a mesma posição do Bob base. O relatório registra esse quadro em `shared_effect_frames`; os outros quatro continuam usando a arte de cada combinação.
 
-Essas duas pendências continuam documentadas, sem regeneração das fontes. Veja `docs/HANDOFF.md` e `docs/art-pipeline.md`.
+O relatório atual do Bob está sem avisos de recorte ou sobreposição. As fontes não foram alteradas. A revisão das animações no contexto das fases e menus continua nas tarefas correspondentes; os recortes anatômicos anotados acima são específicos das duas poses B6.

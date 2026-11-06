@@ -63,6 +63,7 @@ A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar 
 - [x] Processar UI e registrar os ativos no manifesto sem alterar a lógica das fases.
 - [x] Revisar prévias, testes Python, `npm test`, typecheck, build e console no navegador; registrar pendências reais no handoff.
 - [x] Corrigir os seis avisos de recorte da armadura sem alterar os quadros 48×48; testes de regressão e comparação visual em `art/preview/bob_bounds_comparison.png`.
+- [x] Uniformizar `compile[0]` nas 16 combinações e revisar os recortes das peças em `dash[1,3]`; relatório do Bob sem avisos e comparação em `art/preview/bob_parts_comparison.png`.
 
 As fontes em `art/raw/` permanecem intactas durante a importação. A logo foi recriada a pedido do usuário, com a anterior preservada; total atual de 66 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 99 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
 
