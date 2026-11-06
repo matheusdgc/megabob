@@ -1,6 +1,6 @@
 # Pendências de arte
 
-O lote atual de 120 strips/imagens passou nas verificações de recorte, dimensões, transparência, paleta e carregamento. A montagem das fases e dos menus ainda precisa de revisão no contexto de cada tela.
+O lote atual de 123 strips/imagens passou nas verificações de recorte, dimensões, transparência, paleta e carregamento. A montagem das fases e dos menus ainda precisa de revisão no contexto de cada tela.
 
 Correção de enquadramento concluída:
 
@@ -11,7 +11,11 @@ Correção de composição concluída:
 - As poses B6 `dash[1]` e `dash[3]` têm regiões anatômicas próprias para cabeça, peito, braços e botas; deixaram de usar cortes horizontais por altura. A mesma arte é usada pelo air dash com armadura parcial. Comparação em `art/preview/bob_parts_comparison.png`.
 - `compile[0]` é um efeito neutro de partículas, sem partes do corpo. Agora todas as 16 combinações usam os mesmos pixels e a mesma posição do Bob base. O relatório registra esse quadro em `shared_effect_frames`; os outros quatro continuam usando a arte de cada combinação.
 
-O relatório atual do Bob está sem avisos de recorte ou sobreposição. As fontes não foram alteradas. A revisão das animações no contexto das fases e menus continua nas tarefas correspondentes; os recortes anatômicos anotados acima são específicos das duas poses B6.
+O relatório atual do Bob está sem avisos de recorte ou sobreposição. As fontes não foram alteradas. Os recortes anatômicos anotados acima são específicos das duas poses B6.
+
+Revisão de movimento concluída por `tools/review_animations.py`: 145 strips e 594 quadros não vazios, alpha binário e paleta global. Os GIFs de idle, corrida e corrida com tiro comparam as 16 combinações a 2×, usando as sequências de `BOB_LOOPS` (3/12/8 fps). O Phaser confirmou as 288 posições de quadro e os 48 retornos de ciclo. Salto, dash, parede, dano, compilação e vitória foram conferidos em contatos com base/cabeça/botas/completa; air dash com a armadura completa. Nenhum problema novo de recorte foi identificado nas poses conferidas. Os PNGs brutos e de produção mantiveram seus hashes. A validação da sensação e da leitura no percurso jogável continua nos checkpoints de fase.
+
+Comparações animadas em `art/exports/megabob-{idle,run,shoot}-review.gif`; relatório `art/exports/bob-animation-review.json`. Contatos por pose e screenshots do Phaser em `art/preview/`. As poses por estado não receberam tempos fictícios de animação.
 
 Título panorâmico: fundo 480×270 recomposto em 16:9 com `imagegen`, mantendo a fonte U2 original, e variante `title_logo_night` com contorno claro. Prévia em `art/exports/megabob-title-preview.png`; layouts e arquivos em `docs/art-pipeline.md`.
 

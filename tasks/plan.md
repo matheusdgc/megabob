@@ -81,6 +81,10 @@ Derivar duas molduras vazias da U4 para entrada de chefe e recompensa, preservan
 
 Gerar uma ilustração panorâmica de encerramento com `imagegen`, usando o Bob e o fundo de título aprovados como referências. Preservar os originais, registrar prompt e processar uma nova textura 480×270 na paleta do jogo. Reservar uma coluna escura para texto dinâmico. Reutilizar as molduras existentes na composição de Game Over, exportar as duas prévias e layouts ancorados ao centro; créditos reais, bindings, save e navegação permanecem nas tarefas de cenas. Validar fontes, paleta, enquadramento, carregamento no Phaser, testes e build antes do commit.
 
+### T4b — revisão de animações e poses
+
+Conferir os 145 strips do Bob sem alterar a jogabilidade. Ler sequências e fps de `BOB_LOOPS` para produzir comparações animadas das 16 combinações de armadura em idle, corrida e corrida com tiro. Conferir os demais quadros como poses, incluindo air dash, com contatos ampliados e relatório de dimensões, alpha e paleta. Preservar os PNGs de produção e os hashes das fontes; registrar apenas correções sustentadas pela inspeção. Validar os ciclos no Phaser e executar as verificações do projeto.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

@@ -70,6 +70,7 @@ A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar 
 - [x] Normalizar o encaixe dos tiles e plataformas, preparar doze variantes de parallax 512×270 e conferir repetição 3×3/contraste dos quatro temas com as skills do pack gamedev.
 - [x] Preparar molduras de apresentação e onze prévias (quatro chefes, três armas e quatro peças), com layout centralizado e textos separados para integração nas cenas.
 - [x] Preparar fundo de encerramento 480×270, composição de Game Over e layouts para créditos/textos dinâmicos, preservando as fontes e o fluxo de cenas.
+- [x] Revisar os 145 strips do Bob, comparar os três ciclos reais nas 16 combinações de armadura e conferir as poses restantes, sem alterar o ritmo aprovado.
 
 As fontes em `art/raw/` permanecem intactas durante a importação. A logo anterior foi preservada e foram acrescentados fundos panorâmicos de título e encerramento; total atual de 68 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 123 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
 

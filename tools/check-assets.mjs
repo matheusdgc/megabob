@@ -3,6 +3,7 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { checkAnimationLoops } from './check-animation-loops.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -166,7 +167,8 @@ try {
     await writeFile(join(output, `browser-end-screen-${kind}.png`), Buffer.from(screenshot.data, 'base64'));
     endScreens.push(kind);
   }
-  const report = { scenes, presentations, endScreens, errors, warnings, failedRequests };
+  const animationLoops = await checkAnimationLoops(send, root, output);
+  const report = { scenes, presentations, endScreens, animationLoops, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));

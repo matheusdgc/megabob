@@ -104,6 +104,14 @@ Testes do enquadramento: `py -3 -m unittest discover -s tools -p test_bob_fit.py
 
 ## Validação no jogo
 
+### Revisão dos ciclos do Bob
+
+`py -3 tools/review_animations.py` lê os 145 strips do Bob, verifica seus 594 quadros (tamanho, conteúdo, alpha e paleta) e garante que nenhum PNG bruto ou de produção mudou. A sequência e o fps vêm diretamente de `BOB_LOOPS` em `src/systems/bobPose.ts`. Não define tempos novos para as poses ligadas ao estado do personagem.
+
+O comando exporta `art/exports/megabob-idle-review.gif` (3 fps), `megabob-run-review.gif` (12 fps) e `megabob-shoot-review.gif` (8 fps). Cada GIF compara as 16 combinações de armadura, com pixels ampliados 2× e linha de base. A escala de tempo do formato GIF é de 10 ms: os intervalos alternam para manter a duração total, com erro máximo de 5 ms no ciclo completo. Corrida e corrida com tiro duram ambas 500 ms. Metadados e hashes ficam em `bob-animation-review.json`; sete contatos de poses ficam em `art/preview/bob_*_pose_review.png`.
+
+O smoke test verifica também os três ciclos no Phaser, nas 16 combinações, usando uma cena temporária e o avanço de `AnimationState`. Confere 288 posições de quadro, fps e 48 retornos ao primeiro quadro. O helper `tools/check-animation-loops.mjs` verifica o hash da definição; se ela mudar, regenere os GIFs/relatório antes de executar o smoke test. Isso confere a arte e as sequências; não substitui os checkpoints de jogabilidade.
+
 ```powershell
 npm.cmd test
 npm.cmd run typecheck
