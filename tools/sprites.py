@@ -183,13 +183,13 @@ def helmet_anchor(crop: Image.Image) -> tuple[float, float, float] | None:
 # ---------------------------------------------------------------- downscale + cleanup
 
 
-def downscale(crop: Image.Image, s: float) -> Image.Image:
+def downscale(crop: Image.Image, s: float, speck: int = 3) -> Image.Image:
     w, h = max(1, round(crop.width * s)), max(1, round(crop.height * s))
     small = crop.convert("RGBa").resize((w, h), Image.BOX).convert("RGBA")
     out = [(*nearest((r, g, b)), 255) if a >= 128 else (0, 0, 0, 0) for r, g, b, a in pixels(small)]
     small.putdata(out)
     despill(small)
-    remove_specks(small)
+    remove_specks(small, speck)
     return small
 
 
@@ -514,7 +514,88 @@ def run_bob() -> None:
         print("WARN", w, file=sys.stderr)
 
 
-JOBS = {"bob": run_bob}
+# ---------------------------------------------------------------- effects job
+
+# Effect sheets are drawn on a regular grid: rows are found by empty-row gaps, cells by the
+# sheet's column count. Each anim takes some cells of one row and becomes one strip.
+#   (raw file in art/raw/fx, grid columns, rows, [(key, row, cells, (frame w, frame h), fit)])
+#   fit: optional (w, h) box the largest frame is scaled into (default: the frame itself);
+#        one scale per anim, so the frames keep their relative sizes
+FX_SHEETS = [
+    ("FX1_buster", 6, 5, [
+        ("fx_buster", 0, [0, 1], (12, 8), None),
+        ("fx_buster_c1", 1, [0, 1], (24, 12), None),
+        ("fx_buster_c2", 2, [0, 1, 2], (32, 16), None),
+        ("fx_charge1", 3, [0, 1, 2], (48, 48), (40, 40)),
+        ("fx_charge2", 3, [3, 4, 5], (48, 48), (42, 42)),
+        ("fx_muzzle", 4, [0, 1], (12, 12), None),
+    ]),
+    ("A5_compiler_shot", 4, 3, [
+        ("fx_compiler", 0, [0, 1, 2, 3], (44, 16), None),
+        ("fx_compiler_hit", 1, [0, 1, 2, 3], (32, 32), None),
+        ("fx_hit", 1, [0, 1, 2], (16, 16), None),  # small impact for buster shots
+        ("fx_charge3", 2, [0, 1, 2], (48, 48), (46, 46)),
+    ]),
+    ("FX2_weapons", 5, 3, [
+        ("fx_gc", 0, [0, 1, 2, 3], (24, 24), None),
+        ("fx_mutex", 1, [0, 1], (14, 14), None),
+        ("fx_mutex_shell", 1, [2, 3], (32, 32), None),
+        ("fx_null", 2, [0, 1, 2], (24, 12), None),
+        ("fx_null_glitch", 2, [3, 4], (24, 16), None),
+    ]),
+]
+
+
+def run_fx() -> None:
+    warnings: list[str] = []
+    report: dict = {"anims": {}, "warnings": warnings}
+    out_dir = os.path.join(OUT, "fx")
+    for raw, cols, n_rows, anims in FX_SHEETS:
+        im = remove_background(Image.open(os.path.join(RAW, "fx", f"{raw}.png")))
+        # rows = column ranges of the transposed sheet
+        rows = frame_ranges(im.transpose(Image.Transpose.TRANSPOSE), n_rows)
+        if len(rows) != n_rows:
+            warnings.append(f"{raw}: found {len(rows)} rows, expected {n_rows}")
+        cell_w = im.width / cols
+        for key, row, cells, (fw, fh), fit in anims:
+            y0, y1 = rows[row]
+            crops = []
+            for c in cells:
+                part = im.crop((round(c * cell_w), y0, round((c + 1) * cell_w), y1))
+                bbox = opaque_mask(part).getbbox()
+                if not bbox:
+                    warnings.append(f"{key}: cell {c} of row {row} is empty")
+                    continue
+                crops.append(part.crop(bbox))
+            bw, bh = fit or (fw, fh)
+            scale = min(bw / max(c.width for c in crops), bh / max(c.height for c in crops))
+            frames = []
+            for i, crop in enumerate(crops):
+                small = downscale(crop, scale, speck=2)
+                w, h = small.size
+                if w > fw or h > fh:
+                    warnings.append(f"{key}[{i}]: {w}x{h} clipped by the {fw}x{fh} frame")
+                frame = Image.new("RGBA", (fw, fh))
+                frame.alpha_composite(small.crop((0, 0, min(w, fw), min(h, fh))), ((fw - min(w, fw)) // 2, (fh - min(h, fh)) // 2))
+                frames.append(frame)
+            sheet = Image.new("RGBA", (fw * len(frames), fh))
+            for i, f in enumerate(frames):
+                sheet.alpha_composite(f, (i * fw, 0))
+            report["anims"][key] = {
+                "frames": len(frames),
+                "frame": [fw, fh],
+                "scale": round(scale, 4),
+                "file": save(sheet, out_dir, f"{key}.png"),
+            }
+            save(contact_sheet([frames]), PREVIEW, f"{key}.png")
+            print(f"fx {key}: {len(frames)} frames {fw}x{fh}, scale {scale:.3f}", file=sys.stderr)
+    with open(os.path.join(PREVIEW, "fx_report.json"), "w", encoding="utf-8") as fh:
+        json.dump(report, fh, indent=1)
+    for w in warnings:
+        print("WARN", w, file=sys.stderr)
+
+
+JOBS = {"bob": run_bob, "fx": run_fx}
 
 if __name__ == "__main__":
     if len(sys.argv) != 2 or sys.argv[1] not in JOBS:

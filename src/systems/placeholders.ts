@@ -15,6 +15,7 @@ export function generatePlaceholder(scene: Phaser.Scene, def: SheetDef): void {
   for (let i = 0; i < frames; i++) {
     const ox = i * w;
     if (def.placeholder.shape === 'body') drawBody(g, ox, w, h, def.placeholder.color, i);
+    else if (def.placeholder.shape === 'fx') drawFx(g, ox, w, h, def.placeholder.color, i);
     else drawTile(g, ox, w, h, i);
   }
   g.generateTexture(key, w * frames, h);
@@ -22,6 +23,13 @@ export function generatePlaceholder(scene: Phaser.Scene, def: SheetDef): void {
 
   const tex = scene.textures.get(key);
   for (let i = 0; i < frames; i++) tex.add(i, 0, i * w, 0, w, h);
+}
+
+/** Effect blob: a colored rounded block, inset one more pixel each frame. */
+function drawFx(g: Phaser.GameObjects.Graphics, ox: number, w: number, h: number, color: number, i: number): void {
+  const inset = Math.min(i, Math.floor(Math.min(w, h) / 4));
+  g.fillStyle(color);
+  g.fillRoundedRect(ox + inset, inset, w - inset * 2, h - inset * 2, Math.min(w, h) / 4);
 }
 
 /** Chibi-proportioned block: big head, small body, facing right (eye on the right). */

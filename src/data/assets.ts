@@ -11,7 +11,7 @@ export interface SheetDef {
   /** Path under /public, e.g. 'assets/bob/bob_idle.png'. */
   file?: string;
   /** Placeholder look. */
-  placeholder: { color: number; shape: 'body' | 'tile' | 'spike' | 'platform' };
+  placeholder: { color: number; shape: 'body' | 'tile' | 'spike' | 'platform' | 'fx' };
 }
 
 export const BOB_FRAME = 48;
@@ -61,8 +61,39 @@ const bobSheets = (): SheetDef[] => {
   return out;
 };
 
+/** Effect sheets from tools/sprites.py fx: [frames, frame width, frame height, placeholder color]. */
+export const FX = {
+  fx_buster: [2, 12, 8, 0x4589ff],
+  fx_buster_c1: [2, 24, 12, 0x4589ff],
+  fx_buster_c2: [3, 32, 16, 0x4589ff],
+  fx_charge1: [3, 48, 48, 0x0f62fe],
+  fx_charge2: [3, 48, 48, 0xa6c8ff],
+  fx_charge3: [3, 48, 48, 0xffffff],
+  fx_muzzle: [2, 12, 12, 0xffffff],
+  fx_hit: [3, 16, 16, 0xa6c8ff],
+  fx_compiler: [4, 44, 16, 0x0f62fe],
+  fx_compiler_hit: [4, 32, 32, 0xa6c8ff],
+  fx_gc: [4, 24, 24, 0x08bdba],
+  fx_mutex: [2, 14, 14, 0xf1c21b],
+  fx_mutex_shell: [2, 32, 32, 0xf1c21b],
+  fx_null: [3, 24, 12, 0xa56eff],
+  fx_null_glitch: [2, 24, 16, 0xa56eff],
+} as const satisfies Record<string, readonly [number, number, number, number]>;
+export type FxKey = keyof typeof FX;
+
+const fxSheets = (): SheetDef[] =>
+  (Object.entries(FX) as [FxKey, (typeof FX)[FxKey]][]).map(([key, [frames, w, h, color]]) => ({
+    key,
+    frameWidth: w,
+    frameHeight: h,
+    frames,
+    file: `assets/fx/${key}.png`,
+    placeholder: { color, shape: 'fx' },
+  }));
+
 export const SHEETS: SheetDef[] = [
   ...bobSheets(),
+  ...fxSheets(),
   // Test tiles: 0 solid, 1 background wall, 2 spike, 3 one-way platform
   {
     key: 'tiles_test',
