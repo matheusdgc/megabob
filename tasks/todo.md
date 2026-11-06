@@ -147,10 +147,10 @@ Tabela de armas e fraquezas com testes. Energia por arma, troca com Q/E, troca d
 **Verificar:** rodar `python tools/music.py` e jogar com som · **Dep.:** T1
 **Arquivos:** `tools/music.py`, `src/data/music.ts`, `src/audio/musicPlayer.ts`, `src/audio/sfx.ts`, `src/audio/jingles.ts`
 
-### T12: Fase Memory Leak [M]
+### ✅ T12: Fase Memory Leak [M]
 Mapa ASCII completo (cerca de 4 seções, 1 checkpoint), inimigos Drip e Heap Crab, perigo do lodo que sobe, tiles e fundo (placeholder ou real).
-- [ ] Dá para terminar a fase do início até o chefe derrotado
-- [ ] O padrão de fase (arquivo de dados + inimigos próprios) fica documentado no topo de `src/stages/README.md`, para replicar nas outras fases
+- [x] Dá para terminar a fase do início até o chefe derrotado (caminho crítico em `tests/reach.test.ts`; seções conferidas no navegador)
+- [x] O padrão de fase (arquivo de dados + inimigos próprios) fica documentado no topo de `src/stages/README.md`, para replicar nas outras fases
 
 **Verificar:** uma partida completa · **Dep.:** T10, T11
 **Arquivos:** `src/stages/memoryLeak.ts`, `src/entities/enemies/Drip.ts`, `src/entities/enemies/HeapCrab.ts`, `src/stages/README.md`

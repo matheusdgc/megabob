@@ -1,6 +1,6 @@
 # Handoff: estado do projeto
 
-> Atualizado em 06/11/2026, depois da T10 e da auditoria pelo pack de skills de game dev (editor). Branch `dev`.
+> Atualizado em 06/11/2026, no fim da T12 (editor). Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)
@@ -21,6 +21,7 @@
 | T9 | Chefe Memory Leak: `src/systems/boss.ts` (máquina de estados pura intro/fight/dead, dano com i-frames, 15 testes), `src/entities/Boss.ts` (sprite base, dispara `bossDefeated`), `src/entities/bosses/MemoryLeak.ts` (3 padrões: volley de bolhas → poças, afundar/emergir, fúria a 1/3 de vida), `src/ui/BossHealthBar.ts` (barra horizontal com fill na intro). StageScene spawna o chefe no `bossIntro` e reinicia no `afterDeath`. |
 | T10 | Armas: `src/data/weapons.ts` (tabela, `WEAKNESS`, `damageFor`, arma de cada chefe) e `src/systems/weapons.ts` (arsenal: armas ganhas, troca Q/E pulando as não ganhas, energia por arma, recarga). Bob tingido pela arma. Garbage Collector (`src/entities/weapons/GarbageCollector.ts`): orbe lento, 1 na tela, 2 de energia, atravessa inimigos acertando cada um uma vez e engole o lodo do chefe. HUD com barra de energia; barras verticais reutilizáveis (`src/ui/meter.ts`), a do chefe à direita. `WeaponGetScene` depois do chefe, gravando a arma no registry (`ownedWeapons`) e voltando à fase. Dev key G dá o Garbage Collector |
 | Auditoria gamedev | Código de T1–T10 revisado contra as skills do pack (`phaser-core`, `input-systems`, `level-design`, `game-feel`, `platformer`). **Cenas:** a `StageScene` zera o estado da partida em `init()` e solta seus eventos no `shutdown` (antes, `bossIntro`/`bossDefeated` se acumulavam a cada reinício); a `WeaponGet` não se pula mais sozinha. **Fase como dado:** `StageDef` em `src/stages/stages.ts` (mapa, seções, chefe, tileset), `scene.start('Stage', { stage })`. **Controles como dado:** `src/systems/bindings.ts` (`rebind` troca em conflito, `normalizeBindings` valida o save), lidos do registry `bindings`; teclas de dev só no build de dev. **Caminho crítico:** `src/systems/reach.ts` roda o `stepMotion` real num colisor de tiles e `tests/reach.test.ts` exige que toda fase chegue à porta do chefe com 75% do controle aéreo e sem dash. **Retorno:** níveis em `FEEDBACK` (`tuning.ts`): congelamento, tremor e flash por importância, poeira no pouso; `src/entities/feedback.ts` controla a pausa da física por motivos (congelamento e troca de seção). **Pulo:** correção de quina de até 4 px (`src/systems/corner.ts`) |
+| T12 | Fase Memory Leak (`src/stages/memoryLeak.ts`, 174×51 tiles), padrão em `src/stages/README.md`. Seções: A ensina Drip e Heap Crab no plano e 2 poças curtas; B é um poço vertical com lodo subindo (`GooDef`, `src/systems/goo.ts`); C tem checkpoint, uma poça longa com plataformas e a porta; D é a sala do chefe. 2 checkpoints (antes do poço e no começo de C). Autotile (`src/stages/autotile.ts`): a colisão lê o mapa lógico, o skin só escolhe o quadro. Parallax de 3 camadas `_wide`. Inimigos em `src/entities/enemies/` (Drip, Heap Crab; IA pura em `enemyAI.ts`) e projétil `EnemyShot`, que o Garbage Collector engole. Corrigido: bolhas do chefe grudavam no teto (o grupo de física zerava a gravidade). O jogo começa nesta fase; em dev, `?stage=test` abre o mapa antigo |
 
 Validação da arte sobre a base commitada, com as duas novas texturas: 417 testes TypeScript e 17 testes Python passando; typecheck e build também passam. O smoke test confere 267 texturas nas cenas Debug e Stage e renderiza as apresentações em uma cena temporária, sem erros ou avisos. Alterações de gameplay ainda em andamento na outra sessão não entram nessa validação.
 
@@ -34,11 +35,10 @@ Validação da arte sobre a base commitada, com as duas novas texturas: 417 test
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
 - **Licenças da trilha:** o usuário pediu para ignorar por enquanto. Faltam as faixas 05, 07, 08 e 09 em `docs/soundtrack.md`.
 
-## Próximo passo: T11 (áudio) ou T12 (fase Memory Leak)
+## Próximo passo: Checkpoint 3 com o usuário, depois T11 (áudio) e T13 (fluxo)
 
-As duas não dependem uma da outra. Checkpoint 3 (fim do dia 1) pede a fase Memory Leak jogável de ponta a ponta, com o Garbage Collector no fim. Pontos de partida:
-
-- **T12:** a fase nova é uma entrada em `STAGES` (`src/stages/stages.ts`) com mapa próprio (`src/stages/memoryLeak.ts`), seções (a última `locked`), `boss: 'memoryLeak'` e tileset `tiles_memory_leak`; depois, `DEFAULT_STAGE` passa a apontar para ela. Os testes de `tests/stages.test.ts` e `tests/reach.test.ts` rodam sozinhos para cada entrada: se o caminho crítico falhar, ajuste o mapa, não o teste. Falta na `StageScene`: o parallax (`t1_memory_leak_far/mid/near`, ver variantes `_wide` do agente de arte) e os inimigos novos (Drip, Heap Crab).
+- **Checkpoint 3:** o usuário joga a Memory Leak de ponta a ponta e ganha o Garbage Collector. O caminho crítico foi provado por `tests/reach.test.ts`, e cada seção, os inimigos, o lodo e a luta foram conferidos no Edge, mas ninguém jogou a fase inteira com as mãos. Ajustes prováveis depois de jogar: velocidade do lodo (`MEMORY_LEAK_GOO.speed`, 16 px/s) e o ritmo dos inimigos (`src/data/enemies.ts`).
+- **T11:** independente. **T13:** título, seleção de fase (a arte já existe), save e pausa. A seleção deve chamar `scene.start('Stage', { stage })`.
 - **Armas:** `player.arsenal` vem de `registry.get('ownedWeapons')`. O save em `localStorage` é da T13. Mutex Lock e Null Pointer ainda não disparam (`fireSpecial` ignora); entram na T14 e T15. Carregar armas especiais com o Compiler Cannon não foi feito.
 - **Overlaps:** sempre identifique cada lado pelo tipo (`pick` no topo da `StageScene`). O chefe da T9 sumia por causa disso.
 - **Eventos da cena:** o Phaser não limpa `this.events` no reinício. Evento novo da partida entra em `RUN_EVENTS` (`StageScene`). Pausar a física só por `this.fx.hold(motivo)` / `release(motivo)`, nunca `world.pause()` direto.
