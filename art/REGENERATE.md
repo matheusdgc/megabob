@@ -1,6 +1,6 @@
 # Pendências de arte
 
-O lote atual de 108 strips/imagens passou nas verificações de recorte, dimensões, transparência, paleta e carregamento. A montagem das fases e dos menus ainda precisa de revisão no contexto de cada tela.
+O lote atual de 120 strips/imagens passou nas verificações de recorte, dimensões, transparência, paleta e carregamento. A montagem das fases e dos menus ainda precisa de revisão no contexto de cada tela.
 
 Correção de enquadramento concluída:
 
@@ -18,3 +18,5 @@ Título panorâmico: fundo 480×270 recomposto em 16:9 com `imagegen`, mantendo 
 Seleção panorâmica: bordas de U3 recompostas sem deformar os retratos, cinco molduras 64×64, cadeado e foco separados. Os slots e o foco cabem no viewport e não se sobrepõem. Prévias bloqueada/liberada em `art/exports/megabob-stage-select-locked.png` e `megabob-stage-select-unlocked.png`; coordenadas em `art/exports/stage-select-layout.json`.
 
 HUD/pausa: moldura com canal transparente de 6×56, 28 segmentos separados e painel vazio 352×208 com cantos preservados. Medidores vazio, de 1 ponto e cheio foram conferidos. Prévias em `art/exports/megabob-hud-preview.png`, `megabob-pause-start-preview.png` e `megabob-pause-complete-preview.png`; geometria em `hud-pause-layout.json`. As peças usam corretamente os quadros colorido/coletado e cinza/inativo.
+
+Cenários: blocos/bordas sem margens no quadro 16×16; plataformas finas alinhadas ao topo. Doze variantes 512×270 mantêm a escala, o alpha e as emendas horizontais; Tech Debt MID/NEAR têm contraste reduzido para o piso permanecer legível. Galeria em `art/exports/megabob-environments.png`, dados em `environment-art-layout.json`, repetições 3×3 e relatório do pack gamedev em `art/preview/`. Os PNGs brutos e as camadas originais foram preservados.

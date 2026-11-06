@@ -107,7 +107,9 @@ def catalog():
     for stage in ['T1_memory_leak', 'T2_race_condition', 'T3_null_pointer', 'T4_tech_debt']:
         empty = [22, 23] if stage.startswith(('T2', 'T3')) else [20, 21, 22, 23]
         out.append(spec('tiles', 'tiles_' + stage[3:], 'tiles/' + stage + '_tiles', 6, 4,
-                        [(r, c) for r in range(4) for c in range(6)], (16, 16), empty=empty))
+                        [(r, c) for r in range(4) for c in range(6)], (16, 16), empty=empty,
+                        frame_fit={i: 'width' if 12 <= i <= 14 else 'fill' for i in range(18)},
+                        top_frames=[12, 13, 14]))
     for key, indices, size in [('boss_door', [0, 1, 2], (32, 48)),
                                ('checkpoint', [3, 4], (16, 32)),
                                ('moving_platform', [5], (48, 16))]:
@@ -115,7 +117,8 @@ def catalog():
                         mode='runs', stretch=True, anchor='bottom'))
     # Existing ASCII test-map indices: solid, background, hazard, one-way platform.
     out.append(spec('tiles', 'tiles_test', 'tiles/T1_memory_leak_tiles', 6, 4,
-                    [(0, 0), (2, 5), (2, 4), (2, 1)], (16, 16)))
+                    [(0, 0), (2, 5), (2, 4), (2, 1)], (16, 16),
+                    frame_fit={0: 'fill', 1: 'fill', 2: 'fill', 3: 'width'}, top_frames=[3]))
 
     out.append(spec('ui', 'title_logo', 'ui/U1_logo', 1, 1, [(0, 0)], (224, 48)))
     out.append(spec('ui', 'title_logo_night', 'ui/U1_logo', 1, 1, [(0, 0)], (224, 48), (220, 44)))

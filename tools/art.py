@@ -19,6 +19,7 @@ from ui_art import (
     stage_assets, stage_preview, STAGE_SLOTS, hud_assets, scene_preview, hud_preview,
     pause_preview, PAUSE_POSITION, PAUSE_SIZE, METER_CHANNEL,
 )
+from stage_art import extend_view, environment_preview, tile_repeat_preview, environment_gallery, quiet_legacy_layer, THEMES
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW, OUT, PREVIEW = ROOT / 'art/raw', ROOT / 'public/assets', ROOT / 'art/preview'
@@ -83,7 +84,7 @@ def grid_regions(image, columns, rows, mode='grid'):
             for r, (y0, y1) in enumerate(ys) for c, (a, b) in enumerate(xs)}
 
 
-def pack(regions, size, fit, empty=(), anchor='center', stretch=False):
+def pack(regions, size, fit, empty=(), anchor='center', stretch=False, frame_fit=None):
     boxes = [region.getbbox() for region in regions]
     for i, box in enumerate(boxes):
         if box is None and i not in empty:
@@ -98,7 +99,13 @@ def pack(regions, size, fit, empty=(), anchor='center', stretch=False):
     for i, crop in enumerate(crops):
         if crop is None:
             continue
-        target = size if stretch else (max(1, round(crop.width * scale)), max(1, round(crop.height * scale)))
+        mode = (frame_fit or {}).get(i)
+        if stretch or mode == 'fill':
+            target = size
+        elif mode == 'width':
+            target = (size[0], max(1, round(crop.height * size[0] / crop.width)))
+        else:
+            target = (max(1, round(crop.width * scale)), max(1, round(crop.height * scale)))
         small = quantize(crop.resize(target, Image.Resampling.NEAREST))
         if small.width > size[0] or small.height > size[1]:
             raise ValueError(f'frame {i} would be clipped: {small.size} into {size}')
@@ -106,6 +113,20 @@ def pack(regions, size, fit, empty=(), anchor='center', stretch=False):
         y = 0 if anchor == 'top' else size[1] - small.height if anchor == 'bottom' else (size[1] - small.height) // 2
         sheet.alpha_composite(small, (i * size[0] + x, y))
     return sheet
+
+
+def align_top_frames(sheet, size, indices):
+    """Move a platform's visible surface onto its logical tile contact line, preserving pixels."""
+    result = sheet.copy()
+    for index in indices:
+        x = index * size[0]
+        frame = sheet.crop((x, 0, x + size[0], size[1]))
+        box = frame.getbbox()
+        if box and box[1]:
+            shifted = Image.new('RGBA', size)
+            shifted.alpha_composite(frame.crop((0, box[1], size[0], size[1])), (0, 0))
+            result.paste(shifted, (x, 0))
+    return result
 
 
 def periodic(image, border=8):
@@ -173,7 +194,7 @@ def backgrounds():
         far_box = image.crop((0, 0, image.width, image.height // 3)).getbbox()
         if not far_box:
             raise ValueError(f'{source.name}: empty FAR layer')
-        layers = []
+        layers, wide_layers = [], []
         for i, name in enumerate(['far', 'mid', 'near']):
             region = image.crop((far_box[0], round(i * image.height / 3), far_box[2],
                                  round((i + 1) * image.height / 3)))
@@ -190,12 +211,48 @@ def backgrounds():
             entries.append(save_asset(layer, 'bg', key, (512, 224), source.relative_to(RAW).as_posix(),
                                       edgeMismatchBefore=before, edgeMismatchAfter=0))
             layers.append(layer)
+            wide = extend_view(layer, name)
+            depth_adjusted = stage == 'tech_debt' and name != 'far'
+            if depth_adjusted:
+                wide = quiet_legacy_layer(wide)
+            if edge_mismatch(wide):
+                raise ValueError(f'{source.name}/{name}: extended edge did not close')
+            entries.append(save_asset(wide, 'bg', key + '_wide', (512, 270), source.relative_to(RAW).as_posix(),
+                                      edgeMismatchBefore=0, edgeMismatchAfter=0, extendedFrom=key,
+                                      anchor='top' if name == 'near' else 'bottom', depthAdjusted=depth_adjusted))
+            wide_layers.append(wide)
         repeat = Image.new('RGBA', (1024, 672), (25, 25, 34, 255))
         for i, layer in enumerate(layers):
             repeat.alpha_composite(layer, (0, i * 224))
             repeat.alpha_composite(layer, (512, i * 224))
         repeat.save(PREVIEW / (source.stem + '_repeat.png'))
+        repeat = Image.new('RGBA', (1024, 810), (25, 25, 34, 255))
+        for i, layer in enumerate(wide_layers):
+            repeat.alpha_composite(layer, (0, i * 270))
+            repeat.alpha_composite(layer, (512, i * 270))
+        repeat.save(PREVIEW / (source.stem + '_wide_repeat.png'))
     return entries
+
+
+def environment_previews():
+    exports = ROOT / 'art/exports'
+    exports.mkdir(parents=True, exist_ok=True)
+    images, layout = [], {}
+    bob = Image.open(OUT / 'bob/bob_idle.png')
+    mite = Image.open(OUT / 'enemies/enemy_pixel_mite.png')
+    drone = Image.open(OUT / 'enemies/enemy_spam_drone.png')
+    for prefix, theme, label in THEMES:
+        keys = [f'{prefix}_{theme}_{layer}_wide' for layer in ['far', 'mid', 'near']]
+        layers = [Image.open(OUT / ('bg/' + key + '.png')) for key in keys]
+        tiles = Image.open(OUT / ('tiles/tiles_' + theme + '.png'))
+        scene = environment_preview(layers, tiles, bob, mite, drone)
+        scene.save(exports / ('megabob-environment-' + theme.replace('_', '-') + '.png'))
+        tile_repeat_preview(tiles).resize((576, 320), Image.Resampling.NEAREST).save(PREVIEW / (theme + '_tile_repeat.png'))
+        images.append(scene)
+        layout[theme] = dict(label=label, layers=keys, layerSize=[512, 270], tiles='tiles_' + theme,
+                            tileSize=16, topAlignedPlatforms=[12, 13, 14])
+    environment_gallery(images).save(exports / 'megabob-environments.png')
+    (exports / 'environment-art-layout.json').write_text(json.dumps(dict(viewport=[480, 270], themes=layout), indent=2) + '\n', encoding='utf-8')
 
 
 def hashes():
@@ -284,13 +341,19 @@ def run(group='all'):
                 grids[grid_key] = grid_regions(image, item['cols'], item['rows'], item.get('mode', 'grid'))
             regions = [grids[grid_key][position] for position in item['selection']]
         result = pack(regions, item['size'], item['fit'], item.get('empty', ()),
-                      item.get('anchor', 'center'), item.get('stretch', False))
+                      item.get('anchor', 'center'), item.get('stretch', False), item.get('frame_fit'))
+        if item.get('top_frames'):
+            result = align_top_frames(result, item['size'], item['top_frames'])
         if item['key'] == 'title_logo_night':
             result = night_logo(result)
         if item['key'] == 'tech_laser':
             result = periodic(result, 2)
         entry = save_asset(result, item['group'], item['key'], item['size'], source,
                            emptyFrames=list(item.get('empty', ())), sourceCells=item['selection'])
+        if item.get('frame_fit'):
+            entry['frameSizing'] = item['frame_fit']
+        if item.get('top_frames'):
+            entry['topAlignedFrames'] = item['top_frames']
         entries.append(entry)
         print(f"{entry['key']}: {entry['frames']} x {entry['frameWidth']}x{entry['frameHeight']}", flush=True)
     if 'bg' in selected:
@@ -345,6 +408,8 @@ def run(group='all'):
         preview([e for e in entries if e['group'] == category], category)
     if 'ui' in selected:
         title_preview()
+    if 'bg' in selected or 'tiles' in selected:
+        environment_previews()
     legacy = [f'bob/{name}.png' for name in ['B2_idle', 'B3_run', 'B4_jump_fall', 'B5_shoot',
               'B6_dash', 'B7_wall', 'B8_hurt', 'B9_compile_in', 'B10_victory']]
     legacy += ['bob_armor/A2_' + Path(name).name for name in legacy] + ['bob_armor/A2_air_dash.png']

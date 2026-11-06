@@ -13,7 +13,7 @@ Categorias disponíveis: `fx`, `enemies`, `bosses`, `icons`, `tiles`, `bg` e `ui
 ## Entradas e saídas
 
 - Fontes: `art/raw/`, com os prompts ao lado. O importador compara os hashes SHA-256 antes e depois e falha se alguma fonte mudar.
-- Jogo: 108 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
+- Jogo: 120 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
 - Registro: `public/assets/art-manifest.json` e `src/data/processedArt.ts`, ambos gerados. `src/data/assets.ts` conserva as chaves anteriores e inclui os novos registros.
 - Revisão: contatos, repetições de fundos e `art_report.json` em `art/preview/`, fora do Git. O relatório distingue fontes processadas, conceitos de referência e fontes do pipeline anterior do Bob.
 - Logo: `art/exports/megabob-logo.png`, recortada com transparência e resolução da fonte; `public/assets/ui/title_logo.png`, versão 224×48 para o jogo. A versão atual tem lettering MEGABOB com faixas azuis inspiradas na referência IBM. A anterior está preservada em `art/raw/ui/U1_logo-original.png`.
@@ -62,6 +62,16 @@ O canal comporta 28 segmentos em passo de 2 px (1 px preenchido, 1 px vazio). Pa
 
 Prévias: `megabob-hud-preview.png`, `megabob-pause-start-preview.png` e `megabob-pause-complete-preview.png` em `art/exports/`, com ampliações em `art/preview/`. O cenário é uma composição de demonstração com os assets de Memory Leak. Texto e valores existem só nessas prévias; as texturas de jogo ficam vazias para a integração em T13/T21. As prévias não aplicam efeitos de armas, peças, coleta ou pausa ao jogo.
 
+## Terreno e camadas para 480×270
+
+A revisão segue `create-game-assets` e `phaser-core` do pack gamedev, preservando Phaser 3.90. Os materiais foram conferidos em repetições 3×3, em composições na escala nativa e no renderizador do jogo. O utilitário `asset_report.py` do pack verificou dimensões, alpha e limite de 29 cores; relatório local em `art/preview/gamedev_asset_report.json`.
+
+Nos quatro tilesets, quadros 0–11 e 15–17 preenchem 16×16. Plataformas 12–14 ocupam a largura de 16 px e começam em `y=0`, mantendo o perfil fino. Isso remove as margens vazias que faziam o chão parecer separado e a plataforma ficar abaixo da linha de contato. `tiles_test` recebe a mesma normalização. Índices, tamanhos e colisões permanecem os mesmos; os detalhes aparecem em `frameSizing` e `topAlignedFrames` no manifesto.
+
+As doze camadas originais continuam em 512×224. Cada uma ganhou a variante de chave `<chave_original>_wide`, em 512×270: FAR e MID ficam ancoradas embaixo; NEAR fica no alto. FAR estende sua linha superior para cobrir o céu, sem escalar os prédios; MID acrescenta transparência acima e NEAR abaixo. Os deslocamentos já estão gravados na imagem: desenhar todas em `(0,0)` com origem superior esquerda e repetir horizontalmente, sem esticar. Em Tech Debt, apenas MID/NEAR novas recebem uma rampa mais escura, mantendo os CRTs verdes para separar cenário e piso. A transformação está declarada em `depthAdjusted`; fontes e camadas originais ficam intactas.
+
+`py -3 tools/art.py all`, ou os jobs `bg`/`tiles` após a primeira geração completa, montam `art/exports/megabob-environments.png` e quatro imagens `megabob-environment-<tema>.png`. `environment-art-layout.json` registra as chaves das camadas e tiles. São composições para revisar escala, contraste e encaixes; os mapas jogáveis continuam nas tarefas de fase. Repetições ampliadas dos tiles e camadas ficam em `art/preview/`.
+
 ## Regras do processamento
 
 O fundo magenta é removido com tolerância, preservando roxos e branco. Os strips usam alpha binário, nearest-neighbor e a paleta de `tools/palette.py`. Cada animação mantém uma escala compartilhada e a ancoragem declarada. Quadros vazios intencionais mantêm seus índices; vazios inesperados e recortes que excedam o quadro são erros.
@@ -82,6 +92,6 @@ npm.cmd run build
 node tools/check-assets.mjs
 ```
 
-O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 108 texturas do lote e os 145 strips do Bob (253 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script. Para outro servidor local, passe a URL: `node tools/check-assets.mjs http://127.0.0.1:5174`.
+O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 120 texturas do lote e os 145 strips do Bob (265 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script. Para outro servidor local, passe a URL: `node tools/check-assets.mjs http://127.0.0.1:5174`.
 
 O lote está carregado pelo Boot e o mapa de teste usa os tiles reais. Animações e componentes ficam disponíveis para as tarefas de inimigos, chefes, fases e menus; o importador não implementa essas mecânicas.

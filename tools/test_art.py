@@ -3,12 +3,53 @@ import unittest
 
 from PIL import Image, ImageDraw
 
-from art import clean, grid_regions, pack, periodic, background_quantize, quantize
+from art import clean, grid_regions, pack, periodic, background_quantize, quantize, align_top_frames
+from stage_art import extend_view, quiet_legacy_layer
 from sprites import pixels
 from art_catalog import catalog
 
 
 class ArtProcessingTests(unittest.TestCase):
+    def test_legacy_background_reduces_brightness_without_changing_alpha(self):
+        image = Image.new('RGBA', (3, 1))
+        image.putdata([(239, 227, 194, 255), (66, 190, 101, 255), (0, 0, 0, 0)])
+        result = quiet_legacy_layer(image)
+        self.assertEqual(result.getchannel('A').tobytes(), image.getchannel('A').tobytes())
+        self.assertLess(sum(result.getpixel((0, 0))[:3]), sum(image.getpixel((0, 0))[:3]))
+        self.assertEqual(result.getpixel((1, 0)), (25, 128, 56, 255))
+
+    def test_tile_blocks_fill_the_cell_while_platforms_keep_a_thin_profile(self):
+        block = Image.new('RGBA', (12, 10), 'white')
+        platform = Image.new('RGBA', (12, 3), (15, 98, 254, 255))
+        result = pack([block, platform], (16, 16), (16, 16), frame_fit={0: 'fill', 1: 'width'})
+        self.assertEqual(result.crop((0, 0, 16, 16)).getbbox(), (0, 0, 16, 16))
+        box = result.crop((16, 0, 32, 16)).getbbox()
+        self.assertEqual((box[0], box[2]), (0, 16))
+        self.assertLessEqual(box[3] - box[1], 5)
+
+    def test_platform_surface_is_at_tile_top_without_changing_its_width_or_other_tiles(self):
+        image = Image.new('RGBA', (32, 16))
+        ImageDraw.Draw(image).rectangle((0, 0, 15, 15), fill='white')
+        ImageDraw.Draw(image).rectangle((18, 7, 29, 10), fill=(15, 98, 254, 255))
+        result = align_top_frames(image, (16, 16), [1])
+        self.assertEqual(result.crop((0, 0, 16, 16)).tobytes(), image.crop((0, 0, 16, 16)).tobytes())
+        self.assertEqual(result.crop((16, 0, 32, 16)).getbbox(), (2, 0, 14, 4))
+        self.assertEqual(sum(pixels(result.getchannel('A'))), sum(pixels(image.getchannel('A'))))
+
+    def test_wide_layers_keep_their_pixels_and_anchor_without_scaling(self):
+        source = Image.new('RGBA', (8, 4), (0, 65, 68, 255))
+        ImageDraw.Draw(source).rectangle((2, 2, 5, 3), fill=(22, 22, 22, 255))
+        for layer in ['far', 'mid', 'near']:
+            result = extend_view(source, layer, 6)
+            self.assertEqual(result.size, (8, 6))
+            y = 0 if layer == 'near' else 2
+            self.assertEqual(result.crop((0, y, 8, y + 4)).tobytes(), source.tobytes())
+            if layer == 'far':
+                self.assertEqual(result.getchannel('A').getextrema(), (255, 255))
+            else:
+                empty = result.crop((0, 4, 8, 6)) if layer == 'near' else result.crop((0, 0, 8, 2))
+                self.assertIsNone(empty.getbbox())
+
     def test_crt_green_stays_on_the_green_ramp_instead_of_teal_noise(self):
         image = Image.new('RGBA', (2, 1))
         image.putdata([(10, 80, 20, 255), (50, 180, 70, 255)])
