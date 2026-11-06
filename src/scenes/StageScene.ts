@@ -13,7 +13,7 @@ const CAMERA_LOOK_UP = 24;
 /**
  * A playable stage built from an ASCII map. For now: the movement test map.
  * Dev keys: R respawn, F2 toggle hitboxes + state readout, 1-4 toggle armor parts
- * (4 = Turbo Boots: second air dash), H take a 4-point hit from the front.
+ * (4 = Turbo Boots: air dash), H take a 4-point hit from the front.
  * Emits `gameOver` when the last life is lost (T13 will route it to the stage select).
  */
 export class StageScene extends Phaser.Scene {

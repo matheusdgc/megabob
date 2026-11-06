@@ -210,7 +210,7 @@ Tabela de peças com testes, Update Terminal, tela de "upgrade instalado", efeit
 **Arquivos:** `src/data/upgrades.ts`, `src/systems/upgrades.ts`, `src/entities/UpdateTerminal.ts`, `src/entities/Player.ts`, `tests/upgrades.test.ts`
 
 ### T17: Peças nas fases [S]
-Colocar os 4 terminais conforme o spec, com o Compiler Cannon atrás do vão que exige dois dashes no ar, e as passagens escondidas que o Debug Visor revela.
+Colocar os 4 terminais conforme o spec, com o Compiler Cannon atrás do vão que exige dash no ar, e as passagens escondidas que o Debug Visor revela.
 - [ ] As 4 peças podem ser coletadas, e o Compiler Cannon é inalcançável sem as Turbo Boots
 
 **Verificar:** buscar as 4 peças · **Dep.:** T14, T15, T16

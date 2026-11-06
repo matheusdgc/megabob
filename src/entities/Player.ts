@@ -132,7 +132,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.decompile.play(fxAnim(this.scene, 'fx_decompile', 10, 0));
   }
 
-  /** Firmware Armor bitmask (0 = none, 15 = full). The boots add a second air dash. */
+  /** Firmware Armor bitmask (0 = none, 15 = full). The boots enable the air dash. */
   get armor(): number {
     return this.armorBits;
   }

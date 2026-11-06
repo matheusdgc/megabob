@@ -12,7 +12,7 @@ import {
 import { type Action, ActionState } from '../src/systems/actions';
 import { newMotion, type Sensors, stepMotion } from '../src/systems/motion';
 
-function rig(airDashes = 1) {
+function rig(airDashes = 0) {
   const input = new ActionState();
   const m = newMotion(airDashes);
   const frame = (held: Action[], s: Partial<Sensors> = {}) => {
@@ -148,8 +148,15 @@ describe('ground dash', () => {
   });
 });
 
-describe('air dash', () => {
-  it('base Bob: horizontal, no gravity, once per airtime', () => {
+describe('air dash (Turbo Boots)', () => {
+  it('is not available without the boots', () => {
+    const { m, frame } = rig(0);
+    airborne(frame);
+    frame(['dash'], FALLING);
+    expect(m.state).toBe('fall');
+  });
+
+  it('with the boots: horizontal, no gravity, once per airtime', () => {
     const { m, frame } = rig(1);
     airborne(frame);
     const out = frame(['dash'], FALLING);
@@ -167,20 +174,6 @@ describe('air dash', () => {
     frame(['jump']);
     frame(['jump', 'dash'], RISING);
     expect(m.state).toBe('airdash');
-  });
-
-  it('the Turbo Boots allow a second air dash in the same airtime', () => {
-    const { m, frame } = rig(2);
-    airborne(frame);
-    frame(['dash'], FALLING);
-    for (let i = 0; i < AIR_DASH_FRAMES; i++) frame(['dash'], FALLING);
-    frame([], FALLING);
-    frame(['dash'], FALLING);
-    expect(m.state).toBe('airdash');
-    for (let i = 0; i < AIR_DASH_FRAMES; i++) frame(['dash'], FALLING);
-    frame([], FALLING);
-    frame(['dash'], FALLING); // third: none left
-    expect(m.state).toBe('fall');
   });
 
   it('recharges on landing', () => {

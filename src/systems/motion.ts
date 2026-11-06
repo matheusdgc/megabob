@@ -58,7 +58,7 @@ export interface Motion {
   lockDir: 1 | -1;
   /** Airborne at dash speed (dash-jump, dash off a ledge, dash wall-kick). */
   dashMomentum: boolean;
-  /** Air dashes allowed per airtime (1 base, 2 with the Turbo Boots) and how many were used. */
+  /** Air dashes allowed per airtime (0 base, 1 with the Turbo Boots) and how many were used. */
   airDashes: number;
   airDashesUsed: number;
   /** Length of the current knockback (state 'hurt'). */
@@ -73,7 +73,7 @@ export interface MotionOutput {
   gravity: boolean;
 }
 
-export const newMotion = (airDashes = 1): Motion => ({
+export const newMotion = (airDashes = 0): Motion => ({
   state: 'idle',
   facing: 1,
   stateFrames: 0,
@@ -151,7 +151,7 @@ export function stepMotion(m: Motion, input: MotionInput, s: Sensors): MotionOut
     }
   }
 
-  // --- dash: on the ground, or in the air (once per airtime, twice with the Turbo Boots)
+  // --- dash: on the ground, or once per airtime in the air with the Turbo Boots
   if (input.justPressed('dash') && !dashing) {
     if (s.onGround) {
       enter(m, 'dash');

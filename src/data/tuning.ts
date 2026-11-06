@@ -39,9 +39,9 @@ export const DASH_FRAMES = 26;
 /** Releasing dash ends it, but never before this. */
 export const DASH_MIN_FRAMES = 6;
 export const AIR_DASH_FRAMES = 20;
-/** Air dashes per airtime: base Bob, and with the Turbo Boots. Recharged on landing or wall grab. */
-export const AIR_DASHES = 1;
-export const AIR_DASHES_BOOTS = 2;
+/** Air dashes per airtime: none for base Bob, one with the Turbo Boots. Recharged on landing or wall grab. */
+export const AIR_DASHES = 0;
+export const AIR_DASHES_BOOTS = 1;
 /** First frames of a dash that show the launch pose. */
 export const DASH_START_FRAMES = 3;
 /** Braking pose duration when a dash ends standing still. */
