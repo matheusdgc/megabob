@@ -47,8 +47,8 @@ const RUN_EVENTS = ['bossIntro', 'bossDefeated', 'bossRoomUnlocked', 'gameOver']
 /**
  * A playable stage, built from its `StageDef` (map, camera sections, boss, tileset).
  * Start it with `scene.start('Stage', { stage })`; all per-run state is reset in `init()`.
- * Dev keys: R back to the respawn point, F2 hitboxes + state readout, 1-4 armor parts
- * (4 = Turbo Boots: air dash), H take a 4-point hit from the front, G grant the Garbage Collector.
+ * Dev keys (dev build only): R back to the respawn point, F2 hitboxes + state readout, 1-4 armor
+ * parts (4 = Turbo Boots: air dash), H take a 4-point hit from the front, G grant the Garbage Collector.
  * Emits `bossIntro` when the boss door shuts behind Bob, `gameOver` on the last life.
  */
 export class StageScene extends Phaser.Scene {
@@ -153,18 +153,7 @@ export class StageScene extends Phaser.Scene {
     this.events.once('bossDefeated', () => this.onBossDefeated());
 
     this.controls = new GameInput(this);
-    const kb = this.input.keyboard!;
-    kb.on('keydown-R', () => !this.player.isDead && this.respawnBob());
-    kb.on('keydown-F2', () => this.toggleDebug());
-    kb.on('keydown-H', () => this.player.takeHit(4, this.player.body.center.x + this.player.motion.facing * 16));
-    kb.on('keydown-G', () => grant(this.player.arsenal, 'garbageCollector'));
-    const parts: [string, number][] = [
-      ['ONE', ARMOR_BITS.head],
-      ['TWO', ARMOR_BITS.arm],
-      ['THREE', ARMOR_BITS.body],
-      ['FOUR', ARMOR_BITS.legs],
-    ];
-    for (const [key, bit] of parts) kb.on(`keydown-${key}`, () => (this.player.armor ^= bit));
+    if (import.meta.env.DEV) this.devKeys();
 
     // Game logic counts frames, so it runs on the fixed 60 Hz physics step rather than on
     // every display refresh (which is 120-240 Hz on many monitors).
@@ -407,6 +396,22 @@ export class StageScene extends Phaser.Scene {
         `armor a${p.armor} airdash ${m.airDashesUsed}/${m.airDashes}\n` +
         `section ${this.section} door ${this.door?.state ?? '-'}`,
     );
+  }
+
+  /** Dev build only (they would clash with rebound controls in the real game). */
+  private devKeys(): void {
+    const kb = this.input.keyboard!;
+    kb.on('keydown-R', () => !this.player.isDead && this.respawnBob());
+    kb.on('keydown-F2', () => this.toggleDebug());
+    kb.on('keydown-H', () => this.player.takeHit(4, this.player.body.center.x + this.player.motion.facing * 16));
+    kb.on('keydown-G', () => grant(this.player.arsenal, 'garbageCollector'));
+    const parts: [string, number][] = [
+      ['ONE', ARMOR_BITS.head],
+      ['TWO', ARMOR_BITS.arm],
+      ['THREE', ARMOR_BITS.body],
+      ['FOUR', ARMOR_BITS.legs],
+    ];
+    for (const [key, bit] of parts) kb.on(`keydown-${key}`, () => (this.player.armor ^= bit));
   }
 
   private toggleDebug(): void {
