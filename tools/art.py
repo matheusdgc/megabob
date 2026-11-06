@@ -20,7 +20,10 @@ from ui_art import (
     pause_preview, PAUSE_POSITION, PAUSE_SIZE, METER_CHANNEL,
 )
 from stage_art import extend_view, environment_preview, tile_repeat_preview, environment_gallery, quiet_legacy_layer, THEMES
-from presentation_art import presentation_assets, previews as presentation_previews, gallery as presentation_gallery
+from presentation_art import (
+    presentation_assets, previews as presentation_previews, gallery as presentation_gallery,
+    end_screen_previews,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW, OUT, PREVIEW = ROOT / 'art/raw', ROOT / 'public/assets', ROOT / 'art/preview'
@@ -411,6 +414,14 @@ def run(group='all'):
         presentation_gallery(screens).save(exports / 'megabob-presentations.png')
         (exports / 'presentation-layout.json').write_text(
             json.dumps(presentation_layout, indent=2) + '\n', encoding='utf-8')
+        end_screens, end_layout = end_screen_previews(
+            lambda key: Image.open(OUT / (key + '.png')).convert('RGBA'))
+        for name, image in end_screens.items():
+            image.save(exports / ('megabob-' + name + '-preview.png'))
+        (exports / 'end-screen-layout.json').write_text(json.dumps(end_layout, indent=2) + '\n', encoding='utf-8')
+        prompt = RAW / 'ui/U5_ending_bg.prompt.txt'
+        if prompt.exists():
+            (exports / 'megabob-ending.prompt.txt').write_text(prompt.read_text(encoding='utf-8'), encoding='utf-8')
     if before != hashes():
         raise RuntimeError('raw source hashes changed during import')
     # Partial jobs replace their entries in place, keeping unrelated manifest rows stable.

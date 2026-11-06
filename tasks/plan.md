@@ -77,6 +77,10 @@ Normalizar blocos/bordas/perigos para preencher seus quadros 16×16 e plataforma
 
 Derivar duas molduras vazias da U4 para entrada de chefe e recompensa, preservando cantos e paleta. Compor prévias nativas dos quatro retratos de chefes, três armas e quatro peças, reutilizando o Bob com a peça correspondente. Exportar medidas locais a um container central e manter textos fora das texturas. Validar dimensões, paleta, alpha, carregamento no Phaser e as verificações do projeto. Fluxo de cenas, controles e efeitos das recompensas continuam com a outra sessão.
 
+### T4b — encerramento e fim de partida
+
+Gerar uma ilustração panorâmica de encerramento com `imagegen`, usando o Bob e o fundo de título aprovados como referências. Preservar os originais, registrar prompt e processar uma nova textura 480×270 na paleta do jogo. Reservar uma coluna escura para texto dinâmico. Reutilizar as molduras existentes na composição de Game Over, exportar as duas prévias e layouts ancorados ao centro; créditos reais, bindings, save e navegação permanecem nas tarefas de cenas. Validar fontes, paleta, enquadramento, carregamento no Phaser, testes e build antes do commit.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

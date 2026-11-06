@@ -18,6 +18,7 @@ export const PROCESSED_ART: SheetDef[] = [
   {"key":"checkpoint","frameWidth":16,"frameHeight":32,"frames":2,"file":"assets/tiles/checkpoint.png","placeholder":{"color":7303023,"shape":"fx"}},
   {"key":"clock_blade","frameWidth":24,"frameHeight":24,"frames":4,"file":"assets/bosses/clock_blade.png","placeholder":{"color":7303023,"shape":"fx"}},
   {"key":"clock_spike_shot","frameWidth":12,"frameHeight":12,"frames":1,"file":"assets/enemies/clock_spike_shot.png","placeholder":{"color":7303023,"shape":"fx"}},
+  {"key":"ending_background","frameWidth":480,"frameHeight":270,"frames":1,"file":"assets/ui/ending_background.png","placeholder":{"color":7303023,"shape":"fx"}},
   {"key":"enemy_clock_spike","frameWidth":32,"frameHeight":32,"frames":3,"file":"assets/enemies/enemy_clock_spike.png","placeholder":{"color":7303023,"shape":"fx"}},
   {"key":"enemy_dangling_ref","frameWidth":40,"frameHeight":48,"frames":3,"file":"assets/enemies/enemy_dangling_ref.png","placeholder":{"color":7303023,"shape":"fx"}},
   {"key":"enemy_deprecated_bot","frameWidth":48,"frameHeight":48,"frames":4,"file":"assets/enemies/enemy_deprecated_bot.png","placeholder":{"color":7303023,"shape":"fx"}},

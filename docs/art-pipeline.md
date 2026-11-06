@@ -13,7 +13,7 @@ Categorias disponíveis: `fx`, `enemies`, `bosses`, `icons`, `tiles`, `bg` e `ui
 ## Entradas e saídas
 
 - Fontes: `art/raw/`, com os prompts ao lado. O importador compara os hashes SHA-256 antes e depois e falha se alguma fonte mudar.
-- Jogo: 122 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
+- Jogo: 123 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
 - Registro: `public/assets/art-manifest.json` e `src/data/processedArt.ts`, ambos gerados. `src/data/assets.ts` conserva as chaves anteriores e inclui os novos registros.
 - Revisão: contatos, repetições de fundos e `art_report.json` em `art/preview/`, fora do Git. O relatório distingue fontes processadas, conceitos de referência e fontes do pipeline anterior do Bob.
 - Logo: `art/exports/megabob-logo.png`, recortada com transparência e resolução da fonte; `public/assets/ui/title_logo.png`, versão 224×48 para o jogo. A versão atual tem lettering MEGABOB com faixas azuis inspiradas na referência IBM. A anterior está preservada em `art/raw/ui/U1_logo-original.png`.
@@ -72,6 +72,16 @@ O job `ui` produz onze prévias `megabob-boss-*-preview.png`, `megabob-weapon-*-
 
 QA: `art/preview/presentation_asset_report.json` registra as verificações do pack gamedev. O smoke test também renderiza as duas molduras no Phaser em uma cena temporária, com retrato/Bob/ícone/texto separados; screenshots `browser-presentation-boss.png` e `browser-presentation-reward.png`. A cena existe somente no processo de validação.
 
+## Encerramento e Game Over
+
+`ending_background` é uma imagem opaca 480×270, sem texto ou logo. A fonte adicional `art/raw/ui/U5_ending_bg.png` foi criada com a ferramenta integrada `imagegen`, tomando como referências `U2_title_bg_wide.png` e o Bob fornecido pelo usuário em `F:/Downloads/bob-standing-BECrMjXJ.webp`. O Bob mostra os dois olhos e acena à esquerda; o céu azul à direita permanece livre para os créditos. Fonte preservada em 1672×941, prompt integral ao lado e em `art/exports/megabob-ending.prompt.txt`. O processamento usa nearest-neighbor e a paleta global de 29 cores.
+
+O job `ui` exporta `megabob-ending-preview.png` e `megabob-game-over-preview.png`, além de `end-screen-layout.json`. O layout usa um container centralizado no viewport de referência com escala inteira/letterbox. No encerramento, a logo existente fica separada em `(240,16)` e a área de créditos em `(248,132,216,90)`; os nomes e licenças reais devem vir da cena. A prévia traz somente a mensagem de conclusão e agradecimento, sem inventar créditos.
+
+Game Over reutiliza `reward_panel` e `bob_hurt[0]` ampliado 2×. A ação de voltar à seleção tem retângulo/foco renderizado em código, sem gerar outra textura. O layout indica foco inicial, mas não implementa input, save ou navegação. As cenas de produção continuam com as tarefas T13/T19/T20.
+
+As três imagens de saída foram conferidas pelo verificador do pack gamedev (dimensões, paleta e opacidade) e no Phaser. Relatório em `art/preview/end_screen_asset_report.json`; screenshots `browser-end-screen-ending.png` e `browser-end-screen-gameOver.png`. A fonte extra leva o inventário a 68 PNGs brutos, todos preservados durante a importação.
+
 ## Terreno e camadas para 480×270
 
 A revisão segue `create-game-assets` e `phaser-core` do pack gamedev, preservando Phaser 3.90. Os materiais foram conferidos em repetições 3×3, em composições na escala nativa e no renderizador do jogo. O utilitário `asset_report.py` do pack verificou dimensões, alpha e limite de 29 cores; relatório local em `art/preview/gamedev_asset_report.json`.
@@ -102,6 +112,6 @@ npm.cmd run build
 node tools/check-assets.mjs
 ```
 
-O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 122 texturas do lote e os 145 strips do Bob (267 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script. Para outro servidor local, passe a URL: `node tools/check-assets.mjs http://127.0.0.1:5174`.
+O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 123 texturas do lote e os 145 strips do Bob (268 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script. Para outro servidor local, passe a URL: `node tools/check-assets.mjs http://127.0.0.1:5174`.
 
 O lote está carregado pelo Boot e o mapa de teste usa os tiles reais. Animações e componentes ficam disponíveis para as tarefas de inimigos, chefes, fases e menus; o importador não implementa essas mecânicas.

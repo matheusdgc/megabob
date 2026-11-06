@@ -1,5 +1,5 @@
 """Presentation art and integration layouts; scene flow remains in Phaser."""
-from PIL import Image
+from PIL import Image, ImageDraw
 
 from ui_art import SIZE, INK, frame_panel, ui_text
 
@@ -100,3 +100,41 @@ def gallery(images):
         ui_text(result, (x + 8, y + 5), label, 10)
         result.alpha_composite(images[key], (x, y + 20))
     return result
+
+
+def end_screen_layout():
+    return dict(
+        viewport=SIZE, filtering='nearest', scaling='integer-fit-letterbox',
+        containerAnchor=[0.5, 0.5], offset=[-240, -135], textBakedIntoAssets=False,
+        ending=dict(background='ending_background', logo=dict(texture='title_logo_night', position=[240, 16], size=[224, 48]),
+                    heading=dict(position=[248, 78], fontSize=13),
+                    thanks=dict(position=[248, 100], fontSize=12),
+                    creditClipRect=[248, 132, 216, 90],
+                    creditText='Use verified runtime credits; no sample names are provided.'),
+        gameOver=dict(panel=dict(texture='reward_panel', position=[32, 39]),
+                      bob=dict(texture='bob_hurt', frame=0, position=[54, 90], integerScale=2),
+                      heading=dict(position=[168, 74], fontSize=24),
+                      description=dict(position=[168, 116], fontSize=10, lineHeight=18),
+                      action=dict(center=[240, 204], rect=[118, 188, 244, 32], fontSize=12,
+                                  label='VOLTAR À SELEÇÃO', initialFocus=True),
+                      controls='Scene resolves confirm binding; art does not handle input.'),
+    )
+
+
+def end_screen_previews(load):
+    config = end_screen_layout()
+    ending = load('ui/ending_background')
+    ending.alpha_composite(load('ui/title_logo_night'), (240, 16))
+    ui_text(ending, (248, 78), 'SISTEMA RESTAURADO', 13)
+    ui_text(ending, (248, 100), 'Obrigado por jogar!', 12)
+    # The quiet region below stays empty for actual credits supplied by the scene.
+    game_over = Image.new('RGBA', SIZE, INK)
+    game_over.alpha_composite(load('ui/reward_panel'), (32, 39))
+    bob = load('bob/bob_hurt').crop((0, 0, 48, 48)).resize((96, 96), Image.Resampling.NEAREST)
+    game_over.alpha_composite(bob, (54, 90))
+    ui_text(game_over, (168, 74), 'GAME OVER', 24, (241, 194, 27, 255))
+    ui_text(game_over, (168, 116), 'A compilação foi interrompida.', 10)
+    ui_text(game_over, (168, 134), 'Hora de tentar outra vez.', 10)
+    ImageDraw.Draw(game_over).rectangle((118, 188, 361, 219), outline=(69, 137, 255, 255), width=2)
+    ui_text(game_over, (240, 198), 'VOLTAR À SELEÇÃO', 12, anchor='mt')
+    return {'ending': ending, 'game-over': game_over}, config

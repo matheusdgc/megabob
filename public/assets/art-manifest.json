@@ -2816,5 +2816,21 @@
     "frameHeight": 192,
     "frames": 1,
     "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "ending_background",
+    "group": "ui",
+    "file": "assets/ui/ending_background.png",
+    "frameWidth": 480,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "ui/U5_ending_bg.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
   }
 ]

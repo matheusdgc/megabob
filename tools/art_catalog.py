@@ -126,6 +126,8 @@ def catalog():
                     (256, 224), opaque=True, stretch=True))
     out.append(spec('ui', 'title_background_wide', 'ui/U2_title_bg_wide', 1, 1, [(0, 0)],
                     (480, 270), opaque=True, stretch=True))
+    out.append(spec('ui', 'ending_background', 'ui/U5_ending_bg', 1, 1, [(0, 0)],
+                    (480, 270), opaque=True, stretch=True))
     for key, rectangle, size in [('stage_select', (0, 0, .785, 1), (256, 224)),
                                   ('stage_locked', (.785, 0, 1, 1), (48, 48))]:
         out.append(spec('ui', key, 'ui/U3_stage_select', 1, 1, [(0, 0)], size, rects=[rectangle]))

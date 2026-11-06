@@ -128,7 +128,45 @@ try {
     await writeFile(join(output, `browser-presentation-${kind}.png`), Buffer.from(screenshot.data, 'base64'));
     presentations.push(kind);
   }
-  const report = { scenes, presentations, errors, warnings, failedRequests };
+  const endLayout = JSON.parse(await readFile(join(root, 'art/exports/end-screen-layout.json'), 'utf8'));
+  const endScreens = [];
+  for (const kind of ['ending', 'gameOver']) {
+    const result = await send('Runtime.evaluate', {
+      expression: `(() => {
+        const game = window.__game, kind = ${JSON.stringify(kind)}, layout = ${JSON.stringify(endLayout)};
+        game.scene.remove('ArtPresentationCheck');
+        game.scene.add('ArtPresentationCheck', { create() {
+          this.cameras.main.setBackgroundColor('#161616');
+          const cfg = layout[kind], x = this.scale.width / 2 - 240, y = this.scale.height / 2 - 135;
+          const text = (slot, value, color = '#e0e0e0') => this.add.text(
+            x + slot.position[0], y + slot.position[1], value,
+            { fontFamily: 'monospace', fontSize: slot.fontSize + 'px', color });
+          if (kind === 'ending') {
+            this.add.image(x, y, cfg.background).setOrigin(0);
+            this.add.image(x + cfg.logo.position[0], y + cfg.logo.position[1], cfg.logo.texture).setOrigin(0);
+            text(cfg.heading, 'SISTEMA RESTAURADO'); text(cfg.thanks, 'Obrigado por jogar!');
+          } else {
+            this.add.image(x + cfg.panel.position[0], y + cfg.panel.position[1], cfg.panel.texture).setOrigin(0);
+            this.add.sprite(x + cfg.bob.position[0], y + cfg.bob.position[1], cfg.bob.texture, cfg.bob.frame).setOrigin(0).setScale(2);
+            text(cfg.heading, 'GAME OVER', '#f1c21b');
+            text(cfg.description, 'A compilação foi interrompida.\\nHora de tentar outra vez.');
+            const [rx, ry, rw, rh] = cfg.action.rect;
+            this.add.rectangle(x + rx, y + ry, rw, rh).setOrigin(0).setStrokeStyle(2, 0x4589ff);
+            this.add.text(x + cfg.action.center[0], y + cfg.action.center[1], cfg.action.label,
+              { fontFamily: 'monospace', fontSize: cfg.action.fontSize + 'px', color: '#e0e0e0' }).setOrigin(0.5);
+          }
+        } }, true);
+        return game.scene.isActive('ArtPresentationCheck');
+      })()`,
+      returnByValue: true,
+    });
+    if (result.exceptionDetails || result.result.value !== true) throw new Error('End screen art scene failed');
+    await sleep(300);
+    const screenshot = await send('Page.captureScreenshot', { format: 'png' });
+    await writeFile(join(output, `browser-end-screen-${kind}.png`), Buffer.from(screenshot.data, 'base64'));
+    endScreens.push(kind);
+  }
+  const report = { scenes, presentations, endScreens, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));
