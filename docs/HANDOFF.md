@@ -1,6 +1,6 @@
 # Handoff: estado do projeto
 
-> Atualizado em 06/11/2026, no fim da T7 (editor). Branch `dev`.
+> Atualizado em 06/11/2026, no fim da T8 (editor). Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)
@@ -17,8 +17,9 @@
 | T5 | Tiro: básico (máx. 3 na tela), carga em 2 níveis (3 com o bit de braço), aura, flash do cano, pose de tiro em todos os estados |
 | T6 | Vida (28), recuo sem controle e piscar, espinhos e poço matam, descompilação (`fx_decompile`), 3 vidas, barra de vida (`src/ui/Hud.ts`). A Firewall Plating (bit 4) corta o dano pela metade e encurta o recuo |
 | T7 | Inimigos: base `Enemy` (vida, dano por contato, flash, explosão `fx_explosion`), Pixel Mite (anda e vira em paredes e beiradas) e Spam Drone (paira e mergulha). Marcadores `m`/`d` no mapa. Itens com tabela de drop (`src/data/drops.ts`), piscam e somem. Tiros carregados (nível 2+) atravessam o inimigo que destroem |
+| T8 | Câmera por seções (`src/systems/camera.ts`, `TEST_SECTIONS` em tiles): a câmera nunca sai da seção atual, e a troca de seção desliza a câmera com o jogo congelado. Inimigos pertencem a uma seção e renascem ao reentrar. Checkpoint (`C`) muda o ponto de respawn. Porta do chefe (`B`) abre ao encostar, leva o Bob sozinho, fecha atrás e emite `bossIntro`; a sala do chefe é `locked` |
 
-São 332 testes TypeScript e 13 testes Python passando; typecheck e build também passam. O smoke test de arte confere 244 texturas nas cenas Debug e Stage, sem erros ou avisos no console/rede.
+São 343 testes TypeScript e 13 testes Python passando; typecheck e build também passam. O smoke test de arte confere 244 texturas nas cenas Debug e Stage, sem erros ou avisos no console/rede.
 
 **Mudança importante:** a lógica da fase roda no evento `worldstep` da física (60 Hz fixos), e não no `update()` da cena. Antes, em monitores de 120 Hz ou mais, tudo o que conta quadros ficava 2 a 4 vezes mais rápido. Lógica nova que conte quadros deve entrar em `StageScene.tick()`.
 
@@ -30,16 +31,14 @@ São 332 testes TypeScript e 13 testes Python passando; typecheck e build també
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
 - **Licenças da trilha:** o usuário pediu para ignorar por enquanto. Faltam as faixas 05, 07, 08 e 09 em `docs/soundtrack.md`.
 
-## Próximo passo: T8 (seções, checkpoint e porta)
+## Próximo passo: T9 (chefe base e Memory Leak)
 
-Veja os detalhes em `tasks/todo.md`. Pontos de partida:
+O Checkpoint 2 está pronto para o usuário jogar: o mapa de teste vai do início à sala do chefe, com inimigos, itens, morte e checkpoint. Depois vem a T9. Pontos de partida:
 
-- **Respawn:** hoje a morte volta ao `P` do mapa (`StageScene.afterDeath()`), e os inimigos renascem via `spawnEnemies()`. O checkpoint deve trocar o ponto de respawn.
-- **Arte pronta:** `checkpoint` (16×32, 2 quadros: desligado e ligado) e `boss_door` (32×48, 3 quadros) em `src/data/processedArt.ts`.
-- **Energia de arma:** o item de energia só emite `weaponEnergy` na cena. O sistema de armas (T10) deve escutar esse evento.
-- **Overlap entre grupos:** o Arcade pode entregar o par em qualquer ordem, por isso a `StageScene` identifica cada lado pelo tipo (`pick`). Faça o mesmo em overlaps novos.
-
-Depois vêm T7 (inimigos e itens) e T8 (seções, checkpoint e porta). Isso fecha o Checkpoint 2.
+- **Entrada do chefe:** a `StageScene` emite `bossIntro` quando a porta fecha atrás do Bob. A sala do chefe do mapa de teste é a seção 2 (colunas 80-109, linhas 11-27). O chefe deve aparecer ali.
+- **Arte pronta:** `boss_memory_leak` (96×80, 8 quadros), `memory_goo` e `memory_puddle` (projéteis), `fx_boss_explosion` e `portrait_memory_leak`, todos em `src/data/processedArt.ts`.
+- **Morte na sala do chefe:** `respawnBob()` volta ao checkpoint e reabre a porta (`door.reset()`). O chefe precisa ser removido ou reiniciado nesse momento.
+- **Porta:** depois do `shut`, o corpo da porta bloqueia a volta. A porta fica na borda esquerda da sala, fora da vista da câmera.
 
 ## Arte
 

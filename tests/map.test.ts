@@ -22,7 +22,7 @@ describe('parseMap', () => {
 
   it('the movement test map is valid', () => {
     const m = parseMap(TEST_MAP);
-    expect(m.cols).toBe(48);
+    expect(m.cols).toBe(110);
     expect(m.rows).toBe(28);
   });
 });
@@ -36,5 +36,16 @@ describe('enemy markers', () => {
     ]);
     expect(m.tiles[0]![3]).toBe(T.wall);
     expect(m.tiles[1]![2]).toBe(T.empty); // left of the mite is the P cell
+  });
+});
+
+describe('object markers', () => {
+  it('places checkpoints and the boss door at the bottom-left of their cell', () => {
+    const m = parseMap(['#P-C-B#', '#######']);
+    expect(m.objects).toEqual([
+      { kind: 'checkpoint', x: 48, y: 16 },
+      { kind: 'bossDoor', x: 80, y: 16 },
+    ]);
+    expect(m.tiles[0]![3]).toBe(T.wall);
   });
 });

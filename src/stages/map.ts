@@ -23,6 +23,17 @@ const LEGEND: Record<string, number> = {
 export const ENEMY_MARKERS = { m: 'pixelMite', d: 'spamDrone' } as const;
 export type EnemyKind = (typeof ENEMY_MARKERS)[keyof typeof ENEMY_MARKERS];
 
+/** Stage object markers (same tile rule as enemies). `B` is the bottom-left cell of the door. */
+export const OBJECT_MARKERS = { C: 'checkpoint', B: 'bossDoor' } as const;
+export type ObjectKind = (typeof OBJECT_MARKERS)[keyof typeof OBJECT_MARKERS];
+
+export interface MapObject {
+  kind: ObjectKind;
+  /** Bottom-left corner of the marker cell, in pixels. */
+  x: number;
+  y: number;
+}
+
 export interface MapEnemy {
   kind: EnemyKind;
   /** Bottom-center of the marker cell, in pixels. */
@@ -38,17 +49,20 @@ export interface ParsedMap {
   /** Player spawn: feet position in pixels (bottom-center of the P cell). */
   spawn: { x: number; y: number };
   enemies: MapEnemy[];
+  objects: MapObject[];
 }
 
 /**
  * Parse an ASCII stage map. Every row must have the same width and exactly one `P`.
- * Lowercase enemy markers (`ENEMY_MARKERS`) place enemies.
+ * Lowercase enemy markers (`ENEMY_MARKERS`) place enemies; `OBJECT_MARKERS` place checkpoints
+ * and the boss door.
  */
 export function parseMap(rows: readonly string[]): ParsedMap {
   if (rows.length === 0) throw new Error('empty map');
   const cols = rows[0]!.length;
   let spawn: ParsedMap['spawn'] | undefined;
   const enemies: MapEnemy[] = [];
+  const objects: MapObject[] = [];
   const tiles = rows.map((row, r) => {
     if (row.length !== cols) throw new Error(`row ${r} is ${row.length} wide, expected ${cols}`);
     const out: number[] = [];
@@ -56,6 +70,12 @@ export function parseMap(rows: readonly string[]): ParsedMap {
       const kind = ENEMY_MARKERS[ch as keyof typeof ENEMY_MARKERS];
       if (kind) {
         enemies.push({ kind, x: c * TILE + TILE / 2, y: (r + 1) * TILE });
+        out.push(c > 0 ? out[c - 1]! : T.empty);
+        return;
+      }
+      const object = OBJECT_MARKERS[ch as keyof typeof OBJECT_MARKERS];
+      if (object) {
+        objects.push({ kind: object, x: c * TILE, y: (r + 1) * TILE });
         out.push(c > 0 ? out[c - 1]! : T.empty);
         return;
       }
@@ -70,5 +90,5 @@ export function parseMap(rows: readonly string[]): ParsedMap {
     return out;
   });
   if (!spawn) throw new Error('map has no P (player spawn)');
-  return { tiles, cols, rows: rows.length, spawn, enemies };
+  return { tiles, cols, rows: rows.length, spawn, enemies, objects };
 }

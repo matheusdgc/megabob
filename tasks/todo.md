@@ -101,16 +101,16 @@ Classe base `Enemy` (HP, dano por contato, drop) com Pixel Mite e Spam Drone. It
 **Verificar:** jogar o mapa de teste com inimigos · **Dep.:** T6
 **Arquivos:** `src/entities/Enemy.ts`, `src/entities/enemies/PixelMite.ts`, `src/entities/enemies/SpamDrone.ts`, `src/entities/Pickup.ts`, `src/data/drops.ts`
 
-### T8: Seções, checkpoint e porta [M]
+### T8: Seções, checkpoint e porta [M] ✅
 Câmera por seções com transição, terminal de checkpoint, porta do chefe que trava a câmera e os inimigos voltando ao reentrar numa seção.
-- [ ] A câmera nunca mostra fora da seção atual
-- [ ] Passar pela porta trava a sala e dispara o evento `bossIntro`
+- [x] A câmera nunca mostra fora da seção atual
+- [x] Passar pela porta trava a sala e dispara o evento `bossIntro`
 
 **Verificar:** jogar o mapa de teste completo · **Dep.:** T7
 **Arquivos:** `src/systems/camera.ts`, `src/entities/Checkpoint.ts`, `src/entities/BossDoor.ts`, `src/stages/test.ts`
 
 ## ✅ Checkpoint 2
-- [ ] Testes, typecheck e build passam
+- [x] Testes, typecheck e build passam
 - [ ] O mapa de teste é jogável do início à porta do chefe, com inimigos, itens, morte e checkpoint
 
 ---
