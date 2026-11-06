@@ -5,7 +5,7 @@ import { jumpMetrics, reachable, ReachSim } from '../src/systems/reach';
 
 /** A 30-wide strip: floor on the bottom two rows, `gap` empty columns from column 10. */
 function strip(gap: number, extra: (rows: string[][]) => void = () => {}): string[] {
-  const rows = Array.from({ length: 10 }, (_, r) => Array.from({ length: 30 }, () => (r >= 8 ? '#' : '.')));
+  const rows = Array.from({ length: 10 }, (_, r) => Array.from({ length: 30 }, (): string => (r >= 8 ? '#' : '.')));
   for (let c = 10; c < Math.min(30, 10 + gap); c++) for (const r of [8, 9]) rows[r]![c] = '.';
   rows[7]![3] = 'P';
   extra(rows);

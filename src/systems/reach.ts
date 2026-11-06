@@ -64,10 +64,6 @@ export class ReachSim {
     return this.map.tiles[r]?.[c] ?? T.empty;
   }
 
-  private solidAt(px: number, py: number): boolean {
-    return this.tile(Math.floor(px / TILE), Math.floor(py / TILE)) === T.solid;
-  }
-
   /** Any solid tile (or the closed boss door) overlapping the rectangle. */
   private blocked(x: number, y: number, w: number, h: number): { tx: number; ty: number } | null {
     const d = this.door;
