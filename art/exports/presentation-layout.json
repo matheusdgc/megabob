@@ -1,0 +1,129 @@
+{
+  "viewport": [
+    480,
+    270
+  ],
+  "filtering": "nearest",
+  "scaling": "integer-fit-letterbox",
+  "containerAnchor": [
+    0.5,
+    0.5
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "textBakedIntoAssets": false,
+  "boss": {
+    "texture": "boss_intro_panel",
+    "size": [
+      416,
+      112
+    ],
+    "offset": [
+      -208,
+      -56
+    ],
+    "portrait": {
+      "position": [
+        16,
+        8
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "integerScale": 2
+    },
+    "heading": {
+      "position": [
+        136,
+        22
+      ],
+      "fontSize": 10
+    },
+    "name": {
+      "position": [
+        136,
+        48
+      ],
+      "fontSize": 20,
+      "maxWidth": 264
+    },
+    "caption": {
+      "position": [
+        136,
+        82
+      ],
+      "fontSize": 10
+    }
+  },
+  "reward": {
+    "texture": "reward_panel",
+    "size": [
+      416,
+      192
+    ],
+    "offset": [
+      -208,
+      -96
+    ],
+    "bob": {
+      "position": [
+        16,
+        50
+      ],
+      "size": [
+        96,
+        96
+      ],
+      "frame": 1,
+      "integerScale": 2
+    },
+    "heading": {
+      "position": [
+        136,
+        20
+      ],
+      "fontSize": 12
+    },
+    "name": {
+      "position": [
+        136,
+        48
+      ],
+      "fontSize": 17,
+      "maxWidth": 264
+    },
+    "description": {
+      "position": [
+        136,
+        116
+      ],
+      "fontSize": 11,
+      "lineHeight": 16,
+      "maxWidth": 264
+    },
+    "icon": {
+      "position": [
+        136,
+        78
+      ],
+      "size": [
+        32,
+        32
+      ],
+      "integerScale": 2
+    },
+    "footer": {
+      "position": [
+        208,
+        172
+      ],
+      "fontSize": 10,
+      "align": "center"
+    },
+    "prompt": "Resolve the current confirm binding in the scene; do not bake a key."
+  },
+  "previewWeaponBindings": "Q / E (default only)"
+}

@@ -2798,5 +2798,23 @@
     "frameHeight": 208,
     "frames": 1,
     "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "boss_intro_panel",
+    "group": "ui",
+    "file": "assets/ui/boss_intro_panel.png",
+    "frameWidth": 416,
+    "frameHeight": 112,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "reward_panel",
+    "group": "ui",
+    "file": "assets/ui/reward_panel.png",
+    "frameWidth": 416,
+    "frameHeight": 192,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
   }
 ]

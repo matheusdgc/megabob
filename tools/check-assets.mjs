@@ -90,7 +90,45 @@ try {
     await writeFile(join(output, `browser-assets-${scene.toLowerCase()}.png`), Buffer.from(screenshot.data, 'base64'));
     scenes.push({ scene, verifiedTextures: manifest.length });
   }
-  const report = { scenes, errors, warnings, failedRequests };
+  // Temporary QA scene: inspect new art in Phaser without editing production scenes.
+  const layout = JSON.parse(await readFile(join(root, 'art/exports/presentation-layout.json'), 'utf8'));
+  const presentations = [];
+  for (const kind of ['boss', 'reward']) {
+    const result = await send('Runtime.evaluate', {
+      expression: `(() => {
+        const game = window.__game, kind = ${JSON.stringify(kind)}, layout = ${JSON.stringify(layout)};
+        const cfg = layout[kind];
+        if (game.scene.keys.ArtPresentationCheck) game.scene.remove('ArtPresentationCheck');
+        game.scene.add('ArtPresentationCheck', { create() {
+          this.cameras.main.setBackgroundColor('#161616');
+          const x = this.scale.width / 2 + cfg.offset[0], y = this.scale.height / 2 + cfg.offset[1];
+          this.add.image(x, y, cfg.texture).setOrigin(0);
+          const text = (slot, value, color = '#e0e0e0') => this.add.text(
+            x + slot.position[0], y + slot.position[1], value,
+            { fontFamily: 'monospace', fontSize: slot.fontSize + 'px', color });
+          if (kind === 'boss') {
+            this.add.image(x + cfg.portrait.position[0], y + cfg.portrait.position[1], 'portrait_memory_leak').setOrigin(0).setScale(2);
+            text(cfg.heading, 'CHEFE DETECTADO', '#08bdba');
+            text(cfg.name, 'MEMORY LEAK'); text(cfg.caption, 'PREPARE-SE', '#08bdba');
+          } else {
+            this.add.sprite(x + cfg.bob.position[0], y + cfg.bob.position[1], 'bob_victory_a8', cfg.bob.frame).setOrigin(0).setScale(2);
+            this.add.sprite(x + cfg.icon.position[0], y + cfg.icon.position[1], 'armor_legs', 0).setOrigin(0).setScale(2);
+            text(cfg.heading, 'UPGRADE INSTALADO', '#4589ff'); text(cfg.name, 'TURBO BOOTS');
+            text(cfg.description, 'Libera um dash no ar\\na cada pulo.');
+            text(cfg.footer, 'FIRMWARE ATUALIZADO', '#4589ff').setOrigin(0.5, 0);
+          }
+        } }, true);
+        return game.scene.isActive('ArtPresentationCheck');
+      })()`,
+      returnByValue: true,
+    });
+    if (result.exceptionDetails || result.result.value !== true) throw new Error('Presentation scene failed');
+    await sleep(300);
+    const screenshot = await send('Page.captureScreenshot', { format: 'png' });
+    await writeFile(join(output, `browser-presentation-${kind}.png`), Buffer.from(screenshot.data, 'base64'));
+    presentations.push(kind);
+  }
+  const report = { scenes, presentations, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));

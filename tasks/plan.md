@@ -73,6 +73,10 @@ Derivar uma moldura de medidor com canal de 6×56 para 28 segmentos de 1 px sepa
 
 Normalizar blocos/bordas/perigos para preencher seus quadros 16×16 e plataformas para ocupar a largura e começar no topo, mantendo o perfil fino; não alterar as colisões. Preparar variantes das doze camadas em 512×270: FAR/MID ancoradas embaixo e NEAR no alto, mantendo a escala da arte e as bordas periódicas. Preservar as camadas 512×224. Exportar quatro composições de demonstração em 480×270 e uma galeria com os temas, sem alterar os mapas da outra sessão. Testar preservação dos pixels, ancoragem, transparência e repetição horizontal; validar assets, build e navegador.
 
+### T4b — apresentação de chefes e recompensas
+
+Derivar duas molduras vazias da U4 para entrada de chefe e recompensa, preservando cantos e paleta. Compor prévias nativas dos quatro retratos de chefes, três armas e quatro peças, reutilizando o Bob com a peça correspondente. Exportar medidas locais a um container central e manter textos fora das texturas. Validar dimensões, paleta, alpha, carregamento no Phaser e as verificações do projeto. Fluxo de cenas, controles e efeitos das recompensas continuam com a outra sessão.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

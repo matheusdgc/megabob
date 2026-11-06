@@ -20,6 +20,7 @@ from ui_art import (
     pause_preview, PAUSE_POSITION, PAUSE_SIZE, METER_CHANNEL,
 )
 from stage_art import extend_view, environment_preview, tile_repeat_preview, environment_gallery, quiet_legacy_layer, THEMES
+from presentation_art import presentation_assets, previews as presentation_previews, gallery as presentation_gallery
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW, OUT, PREVIEW = ROOT / 'art/raw', ROOT / 'public/assets', ROOT / 'art/preview'
@@ -400,8 +401,21 @@ def run(group='all'):
                       armorCenters=dict(head=[288, 118], arm=[360, 118], body=[288, 178], legs=[360, 178]),
                       armorIconSize=32, armorSourceFrames=dict(collected=0, inactive=1))
         (exports / 'hud-pause-layout.json').write_text(json.dumps(layout, indent=2) + '\n', encoding='utf-8')
+        presentation = presentation_assets(Image.open(OUT / 'ui/pause_panel.png'))
+        for key, image in presentation.items():
+            entries.append(save_asset(image, 'ui', key, image.size, 'ui/U4_hud.png'))
+        screens, presentation_layout = presentation_previews(
+            presentation, lambda key: Image.open(OUT / (key + '.png')).convert('RGBA'))
+        for name, image in screens.items():
+            image.save(exports / ('megabob-' + name + '-preview.png'))
+        presentation_gallery(screens).save(exports / 'megabob-presentations.png')
+        (exports / 'presentation-layout.json').write_text(
+            json.dumps(presentation_layout, indent=2) + '\n', encoding='utf-8')
     if before != hashes():
         raise RuntimeError('raw source hashes changed during import')
+    # Partial jobs replace their entries in place, keeping unrelated manifest rows stable.
+    previous_order = {entry['key']: i for i, entry in enumerate(previous)}
+    entries.sort(key=lambda entry: previous_order.get(entry['key'], len(previous_order)))
     path.write_text(json.dumps(entries, indent=2) + '\n', encoding='utf-8')
     register(entries)
     for category in selected:

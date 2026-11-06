@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "boss_intro_panel_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 112
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 112
+      },
+      "sourceSize": {
+        "w": 416,
+        "h": 112
+      }
+    }
+  },
+  "meta": {
+    "image": "boss_intro_panel.png",
+    "size": {
+      "w": 416,
+      "h": 112
+    },
+    "scale": "1"
+  }
+}
