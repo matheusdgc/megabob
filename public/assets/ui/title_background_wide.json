@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "title_background_wide_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 480,
+        "h": 270
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 480,
+        "h": 270
+      },
+      "sourceSize": {
+        "w": 480,
+        "h": 270
+      }
+    }
+  },
+  "meta": {
+    "image": "title_background_wide.png",
+    "size": {
+      "w": 480,
+      "h": 270
+    },
+    "scale": "1"
+  }
+}

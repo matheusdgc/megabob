@@ -12,8 +12,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter
 
-from palette import nearest, _dist
-from sprites import frame_ranges, is_magenta, pixels
+from palette import nearest, PALETTE, _dist
+from sprites import frame_ranges, is_magenta, pixels, remove_specks
 from art_catalog import EXISTING_FX, REFERENCE_ONLY, catalog
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -199,6 +199,37 @@ def hashes():
             for path in sorted(RAW.rglob('*.png'))}
 
 
+def night_logo(image):
+    """A one-pixel light keyline keeps the striped wordmark readable over navy skies."""
+    # The declared palette starts with six neutrals and five IBM blues. Avoid magenta
+    # background fringe mapping to purple in this blue-only logo variant.
+    allowed = PALETTE[:11]
+    colors = {rgb: min(allowed, key=lambda color: _dist(rgb, color))
+              for rgb in {pixel[:3] for pixel in pixels(image) if pixel[3]}}
+    result = image.copy()
+    result.putdata([(*colors[(r, g, b)], 255) if a else (0, 0, 0, 0)
+                    for r, g, b, a in pixels(image)])
+    remove_specks(result, 2)
+    outline = Image.new('RGBA', result.size, (166, 200, 255, 255))
+    outline.putalpha(result.getchannel('A').filter(ImageFilter.MaxFilter(3)))
+    outline.alpha_composite(result)
+    return outline
+
+
+def title_preview():
+    """Art-only layout at the approved 480x270 viewport; menu text stays in game code."""
+    exports = ROOT / 'art/exports'
+    exports.mkdir(parents=True, exist_ok=True)
+    image = Image.open(OUT / 'ui/title_background_wide.png').convert('RGBA')
+    logo = Image.open(OUT / 'ui/title_logo_night.png').convert('RGBA')
+    image.alpha_composite(logo.resize((448, 96), Image.Resampling.NEAREST), (16, 8))
+    image.save(exports / 'megabob-title-preview.png')
+    image.resize((960, 540), Image.Resampling.NEAREST).save(PREVIEW / 'title_wide_2x.png')
+    prompt = RAW / 'ui/U2_title_bg_wide.prompt.txt'
+    if prompt.exists():
+        (exports / 'megabob-title-wide.prompt.txt').write_text(prompt.read_text(encoding='utf-8'), encoding='utf-8')
+
+
 def register(entries):
     """Generated TS has no Python/runtime dependency and uses the existing Boot loader."""
     declarations = []
@@ -250,6 +281,8 @@ def run(group='all'):
             regions = [grids[grid_key][position] for position in item['selection']]
         result = pack(regions, item['size'], item['fit'], item.get('empty', ()),
                       item.get('anchor', 'center'), item.get('stretch', False))
+        if item['key'] == 'title_logo_night':
+            result = night_logo(result)
         if item['key'] == 'tech_laser':
             result = periodic(result, 2)
         entry = save_asset(result, item['group'], item['key'], item['size'], source,
@@ -264,6 +297,8 @@ def run(group='all'):
     register(entries)
     for category in selected:
         preview([e for e in entries if e['group'] == category], category)
+    if 'ui' in selected:
+        title_preview()
     legacy = [f'bob/{name}.png' for name in ['B2_idle', 'B3_run', 'B4_jump_fall', 'B5_shoot',
               'B6_dash', 'B7_wall', 'B8_hurt', 'B9_compile_in', 'B10_victory']]
     legacy += ['bob_armor/A2_' + Path(name).name for name in legacy] + ['bob_armor/A2_air_dash.png']

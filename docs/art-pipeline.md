@@ -13,10 +13,23 @@ Categorias disponíveis: `fx`, `enemies`, `bosses`, `icons`, `tiles`, `bg` e `ui
 ## Entradas e saídas
 
 - Fontes: `art/raw/`, com os prompts ao lado. O importador compara os hashes SHA-256 antes e depois e falha se alguma fonte mudar.
-- Jogo: 99 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
+- Jogo: 101 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
 - Registro: `public/assets/art-manifest.json` e `src/data/processedArt.ts`, ambos gerados. `src/data/assets.ts` conserva as chaves anteriores e inclui os novos registros.
 - Revisão: contatos, repetições de fundos e `art_report.json` em `art/preview/`, fora do Git. O relatório distingue fontes processadas, conceitos de referência e fontes do pipeline anterior do Bob.
 - Logo: `art/exports/megabob-logo.png`, recortada com transparência e resolução da fonte; `public/assets/ui/title_logo.png`, versão 224×48 para o jogo. A versão atual tem lettering MEGABOB com faixas azuis inspiradas na referência IBM. A anterior está preservada em `art/raw/ui/U1_logo-original.png`.
+
+## Composição do título em 480×270
+
+A fonte adicional `art/raw/ui/U2_title_bg_wide.png` foi gerada com `imagegen`, usando U2 como referência, e recomposta em 16:9. Bob permanece inteiro no canto inferior esquerdo, com céu livre para a logo. O fundo original 256×224 continua disponível.
+
+| Elemento | Textura | Posição e escala sugeridas |
+|---|---|---|
+| Fundo panorâmico | `title_background_wide`, 480×270 | `(0, 0)`, origem superior esquerda, escala 1 |
+| Logo sobre o céu | `title_logo_night`, 224×48 | `(16, 8)`, origem superior esquerda, escala 2 |
+
+`title_logo_night` deriva da mesma fonte da logo: azuis/neutros, remoção de pixels isolados e contorno claro de 1 px para separar as letras do céu. A versão original fica intacta. A margem interna evita cortar o contorno.
+
+`py -3 tools/art.py ui` também monta `art/exports/megabob-title-preview.png` (480×270) e a ampliação nearest-neighbor `art/preview/title_wide_2x.png`. O prompt do fundo está em `art/exports/megabob-title-wide.prompt.txt`. A prévia é uma composição de arte; a cena, os textos e a navegação do menu ficam para T13.
 
 ## Regras do processamento
 
@@ -38,6 +51,6 @@ npm.cmd run build
 node tools/check-assets.mjs
 ```
 
-O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 99 texturas do lote e os 145 strips do Bob (244 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script.
+O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 101 texturas do lote e os 145 strips do Bob (246 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script.
 
 O lote está carregado pelo Boot e o mapa de teste usa os tiles reais. Animações e componentes ficam disponíveis para as tarefas de inimigos, chefes, fases e menus; o importador não implementa essas mecânicas.

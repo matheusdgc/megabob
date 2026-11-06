@@ -1,6 +1,6 @@
 # Pendências de arte
 
-O lote novo de 99 strips/imagens passou nas verificações de recorte, dimensões, transparência, paleta e carregamento. A montagem das fases e dos menus ainda precisa de revisão no contexto de cada tela.
+O lote atual de 101 strips/imagens passou nas verificações de recorte, dimensões, transparência, paleta e carregamento. A montagem das fases e dos menus ainda precisa de revisão no contexto de cada tela.
 
 Correção de enquadramento concluída:
 
@@ -12,3 +12,5 @@ Correção de composição concluída:
 - `compile[0]` é um efeito neutro de partículas, sem partes do corpo. Agora todas as 16 combinações usam os mesmos pixels e a mesma posição do Bob base. O relatório registra esse quadro em `shared_effect_frames`; os outros quatro continuam usando a arte de cada combinação.
 
 O relatório atual do Bob está sem avisos de recorte ou sobreposição. As fontes não foram alteradas. A revisão das animações no contexto das fases e menus continua nas tarefas correspondentes; os recortes anatômicos anotados acima são específicos das duas poses B6.
+
+Título panorâmico: fundo 480×270 recomposto em 16:9 com `imagegen`, mantendo a fonte U2 original, e variante `title_logo_night` com contorno claro. Prévia em `art/exports/megabob-title-preview.png`; layouts e arquivos em `docs/art-pipeline.md`.

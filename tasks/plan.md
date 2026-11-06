@@ -59,6 +59,10 @@ Na revisão de composição, compartilhar o efeito neutro `compile[0]` entre as 
 
 ## Paralelização
 
+### T4b — título em 480×270
+
+Gerar uma fonte panorâmica adicional a partir de U2 com `imagegen`, preservando o original e a identidade do Bob. Processar `title_background_wide` e derivar `title_logo_night` com contorno claro. Registrar as duas texturas, montar uma prévia com a logo a 2× e documentar coordenadas para T13. Conferir paleta, dimensões, integridade das fontes e carregamento das 246 texturas. Não alterar cenas, controles ou mecânicas da outra sessão.
+
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.
 - **T14 e T15** (Race Condition e Null Pointer) mexem em arquivos separados (`stages/`, `bosses/`, `enemies/` de cada uma) depois que a T12 fixar o padrão de fase. Podem rodar em sessões paralelas, se você quiser.
 - **T20 (músicas)** é independente depois que o motor de áudio (T11) estiver pronto.

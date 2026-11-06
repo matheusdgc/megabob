@@ -2252,6 +2252,22 @@
     ]
   },
   {
+    "key": "title_logo_night",
+    "group": "ui",
+    "file": "assets/ui/title_logo_night.png",
+    "frameWidth": 224,
+    "frameHeight": 48,
+    "frames": 1,
+    "source": "ui/U1_logo.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
     "key": "title_background",
     "group": "ui",
     "file": "assets/ui/title_background.png",
@@ -2259,6 +2275,22 @@
     "frameHeight": 224,
     "frames": 1,
     "source": "ui/U2_title_bg.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "title_background_wide",
+    "group": "ui",
+    "file": "assets/ui/title_background_wide.png",
+    "frameWidth": 480,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "ui/U2_title_bg_wide.png",
     "emptyFrames": [],
     "sourceCells": [
       [

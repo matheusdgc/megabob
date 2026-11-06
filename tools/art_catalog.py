@@ -118,8 +118,11 @@ def catalog():
                     [(0, 0), (2, 5), (2, 4), (2, 1)], (16, 16)))
 
     out.append(spec('ui', 'title_logo', 'ui/U1_logo', 1, 1, [(0, 0)], (224, 48)))
+    out.append(spec('ui', 'title_logo_night', 'ui/U1_logo', 1, 1, [(0, 0)], (224, 48), (220, 44)))
     out.append(spec('ui', 'title_background', 'ui/U2_title_bg', 1, 1, [(0, 0)],
                     (256, 224), opaque=True, stretch=True))
+    out.append(spec('ui', 'title_background_wide', 'ui/U2_title_bg_wide', 1, 1, [(0, 0)],
+                    (480, 270), opaque=True, stretch=True))
     for key, rectangle, size in [('stage_select', (0, 0, .785, 1), (256, 224)),
                                   ('stage_locked', (.785, 0, 1, 1), (48, 48))]:
         out.append(spec('ui', key, 'ui/U3_stage_select', 1, 1, [(0, 0)], size, rects=[rectangle]))
