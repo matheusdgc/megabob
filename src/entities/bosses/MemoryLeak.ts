@@ -84,6 +84,8 @@ class GooBlob extends Phaser.Physics.Arcade.Sprite {
     this.body.enable = true;
     this.body.setSize(10, 10);
     this.body.setAllowGravity(true);
+    // set on every launch: the physics group's defaults reset gravityY to 0 when it creates a blob
+    this.body.setGravityY(GOO_GRAVITY);
     this.body.setVelocity(vx, GOO_SPEED_Y);
     this.setFrame(0);
   }

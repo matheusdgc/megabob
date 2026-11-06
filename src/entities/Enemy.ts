@@ -9,6 +9,8 @@ export interface EnemyWorld {
   floorAt(x: number, y: number): boolean;
   /** Bob's hitbox center, or null while he is dead. */
   bob(): { x: number; y: number } | null;
+  /** Launch a memory block (Heap Crab) from (x, y). */
+  throwBlock(x: number, y: number, vx: number, vy: number): void;
 }
 
 /**

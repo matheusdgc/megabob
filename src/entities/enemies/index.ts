@@ -1,9 +1,11 @@
 import Phaser from 'phaser';
-import { GRAVITY, MAX_FALL_SPEED } from '../data/tuning';
-import type { EnemyKind } from '../stages/map';
-import { type Drone, type Mite, newDrone, stepDrone, stepMite } from '../systems/enemyAI';
-import { loopAnim } from './effects';
-import { Enemy, type EnemyWorld } from './Enemy';
+import { GRAVITY, MAX_FALL_SPEED } from '../../data/tuning';
+import type { EnemyKind } from '../../stages/map';
+import { type Drone, type Mite, newDrone, stepDrone, stepMite } from '../../systems/enemyAI';
+import { loopAnim } from '../effects';
+import { Enemy, type EnemyWorld } from '../Enemy';
+import { Drip } from './Drip';
+import { HeapCrab } from './HeapCrab';
 
 /** E1 Pixel Mite: crawls along floors, turning at walls and ledges. */
 export class PixelMite extends Enemy {
@@ -61,5 +63,9 @@ export function createEnemy(kind: EnemyKind, scene: Phaser.Scene, x: number, y: 
       return new PixelMite(scene, x, y, world);
     case 'spamDrone':
       return new SpamDrone(scene, x, y, world);
+    case 'drip':
+      return new Drip(scene, x, y, world);
+    case 'heapCrab':
+      return new HeapCrab(scene, x, y, world);
   }
 }
