@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "pause_panel_wide_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 352,
+        "h": 208
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 352,
+        "h": 208
+      },
+      "sourceSize": {
+        "w": 352,
+        "h": 208
+      }
+    }
+  },
+  "meta": {
+    "image": "pause_panel_wide.png",
+    "size": {
+      "w": 352,
+      "h": 208
+    },
+    "scale": "1"
+  }
+}

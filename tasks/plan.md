@@ -65,6 +65,10 @@ Recompor a moldura U3 com bordas preservadas e cinco slots quadrados: Memory Lea
 
 Gerar uma fonte panorâmica adicional a partir de U2 com `imagegen`, preservando o original e a identidade do Bob. Processar `title_background_wide` e derivar `title_logo_night` com contorno claro. Registrar as duas texturas, montar uma prévia com a logo a 2× e documentar coordenadas para T13. Conferir paleta, dimensões, integridade das fontes e carregamento das 246 texturas. Não alterar cenas, controles ou mecânicas da outra sessão.
 
+### T4b — HUD e pausa em 480×270
+
+Derivar uma moldura de medidor com canal de 6×56 para 28 segmentos de 1 px separados por 1 px, segmentos azuis/amarelos e painel vazio de pausa 352×208. Reutilizar os elementos U4, ícones de armas e peças da armadura. Exportar coordenadas, prévia de HUD e pausas de início/equipamento completo, sem gravar texto nos assets nem implementar menus. Verificar que os 28 segmentos cabem, que não há alpha parcial ou cores fora da paleta e que os arquivos carregam na base commitada enquanto a outra sessão cuida das mecânicas.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

@@ -13,7 +13,7 @@ Categorias disponíveis: `fx`, `enemies`, `bosses`, `icons`, `tiles`, `bg` e `ui
 ## Entradas e saídas
 
 - Fontes: `art/raw/`, com os prompts ao lado. O importador compara os hashes SHA-256 antes e depois e falha se alguma fonte mudar.
-- Jogo: 104 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
+- Jogo: 108 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
 - Registro: `public/assets/art-manifest.json` e `src/data/processedArt.ts`, ambos gerados. `src/data/assets.ts` conserva as chaves anteriores e inclui os novos registros.
 - Revisão: contatos, repetições de fundos e `art_report.json` em `art/preview/`, fora do Git. O relatório distingue fontes processadas, conceitos de referência e fontes do pipeline anterior do Bob.
 - Logo: `art/exports/megabob-logo.png`, recortada com transparência e resolução da fonte; `public/assets/ui/title_logo.png`, versão 224×48 para o jogo. A versão atual tem lettering MEGABOB com faixas azuis inspiradas na referência IBM. A anterior está preservada em `art/raw/ui/U1_logo-original.png`.
@@ -45,6 +45,23 @@ Centros: Memory Leak `(240,62)`, Race Condition `(112,135)`, Bob `(240,135)`, Nu
 
 `py -3 tools/art.py ui` exporta `art/exports/stage-select-layout.json` e as prévias `megabob-stage-select-locked.png` / `megabob-stage-select-unlocked.png`. As ampliações em `art/preview/` usam nearest-neighbor. São exemplos visuais de estado; os critérios de liberação, a escolha de fase e o save pertencem à T13.
 
+## HUD e pausa em 480×270
+
+U4 também fornece os componentes abaixo. Os arquivos anteriores continuam disponíveis.
+
+| Textura | Tamanho | Uso |
+|---|---|---|
+| `hud_meter_frame` | 12×72 | Moldura com canal transparente de 6×56, começando em `(3,8)` |
+| `hud_segment_blue` | 6×1 | Segmento de vida |
+| `hud_segment_yellow` | 6×1 | Segmento de energia |
+| `pause_panel_wide` | 352×208 | Painel vazio, centralizado no viewport, canto superior esquerdo `(64,31)` |
+
+O canal comporta 28 segmentos em passo de 2 px (1 px preenchido, 1 px vazio). Para o segmento `i`, de baixo para cima, usar `x = frameX + 3` e `y = frameY + 8 + 56 - 2 - 2*i`. Preencher o fundo do canal com `#161616`. A prévia usa molduras em `(8,10)` e `(26,10)`.
+
+`art/exports/hud-pause-layout.json` registra o painel, medidores, contador de vidas, linhas das armas e centros das quatro peças. Os ícones `armor_*` têm quadro 0 colorido/coletado e quadro 1 cinza/inativo; na pausa de exemplo são ampliados 2× com nearest-neighbor.
+
+Prévias: `megabob-hud-preview.png`, `megabob-pause-start-preview.png` e `megabob-pause-complete-preview.png` em `art/exports/`, com ampliações em `art/preview/`. O cenário é uma composição de demonstração com os assets de Memory Leak. Texto e valores existem só nessas prévias; as texturas de jogo ficam vazias para a integração em T13/T21. As prévias não aplicam efeitos de armas, peças, coleta ou pausa ao jogo.
+
 ## Regras do processamento
 
 O fundo magenta é removido com tolerância, preservando roxos e branco. Os strips usam alpha binário, nearest-neighbor e a paleta de `tools/palette.py`. Cada animação mantém uma escala compartilhada e a ancoragem declarada. Quadros vazios intencionais mantêm seus índices; vazios inesperados e recortes que excedam o quadro são erros.
@@ -65,6 +82,6 @@ npm.cmd run build
 node tools/check-assets.mjs
 ```
 
-O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 104 texturas do lote e os 145 strips do Bob (249 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script. Para outro servidor local, passe a URL: `node tools/check-assets.mjs http://127.0.0.1:5174`.
+O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 108 texturas do lote e os 145 strips do Bob (253 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script. Para outro servidor local, passe a URL: `node tools/check-assets.mjs http://127.0.0.1:5174`.
 
 O lote está carregado pelo Boot e o mapa de teste usa os tiles reais. Animações e componentes ficam disponíveis para as tarefas de inimigos, chefes, fases e menus; o importador não implementa essas mecânicas.

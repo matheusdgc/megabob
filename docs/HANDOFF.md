@@ -12,7 +12,7 @@
 | T4a | Pipeline `tools/sprites.py`: remove o fundo magenta, normaliza a escala pelo capacete, encaixa a armadura por sobreposição e pré-compõe as 15 combinações de peças |
 | T3 | Movimento base (correr, pulo variável, coyote time), parser de mapa ASCII e mapa de teste |
 | T4 | Deslize e chute na parede, dash, dash-jump e dash no ar (só com as Turbo Boots, 1 por pulo) |
-| T4b | Pipeline `py -3 tools/art.py all`: 104 strips/imagens de efeitos, inimigos, chefes, ícones, tiles, fundos e UI registrados no Boot; título e arte de seleção prontos para 480×270. Veja `docs/art-pipeline.md` |
+| T4b | Pipeline `py -3 tools/art.py all`: 108 strips/imagens de efeitos, inimigos, chefes, ícones, tiles, fundos e UI registrados no Boot; título, seleção e componentes de HUD/pausa preparados para 480×270. Veja `docs/art-pipeline.md` |
 | Enquadramento | Resolução interna de 256×224 para 480×270, a pedido do usuário (câmera estava próxima demais). `?view=LxA` compara opções em dev |
 | T5 | Tiro: básico (máx. 3 na tela), carga em 2 níveis (3 com o bit de braço), aura, flash do cano, pose de tiro em todos os estados |
 | T6 | Vida (28), recuo sem controle e piscar, espinhos e poço matam, descompilação (`fx_decompile`), 3 vidas, barra de vida (`src/ui/Hud.ts`). A Firewall Plating (bit 4) corta o dano pela metade e encurta o recuo |
@@ -20,7 +20,7 @@
 | T8 | Câmera por seções (`src/systems/camera.ts`, `TEST_SECTIONS` em tiles): a câmera nunca sai da seção atual, e a troca de seção desliza a câmera com o jogo congelado. Inimigos pertencem a uma seção e renascem ao reentrar. Checkpoint (`C`) muda o ponto de respawn. Porta do chefe (`B`) abre ao encostar, leva o Bob sozinho, fecha atrás e emite `bossIntro`; a sala do chefe é `locked` |
 | T9 | Chefe Memory Leak: `src/systems/boss.ts` (máquina de estados pura intro/fight/dead, dano com i-frames, 15 testes), `src/entities/Boss.ts` (sprite base, dispara `bossDefeated`), `src/entities/bosses/MemoryLeak.ts` (3 padrões: volley de bolhas → poças, afundar/emergir, fúria a 1/3 de vida), `src/ui/BossHealthBar.ts` (barra horizontal com fill na intro). StageScene spawna o chefe no `bossIntro` e reinicia no `afterDeath`. |
 
-São 362 testes TypeScript e 13 testes Python passando; typecheck e build também passam.
+São 366 testes TypeScript e 13 testes Python passando; typecheck e build também passam. O smoke test de arte confere 253 texturas nas cenas Debug e Stage, sem erros ou avisos.
 
 **Mudança importante:** a lógica da fase roda no evento `worldstep` da física (60 Hz fixos), e não no `update()` da cena. Antes, em monitores de 120 Hz ou mais, tudo o que conta quadros ficava 2 a 4 vezes mais rápido. Lógica nova que conte quadros deve entrar em `StageScene.tick()`.
 
@@ -45,12 +45,13 @@ O Checkpoint 3 está desbloqueado quando o Memory Leak for derrotado. Pontos de 
 
 ## Arte
 
-- **Processado:** Bob e armadura pelo pipeline anterior; lote completo de 104 strips/imagens por `tools/art.py`, incluindo ícones B11, terminal A3, peças A4, inimigos, chefes, efeitos, tiles, doze camadas de parallax e interface. Prévia e relatórios em `art/preview/`, fora do Git.
+- **Processado:** Bob e armadura pelo pipeline anterior; lote completo de 108 strips/imagens por `tools/art.py`, incluindo ícones B11, terminal A3, peças A4, inimigos, chefes, efeitos, tiles, doze camadas de parallax e interface. Prévia e relatórios em `art/preview/`, fora do Git.
 - **Reprodução:** `py -3 tools/art.py all`, ou uma categoria. Catálogo em `tools/art_catalog.py`, registro gerado em `src/data/processedArt.ts`. O job antigo `tools/sprites.py fx` continua disponível para o subconjunto anterior. `fx_hit` agora usa FX3, a fonte de impacto correto.
-- **Conferência:** 67 PNGs brutos (65 previstos, fundo panorâmico adicional e backup da logo), hashes inalterados durante a importação, nenhuma fonte sem classificação, bordas horizontais iguais nas doze camadas. Smoke test nas cenas Debug/Stage: 249 texturas (104 do lote e 145 do Bob), sem erros de console/rede. Detalhes em `docs/art-pipeline.md`.
+- **Conferência:** 67 PNGs brutos (65 previstos, fundo panorâmico adicional e backup da logo), hashes inalterados durante a importação, nenhuma fonte sem classificação, bordas horizontais iguais nas doze camadas. Smoke test nas cenas Debug/Stage: 253 texturas (108 do lote e 145 do Bob), sem erros de console/rede. Detalhes em `docs/art-pipeline.md`.
 - **Logo:** nova versão com faixas azuis inspiradas na IBM; export transparente em `art/exports/megabob-logo.png`, versão de jogo em `public/assets/ui/title_logo.png`. Logo anterior preservada em `art/raw/ui/U1_logo-original.png`.
 - **Título panorâmico para T13:** usar `title_background_wide` (480×270) e `title_logo_night` (224×48, com contorno claro sobre o céu). Prévia em `art/exports/megabob-title-preview.png`, com fundo em `(0,0)` e logo em `(16,8)` a 2×. Artes originais preservadas; cena e navegação de menu ficam para T13.
 - **Seleção para T13:** `stage_select_wide` (480×270) com cinco molduras vazias; `stage_locked_wide` (64×64) e `stage_focus` (72×72) separados. Coordenadas em `art/exports/stage-select-layout.json`; prévias `megabob-stage-select-locked.png` e `megabob-stage-select-unlocked.png` em `art/exports/`. Usar retratos existentes sem esticar; a lógica de seleção/liberação não foi alterada nesta fatia.
+- **HUD/pausa para T13/T21:** `hud_meter_frame` (12×72, canal 6×56 para 28 segmentos), `hud_segment_blue` / `hud_segment_yellow` (6×1) e `pause_panel_wide` (352×208). Coordenadas em `art/exports/hud-pause-layout.json` e prévias `megabob-hud-preview.png`, `megabob-pause-start-preview.png`, `megabob-pause-complete-preview.png`. Ícones `armor_*`: quadro 0 coletado, quadro 1 inativo. Texturas sem texto; integração dos valores e menus fica com as tarefas correspondentes.
 - **Referências:** B1, A1 e três conceitos de chefes não geram texturas. Os novos arquivos estão carregados, mas seu uso nas mecânicas e menus depende das tarefas seguintes.
 - **Armadura revisada:** enquadramento dentro dos 48×48, escala compartilhada no air dash, partículas neutras de `compile[0]` iguais nas 16 combinações e divisões anatômicas específicas de `dash[1,3]`. O relatório do Bob está sem avisos. Prévia em `art/preview/bob_parts_comparison.png`; detalhes em `art/REGENERATE.md`. Trabalho de combate da T7 preservado.
 

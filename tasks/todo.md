@@ -66,8 +66,9 @@ A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar 
 - [x] Uniformizar `compile[0]` nas 16 combinações e revisar os recortes das peças em `dash[1,3]`; relatório do Bob sem avisos e comparação em `art/preview/bob_parts_comparison.png`.
 - [x] Preparar fundo de título panorâmico 480×270, logo com contorno para céu escuro e prévia de composição, preservando as artes originais e deixando as cenas para T13.
 - [x] Recompor a arte da seleção para 480×270 com retratos quadrados, cadeado e foco separados; exportar prévias bloqueada/liberada e coordenadas para T13.
+- [x] Preparar medidores para 28 segmentos e painel de pausa 352×208; exportar HUD, pausas de início/equipamento completo e coordenadas, com textos só nas prévias.
 
-As fontes em `art/raw/` permanecem intactas durante a importação. A logo anterior foi preservada e foi acrescentado um fundo panorâmico de título; total atual de 67 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 104 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
+As fontes em `art/raw/` permanecem intactas durante a importação. A logo anterior foi preservada e foi acrescentado um fundo panorâmico de título; total atual de 67 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 108 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
 
 ## ✅ Checkpoint 1: sensação de jogo
 - [x] Testes, typecheck e build passam

@@ -2485,5 +2485,41 @@
     "frameHeight": 72,
     "frames": 1,
     "source": "ui/U3_stage_select.png"
+  },
+  {
+    "key": "hud_meter_frame",
+    "group": "ui",
+    "file": "assets/ui/hud_meter_frame.png",
+    "frameWidth": 12,
+    "frameHeight": 72,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "hud_segment_blue",
+    "group": "ui",
+    "file": "assets/ui/hud_segment_blue.png",
+    "frameWidth": 6,
+    "frameHeight": 1,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "hud_segment_yellow",
+    "group": "ui",
+    "file": "assets/ui/hud_segment_yellow.png",
+    "frameWidth": 6,
+    "frameHeight": 1,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "pause_panel_wide",
+    "group": "ui",
+    "file": "assets/ui/pause_panel_wide.png",
+    "frameWidth": 352,
+    "frameHeight": 208,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
   }
 ]

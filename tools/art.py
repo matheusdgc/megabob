@@ -15,7 +15,10 @@ from PIL import Image, ImageDraw, ImageFilter
 from palette import nearest, PALETTE, _dist
 from sprites import frame_ranges, is_magenta, pixels, remove_specks
 from art_catalog import EXISTING_FX, REFERENCE_ONLY, catalog
-from ui_art import stage_assets, stage_preview, STAGE_SLOTS
+from ui_art import (
+    stage_assets, stage_preview, STAGE_SLOTS, hud_assets, scene_preview, hud_preview,
+    pause_preview, PAUSE_POSITION, PAUSE_SIZE, METER_CHANNEL,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW, OUT, PREVIEW = ROOT / 'art/raw', ROOT / 'public/assets', ROOT / 'art/preview'
@@ -310,6 +313,30 @@ def run(group='all'):
         layout = dict(viewport=[480, 270], slotSize=64, portraitMaxSize=48, focusSize=72,
                       centers={name: list(center) for name, center in STAGE_SLOTS.items()})
         (exports / 'stage-select-layout.json').write_text(json.dumps(layout, indent=2) + '\n', encoding='utf-8')
+        hud = hud_assets(*(Image.open(OUT / ('ui/' + key + '.png')) for key in
+                           ['hud_health_frame', 'hud_health_segment', 'hud_weapon_segment', 'pause_panel']))
+        for key, image in hud.items():
+            entries.append(save_asset(image, 'ui', key, image.size, 'ui/U4_hud.png'))
+        background = scene_preview([Image.open(OUT / ('bg/t1_memory_leak_' + layer + '.png'))
+                                    for layer in ['far', 'mid', 'near']],
+                                   Image.open(OUT / 'tiles/tiles_memory_leak.png'), Image.open(OUT / 'bob/bob_idle.png'))
+        weapons = {key: Image.open(OUT / ('ui/icon_' + key + '.png')) for key in ['buster', 'gc', 'mutex', 'null']}
+        armor = {key: Image.open(OUT / ('icons/armor_' + key + '.png')) for key in ['head', 'arm', 'body', 'legs']}
+        life = Image.open(OUT / 'icons/bob_life.png')
+        previews = {'hud': hud_preview(background, hud, life, weapons['gc']),
+                    'pause-start': pause_preview(background, hud, weapons, armor, life),
+                    'pause-complete': pause_preview(background, hud, weapons, armor, life, complete=True)}
+        for name, image in previews.items():
+            image.save(exports / ('megabob-' + name + '-preview.png'))
+            image.resize((960, 540), Image.Resampling.NEAREST).save(PREVIEW / (name + '_2x.png'))
+        layout = dict(viewport=[480, 270], pausePanel=dict(position=PAUSE_POSITION, size=PAUSE_SIZE),
+                      meter=dict(size=[12, 72], channel=METER_CHANNEL, capacity=28, pitch=2,
+                                 healthPosition=[8, 10], energyPosition=[26, 10]),
+                      lifeIconPosition=[8, 112], lifeTextPosition=[27, 114],
+                      weaponRows=dict(iconX=106, textX=122, cursorX=86, centersY=[112, 140, 168, 196]),
+                      armorCenters=dict(head=[288, 118], arm=[360, 118], body=[288, 178], legs=[360, 178]),
+                      armorIconSize=32, armorSourceFrames=dict(collected=0, inactive=1))
+        (exports / 'hud-pause-layout.json').write_text(json.dumps(layout, indent=2) + '\n', encoding='utf-8')
     if before != hashes():
         raise RuntimeError('raw source hashes changed during import')
     path.write_text(json.dumps(entries, indent=2) + '\n', encoding='utf-8')
