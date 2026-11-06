@@ -9,6 +9,24 @@ Jogo de plataforma e ação em 16 bits estrelado pelo IBM Bob (Phaser 3 + TypeSc
 - [docs/HANDOFF.md](docs/HANDOFF.md): **estado atual e próximos passos**
 - [docs/art-prompts.md](docs/art-prompts.md) e [docs/soundtrack.md](docs/soundtrack.md): arte e música
 
+## Skills de game dev (pack `gamedev@awesome-gamedev-agent-skills`)
+
+Pack instalado em `~/.agents/plugins/cache/awesome-gamedev-agent-skills/gamedev/<versão>/`. O ponto de entrada é o `router` (skill `gamedev:router`). Se a sessão não listar as skills, leia os `SKILL.md` direto do disco. Motor detectado: **Phaser 3.90**. Leia antes de cada tarefa:
+
+| Tarefa | Skills do pack |
+|---|---|
+| T12, T14, T15, T18 (fases) | `disciplines/level-design`, `genres/platformer` (e `references/feel-tuning.md`) |
+| Inimigos e chefes (T12-T19) | `disciplines/game-ai`, `web-engines/phaser-arcade-physics` |
+| T11, T20 (áudio) | `disciplines/audio-design` |
+| T13 (título, seleção, save, pausa) | `disciplines/save-systems`, `disciplines/game-ui-ux`, `web-engines/phaser-core` (`references/scene-flow.md`) |
+| T13b (remapear controles) | `disciplines/input-systems` (`references/buffering-and-accessibility.md`) |
+| T21, T22 (polimento, desempenho) | `disciplines/game-feel`, `disciplines/camera-systems`, `disciplines/performance-optimization` |
+| T23 (deploy) | `workflows/itch-publish` (GitHub Pages: sem skill no pack) |
+
+Regras que o pack reforça e que já valem aqui:
+- **Medidas do Bob dimensionam o mapa.** O pulo alcança cerca de 53 px de altura (3,3 tiles) e 63 px de distância parado no chão (cerca de 4 tiles), medidos no jogo. Vãos obrigatórios devem ter no máximo uns 70% disso. Os vãos no limite ficam para caminhos opcionais.
+- **Toda fase precisa de um caminho crítico jogável do início ao chefe**, verificado em teste e no navegador, sem teletransporte.
+
 ## Comandos
 
 ```
