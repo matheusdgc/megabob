@@ -1,10 +1,23 @@
 import Phaser from 'phaser';
 import { ARMOR_BITS, BOB_FRAME, type BobAnim, bobKey, type FxKey } from '../data/assets';
-import { BOB_BODY_H, BOB_BODY_W, GRAVITY, MAX_FALL_SPEED, MAX_SHOTS } from '../data/tuning';
+import {
+  AIR_DASHES,
+  AIR_DASHES_BOOTS,
+  BLINK_FRAMES,
+  BOB_BODY_H,
+  BOB_BODY_W,
+  DEATH_FRAMES,
+  GRAVITY,
+  HURT_FRAMES,
+  HURT_FRAMES_PLATED,
+  MAX_FALL_SPEED,
+  MAX_SHOTS,
+} from '../data/tuning';
 import type { ActionState } from '../systems/actions';
 import { BOB_LOOPS, type BobPose, bobPose, poseSheet, shotOrigin } from '../systems/bobPose';
 import { chargeLevel, newBuster, type ShotLevel, stepBuster } from '../systems/charge';
-import { newMotion, stepMotion } from '../systems/motion';
+import { type HitResult, hit, kill, newHealth, tickHealth } from '../systems/damage';
+import { newMotion, startHurt, stepMotion } from '../systems/motion';
 import { fxAnim, Projectile } from './Projectile';
 
 /** Frames the muzzle flash stays on after a shot. */
@@ -36,6 +49,10 @@ function ensureLoop(scene: Phaser.Scene, key: string, anim: BobAnim): void {
 export class Player extends Phaser.Physics.Arcade.Sprite {
   readonly motion = newMotion();
   readonly buster = newBuster();
+  readonly health = newHealth();
+  /** Frames left of the death animation; the scene respawns Bob when it reaches 0. */
+  private deathFrames = 0;
+  private readonly decompile: Phaser.GameObjects.Sprite;
   /** Bob's live shots (pooled); enemies overlap against this group. */
   readonly shots: Phaser.Physics.Arcade.Group;
   private readonly aura: Phaser.GameObjects.Sprite;
@@ -62,20 +79,76 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.shots = scene.physics.add.group({ classType: Projectile, maxSize: MAX_SHOTS * 2, allowGravity: false });
     this.aura = scene.add.sprite(x, y, AURA_SHEETS[1]).setVisible(false).setDepth(1);
     this.muzzle = scene.add.sprite(x, y, 'fx_muzzle').setVisible(false).setDepth(1);
+    this.decompile = scene.add.sprite(x, y, 'fx_decompile').setVisible(false).setDepth(1);
   }
 
-  /** Firmware Armor bitmask (0 = none, 15 = full). The boots enable the air dash. */
+  /** Firewall Plating (armor body bit): half damage, shorter knockback. */
+  private get plated(): boolean {
+    return (this.armorBits & ARMOR_BITS.body) !== 0;
+  }
+
+  get isDead(): boolean {
+    return this.health.dead;
+  }
+
+  /** Damage from something at horizontal position `fromX` (enemy, shot, hazard). */
+  takeHit(amount: number, fromX: number): HitResult {
+    const result = hit(this.health, amount, { plated: this.plated });
+    if (result === 'hurt') {
+      startHurt(this.motion, this.body.center.x, fromX, this.plated ? HURT_FRAMES_PLATED : HURT_FRAMES);
+    } else if (result === 'dead') {
+      this.die();
+    }
+    return result;
+  }
+
+  /** Spikes: instant death, except while blinking after a hit. */
+  touchSpikes(): void {
+    if (!this.health.dead && this.health.invuln === 0) {
+      kill(this.health);
+      this.die();
+    }
+  }
+
+  /** Bottomless pit: always fatal. */
+  fallOut(): void {
+    if (!this.health.dead) {
+      kill(this.health);
+      this.die();
+    }
+  }
+
+  /** Bob "decompiles" into pixels; the body stops colliding until respawn. */
+  private die(): void {
+    const { x, y } = this.body.center;
+    this.deathFrames = DEATH_FRAMES;
+    this.body.stop();
+    this.body.enable = false;
+    this.setVisible(false);
+    this.aura.stop().setVisible(false);
+    this.muzzle.setVisible(false);
+    Object.assign(this.buster, newBuster());
+    this.decompile.setPosition(x, y).setFlipX(this.motion.facing < 0).setVisible(true);
+    this.decompile.play(fxAnim(this.scene, 'fx_decompile', 10, 0));
+  }
+
+  /** Firmware Armor bitmask (0 = none, 15 = full). The boots add a second air dash. */
   get armor(): number {
     return this.armorBits;
   }
 
   set armor(bits: number) {
     this.armorBits = bits;
-    this.motion.canAirDash = (bits & ARMOR_BITS.legs) !== 0;
+    this.motion.airDashes = bits & ARMOR_BITS.legs ? AIR_DASHES_BOOTS : AIR_DASHES;
   }
 
   /** Call once per frame, after the physics step, with this frame's input. */
   step(input: ActionState): void {
+    if (this.health.dead) {
+      if (this.deathFrames > 0 && --this.deathFrames === 0) this.emit('deathDone');
+      return;
+    }
+    tickHealth(this.health);
     const body = this.body;
     const out = stepMotion(this.motion, input, {
       onGround: body.blocked.down,
@@ -88,21 +161,33 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     body.setAllowGravity(out.gravity);
 
     const maxLevel = this.armorBits & ARMOR_BITS.arm ? 3 : 2;
-    const fired = stepBuster(
-      this.buster,
-      { pressed: input.justPressed('shoot'), down: input.isDown('shoot'), released: input.justReleased('shoot') },
-      { liveShots: this.shots.countActive(true), maxLevel },
-    );
+    const hurt = this.motion.state === 'hurt';
+    // no shooting while knocked back; the charge survives only if the button stays held
+    if (hurt && !input.isDown('shoot')) this.buster.charge = 0;
+    const fired = hurt
+      ? null
+      : stepBuster(
+          this.buster,
+          { pressed: input.justPressed('shoot'), down: input.isDown('shoot'), released: input.justReleased('shoot') },
+          { liveShots: this.shots.countActive(true), maxLevel },
+        );
     if (fired !== null) this.fire(fired);
     this.showEffects(chargeLevel(this.buster.charge, maxLevel));
     this.show(bobPose(this.motion, body.velocity.y, this.buster.pose > 0));
+    // blink while invulnerable
+    const inv = this.health.invuln;
+    this.setVisible(inv === 0 || Math.floor(inv / BLINK_FRAMES) % 2 === 0);
   }
 
   /** Put Bob back at a spot, standing still. */
   respawn(x: number, y: number): void {
+    this.deathFrames = 0;
+    this.decompile.stop().setVisible(false);
+    this.setVisible(true);
+    this.body.enable = true;
     this.body.reset(x, y);
     this.body.setAllowGravity(true);
-    Object.assign(this.motion, newMotion(this.motion.canAirDash), { facing: this.motion.facing });
+    Object.assign(this.motion, newMotion(this.motion.airDashes), { facing: this.motion.facing });
     Object.assign(this.buster, newBuster());
   }
 

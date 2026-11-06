@@ -39,6 +39,9 @@ export const DASH_FRAMES = 26;
 /** Releasing dash ends it, but never before this. */
 export const DASH_MIN_FRAMES = 6;
 export const AIR_DASH_FRAMES = 20;
+/** Air dashes per airtime: base Bob, and with the Turbo Boots. Recharged on landing or wall grab. */
+export const AIR_DASHES = 1;
+export const AIR_DASHES_BOOTS = 2;
 /** First frames of a dash that show the launch pose. */
 export const DASH_START_FRAMES = 3;
 /** Braking pose duration when a dash ends standing still. */
@@ -55,6 +58,22 @@ export const SHOOT_POSE_FRAMES = 16;
 export const SHOT_SPEED = [300, 320, 340, 360] as const;
 /** Damage by charge level 0-3. */
 export const SHOT_DAMAGE = [1, 2, 3, 5] as const;
+
+// --- Health and damage ---
+/** Health bar segments. */
+export const BOB_MAX_HP = 28;
+export const START_LIVES = 3;
+/** Knockback duration after a hit (no control), and with the Firewall Plating. */
+export const HURT_FRAMES = 24;
+export const HURT_FRAMES_PLATED = 12;
+/** Horizontal knockback speed, px/s. */
+export const HURT_SPEED = 60;
+/** Invulnerability after a hit, counted from the hit (includes the knockback). */
+export const INVULN_FRAMES = 90;
+/** Bob blinks every this many frames while invulnerable. */
+export const BLINK_FRAMES = 3;
+/** From death until respawn at the checkpoint. */
+export const DEATH_FRAMES = 120;
 
 // --- Bob hitbox (inside the 48x48 sprite cell, feet on the bottom row) ---
 export const BOB_BODY_W = 14;

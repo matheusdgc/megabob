@@ -12,9 +12,20 @@ import {
   WALL_JUMP_SPEED,
   WALL_LOCK_FRAMES,
   WALL_SLIDE_SPEED,
+  HURT_SPEED,
 } from '../data/tuning';
 
-export type MoveState = 'idle' | 'run' | 'jump' | 'fall' | 'land' | 'wall' | 'dash' | 'brake' | 'airdash';
+export type MoveState =
+  | 'idle'
+  | 'run'
+  | 'jump'
+  | 'fall'
+  | 'land'
+  | 'wall'
+  | 'dash'
+  | 'brake'
+  | 'airdash'
+  | 'hurt';
 
 /** What the controller needs from input (ActionState satisfies it). */
 export interface MotionInput {
@@ -47,9 +58,11 @@ export interface Motion {
   lockDir: 1 | -1;
   /** Airborne at dash speed (dash-jump, dash off a ledge, dash wall-kick). */
   dashMomentum: boolean;
-  /** Air dash ability (Turbo Boots) and whether this airtime already used it. */
-  canAirDash: boolean;
-  airDashUsed: boolean;
+  /** Air dashes allowed per airtime (1 base, 2 with the Turbo Boots) and how many were used. */
+  airDashes: number;
+  airDashesUsed: number;
+  /** Length of the current knockback (state 'hurt'). */
+  hurtFrames: number;
 }
 
 export interface MotionOutput {
@@ -60,7 +73,7 @@ export interface MotionOutput {
   gravity: boolean;
 }
 
-export const newMotion = (canAirDash = false): Motion => ({
+export const newMotion = (airDashes = 1): Motion => ({
   state: 'idle',
   facing: 1,
   stateFrames: 0,
@@ -68,8 +81,9 @@ export const newMotion = (canAirDash = false): Motion => ({
   lock: 0,
   lockDir: 1,
   dashMomentum: false,
-  canAirDash,
-  airDashUsed: false,
+  airDashes,
+  airDashesUsed: 0,
+  hurtFrames: 0,
 });
 
 function enter(m: Motion, state: MoveState): void {
@@ -85,13 +99,14 @@ function enter(m: Motion, state: MoveState): void {
  */
 export function stepMotion(m: Motion, input: MotionInput, s: Sensors): MotionOutput {
   m.stateFrames += 1;
+  if (m.state === 'hurt') return stepHurt(m, input, s);
   const h = input.horizontal;
   const wall: -1 | 0 | 1 = s.wallRight ? 1 : s.wallLeft ? -1 : 0;
   const airborne = !s.onGround;
   const dashing = m.state === 'dash' || m.state === 'airdash';
 
   if (s.onGround) {
-    m.airDashUsed = false;
+    m.airDashesUsed = 0;
     m.dashMomentum = false;
   }
 
@@ -127,7 +142,7 @@ export function stepMotion(m: Motion, input: MotionInput, s: Sensors): MotionOut
       m.lock = WALL_LOCK_FRAMES;
       m.lockDir = wall === 1 ? -1 : 1;
       m.dashMomentum = input.isDown('dash');
-      m.airDashUsed = false;
+      m.airDashesUsed = 0;
       enter(m, 'jump');
       m.stateFrames = 0;
       out.vx = m.lockDir * (m.dashMomentum ? DASH_SPEED : RUN_SPEED);
@@ -136,15 +151,15 @@ export function stepMotion(m: Motion, input: MotionInput, s: Sensors): MotionOut
     }
   }
 
-  // --- dash: on the ground, or once per airtime with the Turbo Boots
+  // --- dash: on the ground, or in the air (once per airtime, twice with the Turbo Boots)
   if (input.justPressed('dash') && !dashing) {
     if (s.onGround) {
       enter(m, 'dash');
       out.vx = m.facing * DASH_SPEED;
       return out;
     }
-    if (m.canAirDash && !m.airDashUsed && m.state !== 'wall') {
-      m.airDashUsed = true;
+    if (m.airDashesUsed < m.airDashes && m.state !== 'wall') {
+      m.airDashesUsed += 1;
       m.lock = 0;
       enter(m, 'airdash');
       out.vx = m.facing * DASH_SPEED;
@@ -230,10 +245,34 @@ function land(m: Motion, h: number): void {
 function airborneFalling(m: Motion, h: number, wall: number): void {
   if (wall !== 0 && h === wall && m.lock === 0) {
     m.dashMomentum = false;
-    m.airDashUsed = false;
+    m.airDashesUsed = 0;
     m.facing = wall as 1 | -1;
     enter(m, 'wall');
   } else {
     enter(m, 'fall');
   }
+}
+
+/**
+ * Knock Bob back from a hit at horizontal position `fromX` (Bob at `x`): he turns to face the
+ * source and is pushed away from it, with no control, for `frames` frames.
+ */
+export function startHurt(m: Motion, x: number, fromX: number, frames: number): void {
+  if (fromX !== x) m.facing = fromX > x ? 1 : -1;
+  m.lock = 0;
+  m.dashMomentum = false;
+  m.hurtFrames = frames;
+  enter(m, 'hurt');
+  m.stateFrames = 0;
+}
+
+function stepHurt(m: Motion, input: MotionInput, s: Sensors): MotionOutput {
+  const out: MotionOutput = { vx: -m.facing * HURT_SPEED, gravity: true };
+  // a jump going up when hit stops rising, so the knockback reads clearly
+  if (s.vy < 0 && m.stateFrames === 1) out.vy = 0;
+  if (m.stateFrames >= m.hurtFrames) {
+    enter(m, s.onGround ? (input.horizontal !== 0 ? 'run' : 'idle') : 'fall');
+    out.vx = input.horizontal * RUN_SPEED;
+  }
+  return out;
 }

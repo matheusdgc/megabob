@@ -1,22 +1,23 @@
 # Handoff: estado do projeto
 
-> Atualizado em 05/11/2026, à noite, no fim da T5 (editor, VS Code). Branch `dev`.
+> Atualizado em 06/11/2026, no fim da T6 (editor). Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)
 
 | Tarefa | O que entrega |
 |---|---|
-| T1 | Vite 8 + Phaser 3.90 + TS 7 + Vitest 5, tela de 256×224 com escala inteira |
+| T1 | Vite 8 + Phaser 3.90 + TS 7 + Vitest 5, tela com escala inteira (hoje 480×270) |
 | T2 | Input (teclado e gamepad) com buffer de pulo, manifesto de assets e placeholders |
 | T4a | Pipeline `tools/sprites.py`: remove o fundo magenta, normaliza a escala pelo capacete, encaixa a armadura por sobreposição e pré-compõe as 15 combinações de peças |
 | T3 | Movimento base (correr, pulo variável, coyote time), parser de mapa ASCII e mapa de teste |
-| T4 | Deslize e chute na parede, dash, dash-jump e dash no ar (com as Turbo Boots) |
+| T4 | Deslize e chute na parede, dash, dash-jump e dash no ar (1 por pulo; 2 com as Turbo Boots, a pedido do usuário) |
 | T4b | Job `python tools/sprites.py fx`: recorta as folhas de efeitos por grade e gera `public/assets/fx/` (tiros, auras, flash, impactos e os efeitos das 3 armas) |
 | Enquadramento | Resolução interna de 256×224 para 480×270, a pedido do usuário (câmera estava próxima demais). `?view=LxA` compara opções em dev |
 | T5 | Tiro: básico (máx. 3 na tela), carga em 2 níveis (3 com o bit de braço), aura, flash do cano, pose de tiro em todos os estados |
+| T6 | Vida (28), recuo sem controle e piscar, espinhos e poço matam, descompilação (`fx_decompile`), 3 vidas, barra de vida (`src/ui/Hud.ts`). A Firewall Plating (bit 4) corta o dano pela metade e encurta o recuo |
 
-São 224 testes passando, e o typecheck e o build também passam.
+São 240 testes passando, e o typecheck e o build também passam.
 
 **Mudança importante:** a lógica da fase roda no evento `worldstep` da física (60 Hz fixos), e não no `update()` da cena. Antes, em monitores de 120 Hz ou mais, tudo o que conta quadros ficava 2 a 4 vezes mais rápido. Lógica nova que conte quadros deve entrar em `StageScene.tick()`.
 
@@ -28,14 +29,15 @@ São 224 testes passando, e o typecheck e o build também passam.
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
 - **Licenças da trilha:** o usuário pediu para ignorar por enquanto. Faltam as faixas 05, 07, 08 e 09 em `docs/soundtrack.md`.
 
-## Próximo passo: T6 (vida, dano e morte)
+## Próximo passo: T7 (inimigos base e itens)
 
 Veja os detalhes em `tasks/todo.md`. Pontos de partida:
 
-- **Dano puro:** `src/systems/damage.ts` com testes. A placa de firmware (bit de corpo 4) divide o dano por 2.
-- **Pose de dano:** o sheet `bob_hurt` tem 2 quadros. Durante o recuo, o canhão não deve atirar; dá para pular o `stepBuster` nesse estado.
-- **Espinhos:** o tile `^` (`T.spike` em `src/stages/map.ts`) já existe no mapa de teste e hoje não faz nada.
-- **Tiros contra inimigos (T7):** `player.shots` é o grupo Arcade para o `overlap`. Cada `Projectile` tem `level` e `damage`. Use `fx_hit` (tiro básico) e `fx_compiler_hit` (nível 3) no impacto.
+- **Dano no Bob:** `player.takeHit(amount, fromX)` aplica dano, recuo e invulnerabilidade. `fromX` é a posição horizontal da origem do golpe, e o Bob é empurrado para longe dela. Para matar na hora, use `fallOut()` ou `touchSpikes()`.
+- **Tiros contra inimigos:** `player.shots` é o grupo Arcade para o `overlap`. Cada `Projectile` tem `level` e `damage`. Use `fx_hit` (tiro básico) e `fx_compiler_hit` (nível 3) no impacto.
+- **Itens de vida:** use `heal(player.health, n)` de `src/systems/damage.ts`.
+- **Arte:** os inimigos estão em `art/raw/enemies/` (E1 Pixel Mite e E2 Spam Drone primeiro), e os itens em `art/raw/fx/FX5_pickups.png`. Nenhum dos dois foi processado ainda.
+- **Morte:** quando a animação de morte termina, o `Player` emite `deathDone`, e a `StageScene.afterDeath()` gasta uma vida e faz o respawn no início (os checkpoints chegam na T8). Na última vida, a cena emite `gameOver`.
 
 Depois vêm T7 (inimigos e itens) e T8 (seções, checkpoint e porta). Isso fecha o Checkpoint 2.
 
@@ -51,7 +53,7 @@ Depois vêm T7 (inimigos e itens) e T8 (seções, checkpoint e porta). Isso fech
 - **Quadros que passam do limite:** 4 quadros com armadura passam 1-2 px do quadro de 48 px: idle[0], jump[3], dash[2] e o airdash. Veja os avisos em `art/preview/bob_report.json`.
 - **Peças isoladas em poses horizontais:** no dash, a armadura com só algumas peças pode ter emendas, porque as regiões são divididas por altura. Com as 4 peças, o jogo usa o desenho completo.
 - **Gamepad:** está mapeado, mas não foi testado com um controle de verdade.
-- **Tiles e espinhos:** os tiles ainda são placeholders. Os espinhos não causam dano antes da T6. Cair no poço só volta o Bob ao início.
+- **Tiles:** ainda são placeholders.
 - **Escalada numa parede só:** funciona, mas é lenta (`WALL_LOCK_FRAMES` = 8). Se o usuário reclamar, um valor de 5 ou 6 deve resolver.
 - **Tiros e cenário:** os tiros atravessam paredes, como é comum no gênero. Se o usuário preferir que parem na parede, basta um `collider` entre `player.shots` e a camada de tiles.
 

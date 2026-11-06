@@ -30,7 +30,7 @@ O ciclo de fraquezas fecha (Memory Leak → Race Condition → Null Pointer → 
 
 - Andar, pulo com altura variável (soltar o botão corta o pulo), cair com controle no ar
 - Tiro básico (no máximo 3 projéteis na tela) e tiro carregado em 2 níveis (o 3º nível vem com a armadura)
-- Dash no chão (o dash no ar vem com a armadura)
+- Dash no chão e no ar (1 dash no ar por pulo; as Turbo Boots dão um segundo)
 - Deslizar na parede e pular da parede
 - Invencibilidade com piscar e recuo (knockback) ao levar dano
 - Trocar de arma (L/R ou Q/E) e barra de energia por arma
@@ -44,10 +44,10 @@ São 4 peças, cada uma liberada num **Update Terminal** escondido numa fase. S�
 
 | Peça | Efeito | Onde fica |
 |---|---|---|
-| **Turbo Boots** (pernas) | dash no ar, 1 por pulo | Race Condition, num caminho alternativo, sem pré-requisito |
+| **Turbo Boots** (pernas) | segundo dash no ar no mesmo pulo | Race Condition, num caminho alternativo, sem pré-requisito |
 | **Firewall Plating** (corpo) | dano recebido ÷ 2 e recuo menor | Memory Leak, numa sala atrás de um poço de lodo |
 | **Debug Visor** (cabeça) | revela passagens escondidas e mostra a vida dos chefes | Null Pointer, num ponto alto, sem pré-requisito |
-| **Compiler Cannon** (braço) | tiro carregado nível 3 e armas especiais carregáveis | Memory Leak, atrás de um vão que só se cruza com dash no ar (exige voltar à fase) |
+| **Compiler Cannon** (braço) | tiro carregado nível 3 e armas especiais carregáveis | Memory Leak, atrás de um vão que só se cruza com dois dashes no ar (exige voltar à fase) |
 
 - **Visual:** cada peça coletada aparece no sprite do Bob, desenhada em camadas (Bob base + só as peças que o jogador tem).
 - **Arte:** gerada pelos prompts A1-A5 de [docs/art-prompts.md](docs/art-prompts.md).
@@ -136,7 +136,7 @@ export function damageFor(boss: BossId, weapon: WeaponId, base: number): number 
 
 ## Estratégia de testes
 
-- **Vitest (unitário):** tabela de dano e fraquezas, energia de arma, save/load do progresso, liberação da fortaleza, transições da máquina de estados do player (pulo → parede → pulo da parede, dash no ar 1×/pulo só com Turbo Boots), efeitos das peças de armadura (dano ÷ 2, nível 3 de carga liberado).
+- **Vitest (unitário):** tabela de dano e fraquezas, energia de arma, save/load do progresso, liberação da fortaleza, transições da máquina de estados do player (pulo → parede → pulo da parede, 1 dash no ar por pulo, 2 com as Turbo Boots), efeitos das peças de armadura (dano ÷ 2, nível 3 de carga liberado).
 - **Manual (no navegador):** a sensação de jogar (game feel), colisões e padrões dos chefes. Cada fase é jogada de ponta a ponta antes de passar para a próxima.
 - **Smoke de build:** `npm run build` passa e o `dist/` abre via `npm run preview` sem erro no console.
 - Não vou buscar cobertura alta: o prazo é 2 dias e testo o que é lógica, não renderização.
@@ -156,7 +156,7 @@ export function damageFor(boss: BossId, weapon: WeaponId, base: number): number 
 5. A fortaleza só libera depois dos 3 chefes.
 6. Toda cena tem música conforme [docs/soundtrack.md](docs/soundtrack.md), com volume uniforme e loop sem emenda audível. As ações principais têm SFX gerados em código, e toda faixa usada está creditada (autor, fonte e licença) na tela de créditos.
 7. O progresso (chefes e peças) persiste ao recarregar a página.
-9. As 4 peças de armadura podem ser coletadas. Cada uma aplica seu efeito e aparece no sprite do Bob. O Compiler Cannon só é alcançável com as Turbo Boots.
+9. As 4 peças de armadura podem ser coletadas. Cada uma aplica seu efeito e aparece no sprite do Bob. O Compiler Cannon só é alcançável com as Turbo Boots (dois dashes no ar).
 8. 60 fps estáveis com o número máximo de inimigos e projéteis na tela.
 
 ## Decisões tomadas

@@ -543,6 +543,10 @@ FX_SHEETS = [
         ("fx_null", 2, [0, 1, 2], (24, 12), None),
         ("fx_null_glitch", 2, [3, 4], (24, 16), None),
     ]),
+    ("FX4_movement", 6, 4, [
+        # Bob "decompiling" into pixels on death; sized like Bob standing (~36 px)
+        ("fx_decompile", 3, [0, 1, 2, 3, 4, 5], (48, 48), (36, 38)),
+    ]),
 ]
 
 

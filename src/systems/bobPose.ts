@@ -33,6 +33,7 @@ export function bobPose(m: Motion, vy: number, shooting = false): BobPose {
     frame,
     facing: f,
   });
+  if (m.state === 'hurt') return still('hurt', m.stateFrames < m.hurtFrames / 2 ? 0 : 1);
   if (shooting) {
     switch (m.state) {
       case 'idle':

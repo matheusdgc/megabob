@@ -104,3 +104,10 @@ describe('poseSheet', () => {
     expect(poseSheet('airdash', 1, 8)).toEqual({ key: 'bob_dash_a8', frame: 1 });
   });
 });
+
+describe('bobPose when hurt', () => {
+  it('shows the two hurt frames, even while the shoot pose is active', () => {
+    expect(bobPose(at('hurt', 2, { hurtFrames: 20 }), 0, true)).toMatchObject({ anim: 'hurt', frame: 0 });
+    expect(bobPose(at('hurt', 15, { hurtFrames: 20 }), 0)).toMatchObject({ anim: 'hurt', frame: 1 });
+  });
+});

@@ -12,9 +12,9 @@ import {
 import { type Action, ActionState } from '../src/systems/actions';
 import { newMotion, type Sensors, stepMotion } from '../src/systems/motion';
 
-function rig(canAirDash = false) {
+function rig(airDashes = 1) {
   const input = new ActionState();
-  const m = newMotion(canAirDash);
+  const m = newMotion(airDashes);
   const frame = (held: Action[], s: Partial<Sensors> = {}) => {
     input.update(new Set(held));
     return stepMotion(m, input, { onGround: true, vy: 0, ...s });
@@ -148,16 +148,9 @@ describe('ground dash', () => {
   });
 });
 
-describe('air dash (Turbo Boots)', () => {
-  it('is not available without the boots', () => {
-    const { m, frame } = rig(false);
-    airborne(frame);
-    frame(['dash'], FALLING);
-    expect(m.state).toBe('fall');
-  });
-
-  it('with the boots: horizontal, no gravity, once per airtime', () => {
-    const { m, frame } = rig(true);
+describe('air dash', () => {
+  it('base Bob: horizontal, no gravity, once per airtime', () => {
+    const { m, frame } = rig(1);
     airborne(frame);
     const out = frame(['dash'], FALLING);
     expect(m.state).toBe('airdash');
@@ -169,8 +162,29 @@ describe('air dash (Turbo Boots)', () => {
     expect(m.state).toBe('fall');
   });
 
+  it('works right out of a jump', () => {
+    const { m, frame } = rig(1);
+    frame(['jump']);
+    frame(['jump', 'dash'], RISING);
+    expect(m.state).toBe('airdash');
+  });
+
+  it('the Turbo Boots allow a second air dash in the same airtime', () => {
+    const { m, frame } = rig(2);
+    airborne(frame);
+    frame(['dash'], FALLING);
+    for (let i = 0; i < AIR_DASH_FRAMES; i++) frame(['dash'], FALLING);
+    frame([], FALLING);
+    frame(['dash'], FALLING);
+    expect(m.state).toBe('airdash');
+    for (let i = 0; i < AIR_DASH_FRAMES; i++) frame(['dash'], FALLING);
+    frame([], FALLING);
+    frame(['dash'], FALLING); // third: none left
+    expect(m.state).toBe('fall');
+  });
+
   it('recharges on landing', () => {
-    const { m, frame } = rig(true);
+    const { m, frame } = rig(1);
     airborne(frame);
     frame(['dash'], FALLING);
     frame([]); // lands
@@ -178,5 +192,42 @@ describe('air dash (Turbo Boots)', () => {
     frame([], RISING);
     frame(['dash'], FALLING);
     expect(m.state).toBe('airdash');
+  });
+});
+
+describe('hurt knockback', () => {
+  it('faces the source, is pushed away without control, then recovers', async () => {
+    const { startHurt } = await import('../src/systems/motion');
+    const { HURT_SPEED } = await import('../src/data/tuning');
+    const { m, frame } = rig();
+    frame(['right']);
+    startHurt(m, 100, 50, 10); // hit from the left
+    expect(m.state).toBe('hurt');
+    expect(m.facing).toBe(-1);
+    for (let i = 1; i < 10; i++) {
+      const out = frame(['right', 'jump', 'dash']); // input is ignored
+      expect(out.vx).toBe(HURT_SPEED);
+      expect(m.state).toBe('hurt');
+    }
+    frame(['right']);
+    expect(m.state).toBe('run');
+  });
+
+  it('stops a rising jump on the first frame', async () => {
+    const { startHurt } = await import('../src/systems/motion');
+    const { m, frame } = rig();
+    frame(['jump']);
+    startHurt(m, 100, 150, 10);
+    expect(frame([], RISING).vy).toBe(0);
+  });
+
+  it('recovers into a fall when still airborne', async () => {
+    const { startHurt } = await import('../src/systems/motion');
+    const { m, frame } = rig();
+    startHurt(m, 100, 150, 3);
+    frame([], FALLING);
+    frame([], FALLING);
+    frame([], FALLING);
+    expect(m.state).toBe('fall');
   });
 });

@@ -52,7 +52,7 @@ O servidor ai-memory roda num container Docker (`ai-memory`) em `http://127.0.0.
 - `window.__game` existe só no modo dev.
 - Se o painel do navegador estiver oculto, o `requestAnimationFrame` pausa. Avance os quadros manualmente com `__game.step(t, 16.6667)`, incrementando `t`.
 - `?sprites` abre a tela de debug com todas as animações (teclas 1-4 ligam as peças da armadura).
-- Na fase: **R** volta ao início, **F2** mostra as caixas de colisão e o estado do Bob, e **1-4** ligam as peças (4 = Turbo Boots, para o dash no ar).
+- Na fase: **R** volta ao início, **F2** mostra as caixas de colisão e o estado do Bob, e **1-4** ligam as peças (4 = Turbo Boots, segundo dash no ar), e **H** dá um golpe de 4 de dano no Bob.
 
 ## Limites (do SPEC)
 

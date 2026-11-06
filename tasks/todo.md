@@ -55,6 +55,16 @@ Deslizar na parede, pulo da parede (com uma pequena trava de input horizontal) e
 ### T4b: Integração contínua de arte (recorrente)
 A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar as animações no manifesto. Os quadros ruins vão para uma lista de regeneração em `art/REGENERATE.md`.
 
+**Lote completo de arte — pós-processamento autorizado em 05/11:**
+- [ ] Preservar os hashes das 65 fontes e testar recorte, transparência, escala e quadros vazios.
+- [ ] Processar os efeitos restantes, ícones do Bob e objetos da armadura.
+- [ ] Processar inimigos e chefes, separando projéteis, retratos e peças.
+- [ ] Normalizar tiles 16×16 e camadas 512×224, com relatório de emendas.
+- [ ] Processar UI e registrar os ativos no manifesto sem alterar a lógica das fases.
+- [ ] Revisar prévias, testes Python, `npm test`, typecheck, build e console no navegador; registrar pendências reais no handoff.
+
+As fontes em `art/raw/` permanecem intactas. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`.
+
 ## ✅ Checkpoint 1: sensação de jogo
 - [x] Testes, typecheck e build passam
 - [x] **Você joga o mapa de teste** e aprova pulo, dash e parede (aprovado em 06/11, sem ajustes)
@@ -73,10 +83,10 @@ Tiro básico com no máximo 3 na tela, carga em 2 níveis (com o nível 3 atrás
 **Verificar:** `npm test` e jogar · **Dep.:** T4
 **Arquivos:** `src/systems/charge.ts`, `src/entities/Projectile.ts`, `src/entities/Player.ts`, `tests/charge.test.ts`
 
-### T6: Vida, dano e morte [M]
+### T6: Vida, dano e morte [M] ✅
 HP, i-frames com piscar, recuo e espinhos com morte instantânea. Morte com o efeito "decompile", respawn no checkpoint e no máximo 3 vidas. HUD com a barra de vida.
-- [ ] Testes do módulo de dano (incluindo `hasFirewallPlating` ÷ 2)
-- [ ] Morrer volta ao checkpoint, e acabar as vidas dispara o evento de game over
+- [x] Testes do módulo de dano (incluindo `hasFirewallPlating` ÷ 2)
+- [x] Morrer volta ao checkpoint, e acabar as vidas dispara o evento de game over
 
 **Verificar:** `npm test` e jogar · **Dep.:** T5
 **Arquivos:** `src/systems/damage.ts`, `src/entities/Player.ts`, `src/ui/Hud.ts`, `tests/damage.test.ts`
@@ -200,7 +210,7 @@ Tabela de peças com testes, Update Terminal, tela de "upgrade instalado", efeit
 **Arquivos:** `src/data/upgrades.ts`, `src/systems/upgrades.ts`, `src/entities/UpdateTerminal.ts`, `src/entities/Player.ts`, `tests/upgrades.test.ts`
 
 ### T17: Peças nas fases [S]
-Colocar os 4 terminais conforme o spec, com o Compiler Cannon atrás do vão que exige dash no ar, e as passagens escondidas que o Debug Visor revela.
+Colocar os 4 terminais conforme o spec, com o Compiler Cannon atrás do vão que exige dois dashes no ar, e as passagens escondidas que o Debug Visor revela.
 - [ ] As 4 peças podem ser coletadas, e o Compiler Cannon é inalcançável sem as Turbo Boots
 
 **Verificar:** buscar as 4 peças · **Dep.:** T14, T15, T16

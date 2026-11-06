@@ -78,6 +78,7 @@ export const FX = {
   fx_mutex_shell: [2, 32, 32, 0xf1c21b],
   fx_null: [3, 24, 12, 0xa56eff],
   fx_null_glitch: [2, 24, 16, 0xa56eff],
+  fx_decompile: [6, 48, 48, 0x0f62fe],
 } as const satisfies Record<string, readonly [number, number, number, number]>;
 export type FxKey = keyof typeof FX;
 

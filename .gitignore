@@ -6,3 +6,4 @@ dist/
 art/raw/soundtrack/
 # sprite pipeline previews
 art/preview/
+tools/__pycache__/
