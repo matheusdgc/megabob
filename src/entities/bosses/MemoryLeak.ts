@@ -148,6 +148,9 @@ export class MemoryLeak extends Boss {
   /** X position of Bob when the boss starts lurking (dive target). */
   private diveTargetX = 0;
   private worldH = 0;
+  /** Horizontal limits of the boss room; the emerge point is clamped inside it. */
+  private arenaLeft = -Infinity;
+  private arenaRight = Infinity;
 
   /** Callback to find Bob's position. */
   private readonly getBob: () => { x: number; y: number } | null;
@@ -164,6 +167,12 @@ export class MemoryLeak extends Boss {
     this.worldH = worldH;
     this.getBob = getBob;
     this.goo = scene.physics.add.group({ classType: GooBlob, maxSize: 12, runChildUpdate: false });
+  }
+
+  /** Boss room x-range, so the boss never re-emerges outside it. */
+  setArena(left: number, right: number): void {
+    this.arenaLeft = left;
+    this.arenaRight = right;
   }
 
   /** Expose the goo group so StageScene can set up overlaps with the player. */
@@ -240,7 +249,11 @@ export class MemoryLeak extends Boss {
       case 'lurk':
         if (this.stateFrames >= LURK_FRAMES) {
           // Snap to Bob's last known X (clamped to the boss room)
-          this.x = Phaser.Math.Clamp(this.diveTargetX, this.body.halfWidth + 16, this.worldH - this.body.halfWidth - 16);
+          this.x = Phaser.Math.Clamp(
+            this.diveTargetX,
+            this.arenaLeft + this.body.halfWidth + 16,
+            this.arenaRight - this.body.halfWidth - 16,
+          );
           this.y = this.homeY + this.height; // start below ground
           this.setVisible(true).setAlpha(0);
           this.body.enable = true;

@@ -20,6 +20,12 @@ import { GameInput } from '../systems/input';
 import { BossHealthBar } from '../ui/BossHealthBar';
 import { Hud } from '../ui/Hud';
 
+/**
+ * Arcade may hand overlap pairs in either order (also sprite vs group), so callbacks sort
+ * them by type: returns [the one matching `is`, the other].
+ */
+const pick = <A>(a: unknown, b: unknown, is: (o: unknown) => o is A): [A, unknown] => (is(a) ? [a, b] : [b as A, a]);
+
 /** Camera looks this far above Bob's feet, so he sits slightly below screen center. */
 const CAMERA_LOOK_UP = 24;
 /** Camera pan between sections; the game freezes meanwhile, like the genre. */
@@ -80,7 +86,7 @@ export class StageScene extends Phaser.Scene {
     // Boss room centre: section 2 spans columns 80-109, place boss at col 94, top row 11
     const bossSection = TEST_SECTIONS[2];
     this.bossSpawnX = (bossSection.x + bossSection.w / 2) * TILE;
-    this.bossSpawnY = (bossSection.y + bossSection.h - 1) * TILE; // feet on the floor
+    this.bossSpawnY = (bossSection.y + bossSection.h - 2) * TILE; // feet on the floor (2 floor rows)
 
     const map = this.make.tilemap({ data: parsed.tiles, tileWidth: TILE, tileHeight: TILE });
     const tileset = map.addTilesetImage('tiles_test', 'tiles_test', TILE, TILE, 0, 0);
@@ -110,8 +116,6 @@ export class StageScene extends Phaser.Scene {
     this.pickups = this.add.group();
     this.physics.add.collider(this.enemies, layer, undefined, (e) => (e as Enemy).solid, this);
     this.physics.add.collider(this.pickups, layer);
-    // Arcade may hand group-vs-group pairs in either order, so sort them by type
-    const pick = <A>(a: unknown, b: unknown, is: (o: unknown) => o is A): [A, unknown] => (is(a) ? [a, b] : [b as A, a]);
     const isEnemy = (o: unknown): o is Enemy => o instanceof Enemy;
     this.physics.add.overlap(this.player.shots, this.enemies, (a, b) => {
       const [enemy, shot] = pick(a, b, isEnemy);
@@ -298,18 +302,20 @@ export class StageScene extends Phaser.Scene {
       () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
     );
     this.boss = boss;
-    // Bob's shots hit the boss
-    this.physics.add.overlap(this.player.shots, boss, (shotObj) => {
-      const shot = shotObj as Projectile;
+    // Bob's shots hit the boss (pairs sorted by type: the old version disabled the boss itself)
+    const isBoss = (o: unknown): o is MemoryLeak => o === boss;
+    this.physics.add.overlap(this.player.shots, boss, (a, b) => {
+      const shot = pick(a, b, isBoss)[1] as Projectile;
       if (!shot.active || !boss.active) return;
       const killed = boss.hurt(shot.damage);
       playOnce(this, shot.level === 3 ? 'fx_compiler_hit' : 'fx_hit', shot.x, shot.y, 20);
       if (!(killed && shot.level >= 2)) shot.disableBody(true, true);
     });
     // Goo blobs and puddles hurt Bob
-    this.physics.add.overlap(this.player, boss.gooGroup, (_, gooObj) => {
+    const isBob = (o: unknown): o is Player => o === this.player;
+    this.physics.add.overlap(this.player, boss.gooGroup, (a, b) => {
       if (this.player.isDead) return;
-      const goo = gooObj as Parameters<typeof MemoryLeak.gooDamage>[0];
+      const goo = pick(a, b, isBob)[1] as Parameters<typeof MemoryLeak.gooDamage>[0];
       this.player.takeHit(MemoryLeak.gooDamage(goo), goo.body.center.x);
     });
     // Boss body hurts Bob on contact
@@ -320,6 +326,8 @@ export class StageScene extends Phaser.Scene {
     });
     // Goo collides with the tile layer so it lands on the floor
     this.physics.add.collider(boss.gooGroup, this.layer, undefined, (g) => !(g as unknown as { isPuddle: boolean }).isPuddle, this);
+    const room = this.sections[2]!;
+    boss.setArena(room.x, room.x + room.w);
     this.bossHealthBar = new BossHealthBar(this, 'MEMORY LEAK');
     boss.startIntro();
   }
@@ -327,9 +335,18 @@ export class StageScene extends Phaser.Scene {
   private onBossDefeated(): void {
     this.bossHealthBar?.destroy();
     this.bossHealthBar = undefined;
-    // Unlock the boss room (camera stays, Bob can walk back through the door area)
-    // In future T10 this will transition to the WeaponGet scene
     this.events.emit('bossRoomUnlocked');
+    // Until the weapon-get screen exists (T10): announce the win and restart the stage,
+    // so Bob is never left locked in the boss room.
+    const cam = this.cameras.main;
+    this.time.delayedCall(1500, () =>
+      this.add
+        .text(cam.width / 2, cam.height / 2, 'STAGE CLEAR', { fontFamily: 'monospace', fontSize: '16px', color: '#4589ff' })
+        .setOrigin(0.5)
+        .setScrollFactor(0)
+        .setDepth(100),
+    );
+    this.time.delayedCall(4500, () => this.scene.restart());
   }
 
   /** Death animation over: spend a life and respawn. */
