@@ -2,6 +2,8 @@ import Phaser from 'phaser';
 import { ARMOR_BITS, TILE } from '../data/assets';
 import { MAX_LIVES, PICKUPS, rollDrop } from '../data/drops';
 import { BossDoor } from '../entities/BossDoor';
+import type { Boss } from '../entities/Boss';
+import { MemoryLeak, MEMORY_LEAK_CONTACT } from '../entities/bosses/MemoryLeak';
 import { Checkpoint } from '../entities/Checkpoint';
 import { Enemy, type EnemyWorld } from '../entities/Enemy';
 import { playOnce } from '../entities/effects';
@@ -15,6 +17,7 @@ import { type Action, ActionState } from '../systems/actions';
 import { cameraScroll, type Section, sectionAt, sectionOf, sectionsFromTiles } from '../systems/camera';
 import { heal, loseLife } from '../systems/damage';
 import { GameInput } from '../systems/input';
+import { BossHealthBar } from '../ui/BossHealthBar';
 import { Hud } from '../ui/Hud';
 
 /** Camera looks this far above Bob's feet, so he sits slightly below screen center. */
@@ -55,6 +58,12 @@ export class StageScene extends Phaser.Scene {
   private enemies!: Phaser.GameObjects.Group;
   private pickups!: Phaser.GameObjects.Group;
 
+  private boss?: Boss;
+  private bossHealthBar?: BossHealthBar;
+  /** The X centre of the boss room (section 2 of the test map). */
+  private bossSpawnX = 0;
+  private bossSpawnY = 0;
+
   constructor() {
     super('Stage');
   }
@@ -66,6 +75,12 @@ export class StageScene extends Phaser.Scene {
     this.respawnAt = { ...parsed.spawn, section: Math.max(0, sectionOf(this.sections, parsed.spawn.x, parsed.spawn.y)) };
     this.checkpoints = [];
     this.door = undefined;
+    this.boss = undefined;
+    this.bossHealthBar = undefined;
+    // Boss room centre: section 2 spans columns 80-109, place boss at col 94, top row 11
+    const bossSection = TEST_SECTIONS[2];
+    this.bossSpawnX = (bossSection.x + bossSection.w / 2) * TILE;
+    this.bossSpawnY = (bossSection.y + bossSection.h - 1) * TILE; // feet on the floor
 
     const map = this.make.tilemap({ data: parsed.tiles, tileWidth: TILE, tileHeight: TILE });
     const tileset = map.addTilesetImage('tiles_test', 'tiles_test', TILE, TILE, 0, 0);
@@ -109,6 +124,11 @@ export class StageScene extends Phaser.Scene {
 
     this.enterSection(this.respawnAt.section, true);
 
+    // Boss spawns when the door shuts behind Bob
+    this.events.once('bossIntro', () => this.spawnBoss());
+    // When boss is defeated, unlock boss room so Bob can exit
+    this.events.on('bossDefeated', () => this.onBossDefeated());
+
     this.controls = new GameInput(this);
     const kb = this.input.keyboard!;
     kb.on('keydown-R', () => !this.player.isDead && this.respawnBob());
@@ -142,6 +162,10 @@ export class StageScene extends Phaser.Scene {
     p.step(input);
     for (const e of this.enemies.getChildren() as Enemy[]) e.step();
     for (const k of [...this.pickups.getChildren()] as Pickup[]) k.step();
+    if (this.boss) {
+      this.boss.step();
+      this.bossHealthBar?.update(this.boss);
+    }
 
     if (!p.isDead) {
       const b = p.body;
@@ -255,7 +279,57 @@ export class StageScene extends Phaser.Scene {
     const r = this.respawnAt;
     this.player.respawn(r.x, r.y);
     if (this.door && this.door.state !== 'closed') this.door.reset();
+    // Restart the boss encounter if Bob died in the boss room
+    if (this.boss && !this.boss.active) {
+      // boss was already defeated — nothing to reset
+    } else if (this.boss && this.boss.phase !== 'dead') {
+      this.boss.reset();
+    }
     this.enterSection(r.section, true);
+  }
+
+  private spawnBoss(): void {
+    if (this.boss) return; // already spawned (shouldn't happen, but be safe)
+    const boss = new MemoryLeak(
+      this,
+      this.bossSpawnX,
+      this.bossSpawnY,
+      this.worldHeight,
+      () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
+    );
+    this.boss = boss;
+    // Bob's shots hit the boss
+    this.physics.add.overlap(this.player.shots, boss, (shotObj) => {
+      const shot = shotObj as Projectile;
+      if (!shot.active || !boss.active) return;
+      const killed = boss.hurt(shot.damage);
+      playOnce(this, shot.level === 3 ? 'fx_compiler_hit' : 'fx_hit', shot.x, shot.y, 20);
+      if (!(killed && shot.level >= 2)) shot.disableBody(true, true);
+    });
+    // Goo blobs and puddles hurt Bob
+    this.physics.add.overlap(this.player, boss.gooGroup, (_, gooObj) => {
+      if (this.player.isDead) return;
+      const goo = gooObj as Parameters<typeof MemoryLeak.gooDamage>[0];
+      this.player.takeHit(MemoryLeak.gooDamage(goo), goo.body.center.x);
+    });
+    // Boss body hurts Bob on contact
+    this.physics.add.overlap(this.player, boss, () => {
+      if (!this.player.isDead && boss.phase === 'fight') {
+        this.player.takeHit(MEMORY_LEAK_CONTACT, boss.body.center.x);
+      }
+    });
+    // Goo collides with the tile layer so it lands on the floor
+    this.physics.add.collider(boss.gooGroup, this.layer, undefined, (g) => !(g as unknown as { isPuddle: boolean }).isPuddle, this);
+    this.bossHealthBar = new BossHealthBar(this, 'MEMORY LEAK');
+    boss.startIntro();
+  }
+
+  private onBossDefeated(): void {
+    this.bossHealthBar?.destroy();
+    this.bossHealthBar = undefined;
+    // Unlock the boss room (camera stays, Bob can walk back through the door area)
+    // In future T10 this will transition to the WeaponGet scene
+    this.events.emit('bossRoomUnlocked');
   }
 
   /** Death animation over: spend a life and respawn. */
