@@ -12,14 +12,14 @@
 | T4a | Pipeline `tools/sprites.py`: remove o fundo magenta, normaliza a escala pelo capacete, encaixa a armadura por sobreposição e pré-compõe as 15 combinações de peças |
 | T3 | Movimento base (correr, pulo variável, coyote time), parser de mapa ASCII e mapa de teste |
 | T4 | Deslize e chute na parede, dash, dash-jump e dash no ar (só com as Turbo Boots, 1 por pulo) |
-| T4b | Pipeline `py -3 tools/art.py all`: 101 strips/imagens de efeitos, inimigos, chefes, ícones, tiles, fundos e UI registrados no Boot; logo com faixas inspiradas na IBM e composição de título pronta para 480×270. Veja `docs/art-pipeline.md` |
+| T4b | Pipeline `py -3 tools/art.py all`: 104 strips/imagens de efeitos, inimigos, chefes, ícones, tiles, fundos e UI registrados no Boot; título e arte de seleção prontos para 480×270. Veja `docs/art-pipeline.md` |
 | Enquadramento | Resolução interna de 256×224 para 480×270, a pedido do usuário (câmera estava próxima demais). `?view=LxA` compara opções em dev |
 | T5 | Tiro: básico (máx. 3 na tela), carga em 2 níveis (3 com o bit de braço), aura, flash do cano, pose de tiro em todos os estados |
 | T6 | Vida (28), recuo sem controle e piscar, espinhos e poço matam, descompilação (`fx_decompile`), 3 vidas, barra de vida (`src/ui/Hud.ts`). A Firewall Plating (bit 4) corta o dano pela metade e encurta o recuo |
 | T7 | Inimigos: base `Enemy` (vida, dano por contato, flash, explosão `fx_explosion`), Pixel Mite (anda e vira em paredes e beiradas) e Spam Drone (paira e mergulha). Marcadores `m`/`d` no mapa. Itens com tabela de drop (`src/data/drops.ts`), piscam e somem. Tiros carregados (nível 2+) atravessam o inimigo que destroem |
 | T8 | Câmera por seções (`src/systems/camera.ts`, `TEST_SECTIONS` em tiles): a câmera nunca sai da seção atual, e a troca de seção desliza a câmera com o jogo congelado. Inimigos pertencem a uma seção e renascem ao reentrar. Checkpoint (`C`) muda o ponto de respawn. Porta do chefe (`B`) abre ao encostar, leva o Bob sozinho, fecha atrás e emite `bossIntro`; a sala do chefe é `locked` |
 
-São 344 testes TypeScript e 13 testes Python passando; typecheck e build também passam. O smoke test de arte confere 246 texturas nas cenas Debug e Stage, sem erros ou avisos no console/rede.
+Validação da arte de seleção: 347 testes TypeScript e 13 testes Python passando. Typecheck e build passaram numa cópia isolada da base commitada com os novos assets; a T9 está em edição pela outra sessão no checkout principal. O smoke test confere 249 texturas nas cenas Debug e Stage da base isolada, sem erros ou avisos no console/rede.
 
 **Mudança importante:** a lógica da fase roda no evento `worldstep` da física (60 Hz fixos), e não no `update()` da cena. Antes, em monitores de 120 Hz ou mais, tudo o que conta quadros ficava 2 a 4 vezes mais rápido. Lógica nova que conte quadros deve entrar em `StageScene.tick()`.
 
@@ -42,11 +42,12 @@ O Checkpoint 2 está pronto para o usuário jogar: o mapa de teste vai do iníci
 
 ## Arte
 
-- **Processado:** Bob e armadura pelo pipeline anterior; lote completo de 101 strips/imagens por `tools/art.py`, incluindo ícones B11, terminal A3, peças A4, inimigos, chefes, efeitos, tiles, doze camadas de parallax e interface. Prévia e relatórios em `art/preview/`, fora do Git.
+- **Processado:** Bob e armadura pelo pipeline anterior; lote completo de 104 strips/imagens por `tools/art.py`, incluindo ícones B11, terminal A3, peças A4, inimigos, chefes, efeitos, tiles, doze camadas de parallax e interface. Prévia e relatórios em `art/preview/`, fora do Git.
 - **Reprodução:** `py -3 tools/art.py all`, ou uma categoria. Catálogo em `tools/art_catalog.py`, registro gerado em `src/data/processedArt.ts`. O job antigo `tools/sprites.py fx` continua disponível para o subconjunto anterior. `fx_hit` agora usa FX3, a fonte de impacto correto.
-- **Conferência:** 67 PNGs brutos (65 previstos, fundo panorâmico adicional e backup da logo), hashes inalterados durante a importação, nenhuma fonte sem classificação, bordas horizontais iguais nas doze camadas. Smoke test nas cenas Debug/Stage: 246 texturas (101 do lote e 145 do Bob), sem erros de console/rede. Detalhes em `docs/art-pipeline.md`.
+- **Conferência:** 67 PNGs brutos (65 previstos, fundo panorâmico adicional e backup da logo), hashes inalterados durante a importação, nenhuma fonte sem classificação, bordas horizontais iguais nas doze camadas. Smoke test nas cenas Debug/Stage: 249 texturas (104 do lote e 145 do Bob), sem erros de console/rede. Detalhes em `docs/art-pipeline.md`.
 - **Logo:** nova versão com faixas azuis inspiradas na IBM; export transparente em `art/exports/megabob-logo.png`, versão de jogo em `public/assets/ui/title_logo.png`. Logo anterior preservada em `art/raw/ui/U1_logo-original.png`.
 - **Título panorâmico para T13:** usar `title_background_wide` (480×270) e `title_logo_night` (224×48, com contorno claro sobre o céu). Prévia em `art/exports/megabob-title-preview.png`, com fundo em `(0,0)` e logo em `(16,8)` a 2×. Artes originais preservadas; cena e navegação de menu ficam para T13.
+- **Seleção para T13:** `stage_select_wide` (480×270) com cinco molduras vazias; `stage_locked_wide` (64×64) e `stage_focus` (72×72) separados. Coordenadas em `art/exports/stage-select-layout.json`; prévias `megabob-stage-select-locked.png` e `megabob-stage-select-unlocked.png` em `art/exports/`. Usar retratos existentes sem esticar; a lógica de seleção/liberação não foi alterada nesta fatia.
 - **Referências:** B1, A1 e três conceitos de chefes não geram texturas. Os novos arquivos estão carregados, mas seu uso nas mecânicas e menus depende das tarefas seguintes.
 - **Armadura revisada:** enquadramento dentro dos 48×48, escala compartilhada no air dash, partículas neutras de `compile[0]` iguais nas 16 combinações e divisões anatômicas específicas de `dash[1,3]`. O relatório do Bob está sem avisos. Prévia em `art/preview/bob_parts_comparison.png`; detalhes em `art/REGENERATE.md`. Trabalho de combate da T7 preservado.
 

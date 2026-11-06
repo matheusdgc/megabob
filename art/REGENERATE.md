@@ -1,6 +1,6 @@
 # Pendências de arte
 
-O lote atual de 101 strips/imagens passou nas verificações de recorte, dimensões, transparência, paleta e carregamento. A montagem das fases e dos menus ainda precisa de revisão no contexto de cada tela.
+O lote atual de 104 strips/imagens passou nas verificações de recorte, dimensões, transparência, paleta e carregamento. A montagem das fases e dos menus ainda precisa de revisão no contexto de cada tela.
 
 Correção de enquadramento concluída:
 
@@ -14,3 +14,5 @@ Correção de composição concluída:
 O relatório atual do Bob está sem avisos de recorte ou sobreposição. As fontes não foram alteradas. A revisão das animações no contexto das fases e menus continua nas tarefas correspondentes; os recortes anatômicos anotados acima são específicos das duas poses B6.
 
 Título panorâmico: fundo 480×270 recomposto em 16:9 com `imagegen`, mantendo a fonte U2 original, e variante `title_logo_night` com contorno claro. Prévia em `art/exports/megabob-title-preview.png`; layouts e arquivos em `docs/art-pipeline.md`.
+
+Seleção panorâmica: bordas de U3 recompostas sem deformar os retratos, cinco molduras 64×64, cadeado e foco separados. Os slots e o foco cabem no viewport e não se sobrepõem. Prévias bloqueada/liberada em `art/exports/megabob-stage-select-locked.png` e `megabob-stage-select-unlocked.png`; coordenadas em `art/exports/stage-select-layout.json`.

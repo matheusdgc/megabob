@@ -13,7 +13,7 @@ Categorias disponíveis: `fx`, `enemies`, `bosses`, `icons`, `tiles`, `bg` e `ui
 ## Entradas e saídas
 
 - Fontes: `art/raw/`, com os prompts ao lado. O importador compara os hashes SHA-256 antes e depois e falha se alguma fonte mudar.
-- Jogo: 101 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
+- Jogo: 104 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
 - Registro: `public/assets/art-manifest.json` e `src/data/processedArt.ts`, ambos gerados. `src/data/assets.ts` conserva as chaves anteriores e inclui os novos registros.
 - Revisão: contatos, repetições de fundos e `art_report.json` em `art/preview/`, fora do Git. O relatório distingue fontes processadas, conceitos de referência e fontes do pipeline anterior do Bob.
 - Logo: `art/exports/megabob-logo.png`, recortada com transparência e resolução da fonte; `public/assets/ui/title_logo.png`, versão 224×48 para o jogo. A versão atual tem lettering MEGABOB com faixas azuis inspiradas na referência IBM. A anterior está preservada em `art/raw/ui/U1_logo-original.png`.
@@ -30,6 +30,20 @@ A fonte adicional `art/raw/ui/U2_title_bg_wide.png` foi gerada com `imagegen`, u
 `title_logo_night` deriva da mesma fonte da logo: azuis/neutros, remoção de pixels isolados e contorno claro de 1 px para separar as letras do céu. A versão original fica intacta. A margem interna evita cortar o contorno.
 
 `py -3 tools/art.py ui` também monta `art/exports/megabob-title-preview.png` (480×270) e a ampliação nearest-neighbor `art/preview/title_wide_2x.png`. O prompt do fundo está em `art/exports/megabob-title-wide.prompt.txt`. A prévia é uma composição de arte; a cena, os textos e a navegação do menu ficam para T13.
+
+## Seleção de fases em 480×270
+
+`tools/ui_art.py` recompõe as peças de U3: preserva os cantos da moldura, redimensiona só as bordas e monta o interior com cinco slots quadrados. Retratos e texto não ficam gravados no fundo. O cadeado e o foco são texturas independentes.
+
+| Textura | Tamanho | Uso |
+|---|---|---|
+| `stage_select_wide` | 480×270 | Fundo e cinco molduras vazias, em `(0, 0)`, origem superior esquerda |
+| `stage_locked_wide` | 64×64 | Cobertura do slot da fortaleza enquanto bloqueada, centrada em `(240, 208)` |
+| `stage_focus` | 72×72 | Cantos amarelos de foco, centrados no slot selecionado |
+
+Centros: Memory Leak `(240,62)`, Race Condition `(112,135)`, Bob `(240,135)`, Null Pointer `(368,135)` e fortaleza `(240,208)`. Cada moldura tem 64×64; os retratos dos chefes permanecem em 48×48 e o de Bob em 32×32, sem deformação.
+
+`py -3 tools/art.py ui` exporta `art/exports/stage-select-layout.json` e as prévias `megabob-stage-select-locked.png` / `megabob-stage-select-unlocked.png`. As ampliações em `art/preview/` usam nearest-neighbor. São exemplos visuais de estado; os critérios de liberação, a escolha de fase e o save pertencem à T13.
 
 ## Regras do processamento
 
@@ -51,6 +65,6 @@ npm.cmd run build
 node tools/check-assets.mjs
 ```
 
-O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 101 texturas do lote e os 145 strips do Bob (246 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script.
+O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 104 texturas do lote e os 145 strips do Bob (249 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script. Para outro servidor local, passe a URL: `node tools/check-assets.mjs http://127.0.0.1:5174`.
 
 O lote está carregado pelo Boot e o mapa de teste usa os tiles reais. Animações e componentes ficam disponíveis para as tarefas de inimigos, chefes, fases e menus; o importador não implementa essas mecânicas.

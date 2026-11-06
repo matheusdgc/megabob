@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
+const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
 const output = join(root, 'art/preview');
 await mkdir(output, { recursive: true });
 const profile = await mkdtemp(join(tmpdir(), 'megabob-assets-'));
@@ -70,7 +71,7 @@ try {
   }
   const scenes = [];
   for (const [query, scene] of [['?sprites', 'Debug'], ['', 'Stage']]) {
-    await send('Page.navigate', { url: `http://127.0.0.1:5173/${query}` });
+    await send('Page.navigate', { url: `${baseUrl}/${query}` });
     let state;
     for (let i = 0; i < 120; i++) {
       const result = await send('Runtime.evaluate', {
