@@ -24,11 +24,11 @@ Mapeamento de teclado (setas/WASD, Z, X, C, Q/E, Enter) e de gamepad numa interf
 **Verificar:** cena de debug mostrando as ações ativas · **Dep.:** T1
 **Arquivos:** `src/systems/input.ts`, `src/data/assets.ts`, `src/systems/placeholders.ts`
 
-### T3: Movimento base do Bob [M]
+### T3: Movimento base do Bob [M] ✅
 Máquina de estados pura (`idle/run/jump/fall/land`) com testes. Andar, pulo variável, coyote time e gravidade. Mapa ASCII de teste com colisão de tiles e câmera seguindo.
-- [ ] Testes cobrem as transições idle ↔ run ↔ jump → fall → land e o corte do pulo ao soltar o botão
-- [ ] O Bob anda e pula no mapa de teste sem atravessar tiles
-- [ ] Todas as constantes ficam em `tuning.ts`
+- [x] Testes cobrem as transições idle ↔ run ↔ jump → fall → land e o corte do pulo ao soltar o botão
+- [x] O Bob anda e pula no mapa de teste sem atravessar tiles
+- [x] Todas as constantes ficam em `tuning.ts`
 
 **Verificar:** `npm test` e jogar o mapa de teste · **Dep.:** T2
 **Arquivos:** `src/systems/playerState.ts`, `src/entities/Player.ts`, `src/data/tuning.ts`, `src/stages/test.ts`, `src/scenes/StageScene.ts`, `tests/playerState.test.ts`

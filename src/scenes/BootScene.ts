@@ -31,6 +31,7 @@ export class BootScene extends Phaser.Scene {
         generatePlaceholder(this, s);
       }
     }
-    this.scene.start('Debug');
+    // ?sprites opens the sprite/input debug screen instead of the stage
+    this.scene.start(new URLSearchParams(location.search).has('sprites') ? 'Debug' : 'Stage');
   }
 }
