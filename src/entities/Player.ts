@@ -6,6 +6,7 @@ import {
   BLINK_FRAMES,
   BOB_BODY_H,
   BOB_BODY_W,
+  SHOOT_POSE_FRAMES,
   DEATH_FRAMES,
   GRAVITY,
   HURT_FRAMES,
@@ -18,6 +19,9 @@ import { BOB_LOOPS, type BobPose, bobPose, poseSheet, shotOrigin } from '../syst
 import { chargeLevel, newBuster, type ShotLevel, stepBuster } from '../systems/charge';
 import { type HitResult, hit, kill, newHealth, tickHealth } from '../systems/damage';
 import { newMotion, startHurt, stepMotion } from '../systems/motion';
+import { type Arsenal, cycleWeapon, newArsenal, spend } from '../systems/weapons';
+import { WEAPONS } from '../data/weapons';
+import { GC_MAX_ON_SCREEN, GcOrb } from './weapons/GarbageCollector';
 import { fxAnim, Projectile } from './Projectile';
 
 /** Frames the muzzle flash stays on after a shot. */
@@ -50,6 +54,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   readonly motion = newMotion();
   readonly buster = newBuster();
   readonly health = newHealth();
+  /** Owned weapons, equipped weapon and energy. The stage replaces it with saved progress. */
+  arsenal: Arsenal = newArsenal();
+  /** Live special-weapon projectiles (Garbage Collector orbs). */
+  readonly specials: Phaser.Physics.Arcade.Group;
   /** Frames left of the death animation; the scene respawns Bob when it reaches 0. */
   private deathFrames = 0;
   private readonly decompile: Phaser.GameObjects.Sprite;
@@ -77,6 +85,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // basic shots plus room for charged shots fired while they are still flying
     this.shots = scene.physics.add.group({ classType: Projectile, maxSize: MAX_SHOTS * 2, allowGravity: false });
+    this.specials = scene.physics.add.group({ classType: GcOrb, maxSize: GC_MAX_ON_SCREEN + 1, allowGravity: false });
     this.aura = scene.add.sprite(x, y, AURA_SHEETS[1]).setVisible(false).setDepth(1);
     this.muzzle = scene.add.sprite(x, y, 'fx_muzzle').setVisible(false).setDepth(1);
     this.decompile = scene.add.sprite(x, y, 'fx_decompile').setVisible(false).setDepth(1);
@@ -162,16 +171,24 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     const maxLevel = this.armorBits & ARMOR_BITS.arm ? 3 : 2;
     const hurt = this.motion.state === 'hurt';
+    if (input.justPressed('nextWeapon')) this.switchWeapon(1);
+    else if (input.justPressed('prevWeapon')) this.switchWeapon(-1);
     // no shooting while knocked back; the charge survives only if the button stays held
     if (hurt && !input.isDown('shoot')) this.buster.charge = 0;
-    const fired = hurt
-      ? null
-      : stepBuster(
-          this.buster,
-          { pressed: input.justPressed('shoot'), down: input.isDown('shoot'), released: input.justReleased('shoot') },
-          { liveShots: this.shots.countActive(true), maxLevel },
-        );
-    if (fired !== null) this.fire(fired);
+    if (this.arsenal.current === 'buster') {
+      const fired = hurt
+        ? null
+        : stepBuster(
+            this.buster,
+            { pressed: input.justPressed('shoot'), down: input.isDown('shoot'), released: input.justReleased('shoot') },
+            { liveShots: this.shots.countActive(true), maxLevel },
+          );
+      if (fired !== null) this.fire(fired);
+    } else {
+      // special weapons: one shot per press, paid with weapon energy (no charging yet)
+      if (this.buster.pose > 0) this.buster.pose--;
+      if (!hurt && input.justPressed('shoot')) this.fireSpecial();
+    }
     this.showEffects(chargeLevel(this.buster.charge, maxLevel));
     this.show(bobPose(this.motion, body.velocity.y, this.buster.pose > 0));
     // blink while invulnerable
@@ -189,6 +206,31 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.setAllowGravity(true);
     Object.assign(this.motion, newMotion(this.motion.airDashes), { facing: this.motion.facing });
     Object.assign(this.buster, newBuster());
+  }
+
+  /** Q/E: next or previous owned weapon; Bob's colors follow the weapon. */
+  private switchWeapon(dir: 1 | -1): void {
+    const before = this.arsenal.current;
+    if (cycleWeapon(this.arsenal, dir) === before) return;
+    this.buster.charge = 0;
+    this.applyWeaponTint();
+    this.emit('weaponChanged', this.arsenal.current);
+  }
+
+  /** Tints Bob with the equipped weapon's colors (the buster shows his own). */
+  applyWeaponTint(): void {
+    const tint = WEAPONS[this.arsenal.current].tint;
+    if (tint === 0xffffff) this.clearTint();
+    else this.setTint(tint);
+  }
+
+  private fireSpecial(): void {
+    if (this.arsenal.current !== 'garbageCollector') return; // the others arrive in T14/T15
+    if (this.specials.countActive(true) >= GC_MAX_ON_SCREEN || !spend(this.arsenal)) return;
+    const o = shotOrigin(this.motion);
+    const orb = this.specials.get() as GcOrb | null;
+    orb?.fire(this.body.center.x + o.dx, this.body.bottom + o.dy, o.dir);
+    this.buster.pose = SHOOT_POSE_FRAMES;
   }
 
   private fire(level: ShotLevel): void {

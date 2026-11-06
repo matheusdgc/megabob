@@ -128,10 +128,10 @@ Classe base `Boss`: máquina de estados, barra de vida que enche na entrada, i-f
 **Verificar:** lutar no mapa de teste · **Dep.:** T8
 **Arquivos:** `src/entities/Boss.ts`, `src/entities/bosses/MemoryLeak.ts`, `src/ui/BossHealthBar.ts`
 
-### T10: Sistema de armas e Garbage Collector [M]
+### T10: Sistema de armas e Garbage Collector [M] ✅
 Tabela de armas e fraquezas com testes. Energia por arma, troca com Q/E, troca de paleta do Bob, tela "arma ganha" e a arma Garbage Collector.
-- [ ] Testes: fraqueza = 3×, energia consome e recarrega, troca de arma pula as que não foram ganhas
-- [ ] Depois do Memory Leak, o Garbage Collector está equipável e funcionando
+- [x] Testes: fraqueza = 3×, energia consome e recarrega, troca de arma pula as que não foram ganhas
+- [x] Depois do Memory Leak, o Garbage Collector está equipável e funcionando
 
 **Verificar:** `npm test` e jogar · **Dep.:** T9
 **Arquivos:** `src/data/weapons.ts`, `src/systems/weapons.ts`, `src/entities/weapons/GarbageCollector.ts`, `src/scenes/WeaponGetScene.ts`, `tests/weapons.test.ts`

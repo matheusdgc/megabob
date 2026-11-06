@@ -1,6 +1,6 @@
 # Handoff: estado do projeto
 
-> Atualizado em 06/11/2026, no fim da T9 (editor, IBM Bob). Branch `dev`.
+> Atualizado em 06/11/2026, no fim da T10 (editor). Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)
@@ -19,8 +19,9 @@
 | T7 | Inimigos: base `Enemy` (vida, dano por contato, flash, explosão `fx_explosion`), Pixel Mite (anda e vira em paredes e beiradas) e Spam Drone (paira e mergulha). Marcadores `m`/`d` no mapa. Itens com tabela de drop (`src/data/drops.ts`), piscam e somem. Tiros carregados (nível 2+) atravessam o inimigo que destroem |
 | T8 | Câmera por seções (`src/systems/camera.ts`, `TEST_SECTIONS` em tiles): a câmera nunca sai da seção atual, e a troca de seção desliza a câmera com o jogo congelado. Inimigos pertencem a uma seção e renascem ao reentrar. Checkpoint (`C`) muda o ponto de respawn. Porta do chefe (`B`) abre ao encostar, leva o Bob sozinho, fecha atrás e emite `bossIntro`; a sala do chefe é `locked` |
 | T9 | Chefe Memory Leak: `src/systems/boss.ts` (máquina de estados pura intro/fight/dead, dano com i-frames, 15 testes), `src/entities/Boss.ts` (sprite base, dispara `bossDefeated`), `src/entities/bosses/MemoryLeak.ts` (3 padrões: volley de bolhas → poças, afundar/emergir, fúria a 1/3 de vida), `src/ui/BossHealthBar.ts` (barra horizontal com fill na intro). StageScene spawna o chefe no `bossIntro` e reinicia no `afterDeath`. |
+| T10 | Armas: `src/data/weapons.ts` (tabela, `WEAKNESS`, `damageFor`, arma de cada chefe) e `src/systems/weapons.ts` (arsenal: armas ganhas, troca Q/E pulando as não ganhas, energia por arma, recarga). Bob tingido pela arma. Garbage Collector (`src/entities/weapons/GarbageCollector.ts`): orbe lento, 1 na tela, 2 de energia, atravessa inimigos acertando cada um uma vez e engole o lodo do chefe. HUD com barra de energia; barras verticais reutilizáveis (`src/ui/meter.ts`), a do chefe à direita. `WeaponGetScene` depois do chefe, gravando a arma no registry (`ownedWeapons`) e voltando à fase. Dev key G dá o Garbage Collector |
 
-São 366 testes TypeScript e 13 testes Python passando; typecheck e build também passam. O smoke test de arte confere 253 texturas nas cenas Debug e Stage, sem erros ou avisos.
+São 377 testes TypeScript passando; typecheck e build também passam.
 
 **Mudança importante:** a lógica da fase roda no evento `worldstep` da física (60 Hz fixos), e não no `update()` da cena. Antes, em monitores de 120 Hz ou mais, tudo o que conta quadros ficava 2 a 4 vezes mais rápido. Lógica nova que conte quadros deve entrar em `StageScene.tick()`.
 
@@ -32,16 +33,13 @@ São 366 testes TypeScript e 13 testes Python passando; typecheck e build també
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
 - **Licenças da trilha:** o usuário pediu para ignorar por enquanto. Faltam as faixas 05, 07, 08 e 09 em `docs/soundtrack.md`.
 
-## Próximo passo: T10 (sistema de armas e Garbage Collector)
+## Próximo passo: T11 (áudio) ou T12 (fase Memory Leak)
 
-O Checkpoint 3 está desbloqueado quando o Memory Leak for derrotado. Pontos de partida:
+As duas não dependem uma da outra. Checkpoint 3 (fim do dia 1) pede a fase Memory Leak jogável de ponta a ponta, com o Garbage Collector no fim. Pontos de partida:
 
-- **bossDefeated:** a `StageScene` emite esse evento e `onBossDefeated()` destrói a barra. Neste momento a T10 deve iniciar a transição para `WeaponGetScene` (ainda não existe).
-- **Tabela de armas:** `src/data/weapons.ts` — `WeaponId`, `WEAKNESS` e `damageFor()` como no SPEC (já há o esqueleto no SPEC.md).
-- **Energia por arma:** cada arma tem um pool separado; Q/E trocam a arma ativa (pulando as que não foram ganhas).
-- **Garbage Collector:** orbe que suga projéteis e atravessa inimigos. Energia gasta por orbe ativo.
-- **Arma ganha:** ao voltar à seleção a `StageScene` recebe via dados de cena `{ weapon: 'garbageCollector' }`.
-- **Fraqueza:** Memory Leak leva 3× do Mutex Lock (T14), mas o dano base já é injetado pelo `damageFor()` que a T10 entregará.
+- **T12:** hoje a fase é o mapa de teste (`src/stages/test.ts` + `TEST_SECTIONS`) e a `StageScene` usa `BOSS_ID = 'memoryLeak'` fixo. A fase de verdade precisa de um arquivo de dados próprio (mapa, seções, chefe, tileset `t1_memory_leak`, parallax `t1_memory_leak_far/mid/near`) e da `StageScene` recebendo qual fase carregar.
+- **Armas:** `player.arsenal` vem de `registry.get('ownedWeapons')`. O save em `localStorage` é da T13. Mutex Lock e Null Pointer ainda não disparam (`fireSpecial` ignora); entram na T14 e T15. Carregar armas especiais com o Compiler Cannon não foi feito.
+- **Overlaps:** sempre identifique cada lado pelo tipo (`pick` no topo da `StageScene`). O chefe da T9 sumia por causa disso.
 
 ## Arte
 

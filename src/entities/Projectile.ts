@@ -26,6 +26,7 @@ export function fxAnim(scene: Phaser.Scene, key: FxKey, fps: number, repeat = -1
  * terrain and is recycled once it leaves the camera view.
  */
 export class Projectile extends Phaser.Physics.Arcade.Sprite {
+  readonly weapon = 'buster' as const;
   level: ShotLevel = 0;
   damage: number = SHOT_DAMAGE[0];
 

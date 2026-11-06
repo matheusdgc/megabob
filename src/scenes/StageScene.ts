@@ -17,6 +17,10 @@ import { type Action, ActionState } from '../systems/actions';
 import { cameraScroll, type Section, sectionAt, sectionOf, sectionsFromTiles } from '../systems/camera';
 import { heal, loseLife } from '../systems/damage';
 import { GameInput } from '../systems/input';
+import { grant, newArsenal, refill } from '../systems/weapons';
+import { BOSS_WEAPON, type BossId, damageFor, WEAPON_MAX_ENERGY, WEAPONS } from '../data/weapons';
+import { GcOrb } from '../entities/weapons/GarbageCollector';
+import { OWNED_WEAPONS } from './WeaponGetScene';
 import { BossHealthBar } from '../ui/BossHealthBar';
 import { Hud } from '../ui/Hud';
 
@@ -25,6 +29,9 @@ import { Hud } from '../ui/Hud';
  * them by type: returns [the one matching `is`, the other].
  */
 const pick = <A>(a: unknown, b: unknown, is: (o: unknown) => o is A): [A, unknown] => (is(a) ? [a, b] : [b as A, a]);
+
+/** The boss of this stage (the test map uses Memory Leak). */
+const BOSS_ID: BossId = 'memoryLeak';
 
 /** Camera looks this far above Bob's feet, so he sits slightly below screen center. */
 const CAMERA_LOOK_UP = 24;
@@ -40,7 +47,7 @@ interface RespawnPoint {
 /**
  * A playable stage built from an ASCII map and its camera sections (for now: the test map).
  * Dev keys: R back to the respawn point, F2 hitboxes + state readout, 1-4 armor parts
- * (4 = Turbo Boots: air dash), H take a 4-point hit from the front.
+ * (4 = Turbo Boots: air dash), H take a 4-point hit from the front, G grant the Garbage Collector.
  * Emits `bossIntro` when the boss door shuts behind Bob, `gameOver` on the last life.
  */
 export class StageScene extends Phaser.Scene {
@@ -109,6 +116,8 @@ export class StageScene extends Phaser.Scene {
     this.physics.add.collider(this.player, layer);
     if (this.door) this.physics.add.collider(this.player, this.door);
     this.player.on('deathDone', () => this.afterDeath());
+    this.player.arsenal = newArsenal(this.registry.get(OWNED_WEAPONS) ?? []);
+    this.player.applyWeaponTint();
     this.hud = new Hud(this);
 
     this.mapEnemies = parsed.enemies.map((e) => ({ ...e, section: sectionOf(this.sections, e.x, e.y) }));
@@ -122,6 +131,11 @@ export class StageScene extends Phaser.Scene {
       this.shotHits(shot as Projectile, enemy);
     });
     this.physics.add.overlap(this.player, this.enemies, (a, b) => this.touchEnemy(pick(a, b, isEnemy)[0]));
+    this.physics.add.overlap(this.player.specials, this.enemies, (a, b) => {
+      const [enemy, orb] = pick(a, b, isEnemy) as [Enemy, GcOrb];
+      // the orb passes through, hitting each enemy once
+      if (orb.active && enemy.active && orb.firstHit(enemy)) enemy.hurt(orb.damage);
+    });
     this.physics.add.overlap(this.player, this.pickups, (a, b) =>
       this.collect(pick(a, b, (o): o is Pickup => o instanceof Pickup)[0]),
     );
@@ -138,6 +152,7 @@ export class StageScene extends Phaser.Scene {
     kb.on('keydown-R', () => !this.player.isDead && this.respawnBob());
     kb.on('keydown-F2', () => this.toggleDebug());
     kb.on('keydown-H', () => this.player.takeHit(4, this.player.body.center.x + this.player.motion.facing * 16));
+    kb.on('keydown-G', () => grant(this.player.arsenal, 'garbageCollector'));
     const parts: [string, number][] = [
       ['ONE', ARMOR_BITS.head],
       ['TWO', ARMOR_BITS.arm],
@@ -187,7 +202,9 @@ export class StageScene extends Phaser.Scene {
       if (next !== this.section) this.enterSection(next, false);
     }
     const h = p.health;
-    this.hud.update(h.hp, h.max, h.lives);
+    const a = p.arsenal;
+    const gauge = a.current === 'buster' ? null : { energy: a.energy[a.current], max: WEAPON_MAX_ENERGY, color: WEAPONS[a.current].color };
+    this.hud.update(h.hp, h.max, h.lives, gauge);
   }
 
   /**
@@ -272,8 +289,7 @@ export class StageScene extends Phaser.Scene {
         h.lives = Math.min(MAX_LIVES, h.lives + 1);
         break;
       default:
-        // weapon energy: the weapon system (T10) listens for this
-        this.events.emit('weaponEnergy', item.amount);
+        refill(this.player.arsenal, item.amount);
     }
     item.destroy();
   }
@@ -307,9 +323,19 @@ export class StageScene extends Phaser.Scene {
     this.physics.add.overlap(this.player.shots, boss, (a, b) => {
       const shot = pick(a, b, isBoss)[1] as Projectile;
       if (!shot.active || !boss.active) return;
-      const killed = boss.hurt(shot.damage);
+      const killed = boss.hurt(damageFor(BOSS_ID, shot.weapon, shot.damage));
       playOnce(this, shot.level === 3 ? 'fx_compiler_hit' : 'fx_hit', shot.x, shot.y, 20);
       if (!(killed && shot.level >= 2)) shot.disableBody(true, true);
+    });
+    // Garbage Collector orbs: hit the boss once each, swallow goo
+    const isOrb = (o: unknown): o is GcOrb => o instanceof GcOrb;
+    this.physics.add.overlap(this.player.specials, boss, (a, b) => {
+      const orb = pick(a, b, isOrb)[0];
+      if (orb.active && boss.active && orb.firstHit(boss)) boss.hurt(damageFor(BOSS_ID, orb.weapon, orb.damage));
+    });
+    this.physics.add.overlap(this.player.specials, boss.gooGroup, (a, b) => {
+      const goo = pick(a, b, isOrb)[1] as { active: boolean; deactivate(): void };
+      if (goo.active) goo.deactivate();
     });
     // Goo blobs and puddles hurt Bob
     const isBob = (o: unknown): o is Player => o === this.player;
@@ -336,17 +362,9 @@ export class StageScene extends Phaser.Scene {
     this.bossHealthBar?.destroy();
     this.bossHealthBar = undefined;
     this.events.emit('bossRoomUnlocked');
-    // Until the weapon-get screen exists (T10): announce the win and restart the stage,
-    // so Bob is never left locked in the boss room.
-    const cam = this.cameras.main;
-    this.time.delayedCall(1500, () =>
-      this.add
-        .text(cam.width / 2, cam.height / 2, 'STAGE CLEAR', { fontFamily: 'monospace', fontSize: '16px', color: '#4589ff' })
-        .setOrigin(0.5)
-        .setScrollFactor(0)
-        .setDepth(100),
-    );
-    this.time.delayedCall(4500, () => this.scene.restart());
+    // after the explosion: the weapon-get screen, which then returns to the stage (T13: select)
+    const weapon = BOSS_WEAPON[BOSS_ID];
+    this.time.delayedCall(2500, () => (weapon ? this.scene.start('WeaponGet', { weapon, next: 'Stage' }) : this.scene.restart()));
   }
 
   /** Death animation over: spend a life and respawn. */

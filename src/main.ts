@@ -3,6 +3,7 @@ import { GAME_HEIGHT, GAME_WIDTH, PHYSICS_FPS } from './config';
 import { BootScene } from './scenes/BootScene';
 import { DebugScene } from './scenes/DebugScene';
 import { StageScene } from './scenes/StageScene';
+import { WeaponGetScene } from './scenes/WeaponGetScene';
 import { integerZoom } from './systems/scaling';
 
 const parent = document.getElementById('game');
@@ -32,7 +33,7 @@ const game = new Phaser.Game({
     },
   },
   input: { gamepad: true },
-  scene: [BootScene, StageScene, DebugScene],
+  scene: [BootScene, StageScene, WeaponGetScene, DebugScene],
 });
 
 window.addEventListener('resize', () => game.scale.setZoom(zoomFor()));
