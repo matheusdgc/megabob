@@ -26,6 +26,7 @@ Toda tarefa só fecha com `npm test`, `npm run typecheck` e `npm run build` pass
 
 - Trabalhe no branch **`dev`**. O `main` só recebe o merge final. Não dê push sem pedir ao usuário.
 - Faça um commit por tarefa ou fatia, com mensagem no estilo `feat: <o que> (T5)` e um corpo curto explicando o porquê.
+- **Não inclua agentes como coautores:** nada de linha `Co-Authored-By` (nem outra atribuição a IA) em commits ou PRs, até o usuário autorizar.
 - `art/raw/soundtrack/` fica fora do git (64 MB brutos). As faixas convertidas vão para `public/assets/music/`.
 
 ## Arquitetura (não quebre isto)
