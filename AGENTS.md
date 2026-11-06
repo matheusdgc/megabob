@@ -38,6 +38,15 @@ Toda tarefa só fecha com `npm test`, `npm run typecheck` e `npm run build` pass
 - **Fases:** mapas ASCII em `src/stages/*.ts`, interpretados por `parseMap` (`src/stages/map.ts`). Legenda: `#` sólido, `=` plataforma de mão única, `^` espinho, `-` parede de fundo, `.` vazio, `P` início.
 - **Quadros:** o Bob tem quadros de 48×48, com os pés na última linha e origin `(0.5, 1)`. A caixa de colisão é 14×30, e os tiles são 16×16. A tela interna é 256×224, com escala inteira.
 
+## Memória do projeto (ai-memory)
+
+O servidor ai-memory roda num container Docker (`ai-memory`) em `http://127.0.0.1:49374`. O editor (inclusive a extensão dentro do IBM Bob) usa pelo plugin `ai-memory@ai-memory`, já ativado em `~/.agents/settings.json`.
+
+- **Escopo deste projeto:** `workspace: "default"`, `project: "matheusdgc-megabob"`. Com `matheusdgc` como workspace, o servidor responde "not found".
+- **Se as ferramentas `memory_*` não aparecerem:** o Docker provavelmente subiu depois da sessão, e o plugin falhou com "Connection closed". Com o Docker aberto, rode `/mcp`, escolha `plugin:ai-memory:ai-memory` e clique em **Reconnect**. Se não houver `/mcp`, abra uma sessão nova.
+- **Último recurso (HTTP direto):** `POST http://127.0.0.1:49374/mcp` com os cabeçalhos `Content-Type: application/json` e `Accept: application/json, text/event-stream`, e um corpo JSON-RPC `tools/call`, passando o escopo acima em toda chamada. O wrapper de CLI `ai-memory` falha no Git Bash por causa do caminho de montagem do Docker.
+- **Ao começar:** chame `memory_handoff_list` (ou aceite o handoff que o hook já mostrou). Ao encerrar, registre um handoff com `memory_handoff_begin`. O estado oficial continua sendo `docs/HANDOFF.md`, e o handoff do ai-memory só espelha esse arquivo.
+
 ## Testando no navegador
 
 - `window.__game` existe só no modo dev.
