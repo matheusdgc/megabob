@@ -51,6 +51,10 @@ Reaproveitar os helpers de `tools/sprites.py` e o Pillow instalado, acrescentand
 
 As fontes permanecem intactas. Conceitos usados apenas como referência não viram texturas duplicadas do jogo. Fundos recebem fechamento de bordas nas cópias processadas; as prévias mostram duas repetições para conferir. Commits desta fatia não incluem as pastas brutas que o handoff pede confirmar separadamente.
 
+### T4b — revisão do enquadramento da armadura
+
+Corrigir a busca de encaixe para comparar a silhueta completa e aceitar apenas posições dentro dos 48×48. Aplicar uma escala compartilhada limitada pelo maior quadro no air dash. Testar o recorte nas bordas antes da correção, regenerar as saídas e comparar as prévias. Preservar fontes, resolução e a implementação de combate da outra sessão.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

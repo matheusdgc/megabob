@@ -24,7 +24,9 @@ O fundo magenta é removido com tolerância, preservando roxos e branco. Os stri
 
 Folhas com espaçamento irregular usam os intervalos de conteúdo; folhas de efeitos e tiles usam a grade declarada. Os tiles têm 16×16. Os fundos geram três camadas de 512×224 por fase: FAR com duas cores para preservar silhuetas, MID e NEAR com transparência. A correção de bordas garante igualdade entre as colunas inicial e final; as prévias repetidas permitem conferir a composição visual da emenda.
 
-B1, A1, três conceitos de chefes e o logo anterior são referências, sem saída de runtime. Bob B2–B10, a armadura e air dash continuam no pipeline `py -3 tools/sprites.py bob`. Seus problemas de encaixe já registrados no handoff permanecem pendentes.
+B1, A1, três conceitos de chefes e o logo anterior são referências, sem saída de runtime. Bob B2–B10, a armadura e air dash continuam no pipeline `py -3 tools/sprites.py bob`. O encaixe considera o desenho inteiro, restringe posições aos 48×48 e limita a escala compartilhada de poses grandes, sem recorte. Os avisos de clipping foram corrigidos; sobreposição de `compile[0]` e emendas de peças parciais permanecem em `art/REGENERATE.md`.
+
+Testes do enquadramento: `py -3 -m unittest discover -s tools -p test_bob_fit.py`. Para executar todos os testes Python, use `py -3 -m unittest discover -s tools -p 'test_*.py'`.
 
 ## Validação no jogo
 

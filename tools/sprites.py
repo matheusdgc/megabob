@@ -307,12 +307,17 @@ def shifted_iou(base: list[int], other: list[int], dx: int, dy: int) -> float:
     return inter / union if union else 0.0
 
 
+def bounded_scale(crops, scale: float) -> float:
+    """Keep one shared scale for the sheet, shrinking only when a pose exceeds its cell."""
+    return min(scale, CELL / max(c.width for c in crops), CELL / max(c.height for c in crops))
+
+
 def fit_armor(base_frames, base_offsets, base_cells, armor: RawSheet, est_scale: float):
     """Shared armor scale + per-frame offsets maximizing silhouette overlap with the base."""
     base_masks = [row_masks(c) for c in base_cells]
     best = None
     for m in ARMOR_SCALE_STEPS:
-        scale = est_scale * m
+        scale = bounded_scale(armor.crops, est_scale * m)
         frames = armor.frames(scale)
         total, picks = 0.0, []
         for i, (bf, af) in enumerate(zip(base_frames, frames)):
@@ -322,15 +327,19 @@ def fit_armor(base_frames, base_offsets, base_cells, armor: RawSheet, est_scale:
             # start: armor bottom-center on the base bottom-center, then search around it
             dx0 = round(bdx + bw / 2 - aw / 2)
             dy0 = bdy + bh - ah
-            cell, _, _, _ = place(af, dx0, dy0)
+            # Score the complete drawing, never a mask already clipped at its initial offset.
+            # Otherwise the overlap search can prefer losing protruding armor at an edge.
+            cell, _, _, _ = place(af, 0, 0)
             amask = row_masks(cell)
-            score, sx, sy = max(
-                (shifted_iou(base_masks[i], amask, sx, sy), sx, sy)
-                for sx in range(-ARMOR_SHIFT, ARMOR_SHIFT + 1)
-                for sy in range(-ARMOR_SHIFT, ARMOR_SHIFT + 1)
+            dx0 = min(max(dx0, 0), CELL - aw)
+            dy0 = min(max(dy0, 0), CELL - ah)
+            score, dx, dy = max(
+                (shifted_iou(base_masks[i], amask, dx, dy), dx, dy)
+                for dx in range(max(0, dx0 - ARMOR_SHIFT), min(CELL - aw, dx0 + ARMOR_SHIFT) + 1)
+                for dy in range(max(0, dy0 - ARMOR_SHIFT), min(CELL - ah, dy0 + ARMOR_SHIFT) + 1)
             )
             total += score
-            picks.append((dx0 + sx, dy0 + sy, round(score, 2)))
+            picks.append((dx, dy, round(score, 2)))
         mean = total / len(frames)
         if best is None or mean > best[0]:
             best = (mean, scale, frames, picks)
@@ -494,6 +503,7 @@ def run_bob() -> None:
         sheet = RawSheet(os.path.join(RAW, "bob_armor", f"{raw}.png"), n, warnings)
         # same armored size as the reference anim: its armor/base ratio over our helmet scale
         scale = (sheet.scale_for(target_brim) or 0.1) * armor_ratio.get(like, 1.0)
+        scale = bounded_scale(sheet.crops, scale)
         cells = []
         for i, f in enumerate(sheet.frames(scale)):
             cell, _, _, clipped = place(f)

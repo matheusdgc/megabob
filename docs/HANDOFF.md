@@ -1,6 +1,6 @@
 # Handoff: estado do projeto
 
-> Atualizado em 06/11/2026, no fim da T6 (editor). Branch `dev`.
+> Atualizado em 06/11/2026, após a revisão do enquadramento da armadura (T4b). Última tarefa de combate concluída: T6. Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)
@@ -17,7 +17,7 @@
 | T5 | Tiro: básico (máx. 3 na tela), carga em 2 níveis (3 com o bit de braço), aura, flash do cano, pose de tiro em todos os estados |
 | T6 | Vida (28), recuo sem controle e piscar, espinhos e poço matam, descompilação (`fx_decompile`), 3 vidas, barra de vida (`src/ui/Hud.ts`). A Firewall Plating (bit 4) corta o dano pela metade e encurta o recuo |
 
-São 323 testes TypeScript e 9 testes Python passando; typecheck, build e smoke test das 99 texturas no navegador também passam.
+Validação da correção de arte: 323 testes TypeScript passando numa cópia isolada da base commitada com os sprites novos, e 11 testes Python passando. Typecheck, build e smoke test das 99 texturas no navegador também passam. A T7 está sendo implementada por outra sessão no mesmo checkout; nessa implementação ainda havia duas falhas em `tests/enemies.test.ts` (limite do sorteio e contagem do mergulho do drone), fora desta correção de arte. Seus arquivos foram preservados e não entram no commit da correção.
 
 **Mudança importante:** a lógica da fase roda no evento `worldstep` da física (60 Hz fixos), e não no `update()` da cena. Antes, em monitores de 120 Hz ou mais, tudo o que conta quadros ficava 2 a 4 vezes mais rápido. Lógica nova que conte quadros deve entrar em `StageScene.tick()`.
 
@@ -51,7 +51,7 @@ Depois vêm T7 (inimigos e itens) e T8 (seções, checkpoint e porta). Isso fech
 
 ## Problemas conhecidos
 
-- **Quadros que passam do limite:** 4 quadros com armadura passam 1-2 px do quadro de 48 px: idle[0], jump[3], dash[2] e o airdash. Veja os avisos em `art/preview/bob_report.json`.
+- **Recorte da armadura corrigido:** o encaixe agora considera o desenho inteiro e só aceita posições dentro dos 48×48; air dash mantém uma escala compartilhada para caber inteiro. Os seis avisos de recorte foram eliminados. Restou o aviso de baixa sobreposição de `compile[0]`; ver `art/REGENERATE.md` e `art/preview/bob_report.json`.
 - **Peças isoladas em poses horizontais:** no dash, a armadura com só algumas peças pode ter emendas, porque as regiões são divididas por altura. Com as 4 peças, o jogo usa o desenho completo.
 - **Gamepad:** está mapeado, mas não foi testado com um controle de verdade.
 - **Tiles:** mapa de teste usa os tiles reais de T1. Montagem visual das quatro fases e integração do parallax entram nas tarefas de fases.
