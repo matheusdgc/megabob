@@ -63,10 +63,12 @@ A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar 
 
 ## Fase 2: Combate
 
-### T5: Tiro do Bob [M]
+### T5: Tiro do Bob [M] ✅
 Tiro básico com no máximo 3 na tela, carga em 2 níveis (com o nível 3 atrás de `hasCompilerCannon`), aura de carga e pool de projéteis. Tiro em todos os estados (no chão, no ar, correndo, na parede, no dash).
-- [ ] Testes: o nível de carga depende do tempo segurado e o 4º tiro é bloqueado
-- [ ] Os sprites de tiro aparecem certos em cada estado
+- [x] Testes: o nível de carga depende do tempo segurado e o 4º tiro é bloqueado
+- [x] Os sprites de tiro aparecem certos em cada estado
+
+> Feito: os tiros atravessam o cenário e somem fora da tela, e o tiro na parede sai para longe dela. A lógica do jogo passou a rodar no passo fixo de 60 Hz da física (`worldstep`), e não mais a cada atualização do monitor.
 
 **Verificar:** `npm test` e jogar · **Dep.:** T4
 **Arquivos:** `src/systems/charge.ts`, `src/entities/Projectile.ts`, `src/entities/Player.ts`, `tests/charge.test.ts`
