@@ -92,10 +92,10 @@ HP, i-frames com piscar, recuo e espinhos com morte instantânea. Morte com o ef
 **Verificar:** `npm test` e jogar · **Dep.:** T5
 **Arquivos:** `src/systems/damage.ts`, `src/entities/Player.ts`, `src/ui/Hud.ts`, `tests/damage.test.ts`
 
-### T7: Inimigos base e itens [M]
+### T7: Inimigos base e itens [M] ✅
 Classe base `Enemy` (HP, dano por contato, drop) com Pixel Mite e Spam Drone. Itens de vida pequena/grande, energia e vida extra, com tabela de drop.
-- [ ] Os 2 inimigos se comportam como descrito e morrem com explosão
-- [ ] Os itens caem, piscam antes de sumir e aplicam o efeito
+- [x] Os 2 inimigos se comportam como descrito e morrem com explosão
+- [x] Os itens caem, piscam antes de sumir e aplicam o efeito
 
 **Verificar:** jogar o mapa de teste com inimigos · **Dep.:** T6
 **Arquivos:** `src/entities/Enemy.ts`, `src/entities/enemies/PixelMite.ts`, `src/entities/enemies/SpamDrone.ts`, `src/entities/Pickup.ts`, `src/data/drops.ts`

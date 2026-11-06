@@ -1,6 +1,6 @@
 # Handoff: estado do projeto
 
-> Atualizado em 06/11/2026, após a revisão do enquadramento da armadura (T4b). Última tarefa de combate concluída: T6. Branch `dev`.
+> Atualizado em 06/11/2026, no fim da T7 (editor). Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)
@@ -16,8 +16,9 @@
 | Enquadramento | Resolução interna de 256×224 para 480×270, a pedido do usuário (câmera estava próxima demais). `?view=LxA` compara opções em dev |
 | T5 | Tiro: básico (máx. 3 na tela), carga em 2 níveis (3 com o bit de braço), aura, flash do cano, pose de tiro em todos os estados |
 | T6 | Vida (28), recuo sem controle e piscar, espinhos e poço matam, descompilação (`fx_decompile`), 3 vidas, barra de vida (`src/ui/Hud.ts`). A Firewall Plating (bit 4) corta o dano pela metade e encurta o recuo |
+| T7 | Inimigos: base `Enemy` (vida, dano por contato, flash, explosão `fx_explosion`), Pixel Mite (anda e vira em paredes e beiradas) e Spam Drone (paira e mergulha). Marcadores `m`/`d` no mapa. Itens com tabela de drop (`src/data/drops.ts`), piscam e somem. Tiros carregados (nível 2+) atravessam o inimigo que destroem |
 
-Validação da correção de arte: 323 testes TypeScript passando numa cópia isolada da base commitada com os sprites novos, e 11 testes Python passando. Typecheck, build e smoke test das 99 texturas no navegador também passam. A T7 está sendo implementada por outra sessão no mesmo checkout; nessa implementação ainda havia duas falhas em `tests/enemies.test.ts` (limite do sorteio e contagem do mergulho do drone), fora desta correção de arte. Seus arquivos foram preservados e não entram no commit da correção.
+São 332 testes passando, e o typecheck e o build também passam.
 
 **Mudança importante:** a lógica da fase roda no evento `worldstep` da física (60 Hz fixos), e não no `update()` da cena. Antes, em monitores de 120 Hz ou mais, tudo o que conta quadros ficava 2 a 4 vezes mais rápido. Lógica nova que conte quadros deve entrar em `StageScene.tick()`.
 
@@ -29,15 +30,14 @@ Validação da correção de arte: 323 testes TypeScript passando numa cópia is
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
 - **Licenças da trilha:** o usuário pediu para ignorar por enquanto. Faltam as faixas 05, 07, 08 e 09 em `docs/soundtrack.md`.
 
-## Próximo passo: T7 (inimigos base e itens)
+## Próximo passo: T8 (seções, checkpoint e porta)
 
 Veja os detalhes em `tasks/todo.md`. Pontos de partida:
 
-- **Dano no Bob:** `player.takeHit(amount, fromX)` aplica dano, recuo e invulnerabilidade. `fromX` é a posição horizontal da origem do golpe, e o Bob é empurrado para longe dela. Para matar na hora, use `fallOut()` ou `touchSpikes()`.
-- **Tiros contra inimigos:** `player.shots` é o grupo Arcade para o `overlap`. Cada `Projectile` tem `level` e `damage`. Use `fx_hit` (tiro básico) e `fx_compiler_hit` (nível 3) no impacto.
-- **Itens de vida:** use `heal(player.health, n)` de `src/systems/damage.ts`.
-- **Arte:** inimigos processados em `public/assets/enemies/` (`enemy_pixel_mite`, `enemy_spam_drone` primeiro), e itens `pickup_*` em `public/assets/fx/`. Já registrados em `SHEETS`; consultar `public/assets/art-manifest.json` para os quadros e `art/preview/enemies_contact.png` para revisão.
-- **Morte:** quando a animação de morte termina, o `Player` emite `deathDone`, e a `StageScene.afterDeath()` gasta uma vida e faz o respawn no início (os checkpoints chegam na T8). Na última vida, a cena emite `gameOver`.
+- **Respawn:** hoje a morte volta ao `P` do mapa (`StageScene.afterDeath()`), e os inimigos renascem via `spawnEnemies()`. O checkpoint deve trocar o ponto de respawn.
+- **Arte pronta:** `checkpoint` (16×32, 2 quadros: desligado e ligado) e `boss_door` (32×48, 3 quadros) em `src/data/processedArt.ts`.
+- **Energia de arma:** o item de energia só emite `weaponEnergy` na cena. O sistema de armas (T10) deve escutar esse evento.
+- **Overlap entre grupos:** o Arcade pode entregar o par em qualquer ordem, por isso a `StageScene` identifica cada lado pelo tipo (`pick`). Faça o mesmo em overlaps novos.
 
 Depois vêm T7 (inimigos e itens) e T8 (seções, checkpoint e porta). Isso fecha o Checkpoint 2.
 

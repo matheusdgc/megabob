@@ -1,9 +1,15 @@
 import Phaser from 'phaser';
 import { ARMOR_BITS, TILE } from '../data/assets';
+import { MAX_LIVES, PICKUPS, rollDrop } from '../data/drops';
+import { Enemy, type EnemyWorld } from '../entities/Enemy';
+import { playOnce } from '../entities/effects';
+import { createEnemy } from '../entities/enemies';
+import { Pickup } from '../entities/Pickup';
+import type { Projectile } from '../entities/Projectile';
 import { Player } from '../entities/Player';
-import { parseMap, T } from '../stages/map';
+import { type MapEnemy, parseMap, T } from '../stages/map';
 import { TEST_MAP } from '../stages/test';
-import { loseLife } from '../systems/damage';
+import { heal, loseLife } from '../systems/damage';
 import { GameInput } from '../systems/input';
 import { Hud } from '../ui/Hud';
 
@@ -24,6 +30,10 @@ export class StageScene extends Phaser.Scene {
   private readout?: Phaser.GameObjects.Text;
   private layer!: Phaser.Tilemaps.TilemapLayer;
   private hud!: Hud;
+  private mapEnemies: MapEnemy[] = [];
+  /** Live enemies and pickups; stepped on the fixed logic tick. */
+  private enemies!: Phaser.GameObjects.Group;
+  private pickups!: Phaser.GameObjects.Group;
 
   constructor() {
     super('Stage');
@@ -51,6 +61,24 @@ export class StageScene extends Phaser.Scene {
     this.physics.add.collider(this.player, layer);
     this.player.on('deathDone', () => this.afterDeath());
     this.hud = new Hud(this);
+
+    this.mapEnemies = parsed.enemies;
+    this.enemies = this.add.group();
+    this.pickups = this.add.group();
+    this.physics.add.collider(this.enemies, layer, undefined, (e) => (e as Enemy).solid, this);
+    this.physics.add.collider(this.pickups, layer);
+    // Arcade may hand group-vs-group pairs in either order, so sort them by type
+    const pick = <A>(a: unknown, b: unknown, is: (o: unknown) => o is A): [A, unknown] => (is(a) ? [a, b] : [b as A, a]);
+    const isEnemy = (o: unknown): o is Enemy => o instanceof Enemy;
+    this.physics.add.overlap(this.player.shots, this.enemies, (a, b) => {
+      const [enemy, shot] = pick(a, b, isEnemy);
+      this.shotHits(shot as Projectile, enemy);
+    });
+    this.physics.add.overlap(this.player, this.enemies, (a, b) => this.touchEnemy(pick(a, b, isEnemy)[0]));
+    this.physics.add.overlap(this.player, this.pickups, (a, b) =>
+      this.collect(pick(a, b, (o): o is Pickup => o instanceof Pickup)[0]),
+    );
+    this.spawnEnemies();
 
     const cam = this.cameras.main;
     cam.setBounds(0, 0, width, this.worldHeight);
@@ -81,6 +109,8 @@ export class StageScene extends Phaser.Scene {
     const input = this.controls.poll();
     const p = this.player;
     p.step(input);
+    for (const e of this.enemies.getChildren() as Enemy[]) e.step();
+    for (const k of [...this.pickups.getChildren()] as Pickup[]) k.step();
     if (!p.isDead) {
       const b = p.body;
       if (b.bottom > this.worldHeight + 8) p.fallOut();
@@ -93,10 +123,64 @@ export class StageScene extends Phaser.Scene {
     this.hud.update(h.hp, h.max, h.lives);
   }
 
+  /** Enemies from the map markers (again after each death, like the genre). */
+  private spawnEnemies(): void {
+    this.enemies.clear(true, true);
+    this.pickups.clear(true, true);
+    const world: EnemyWorld = {
+      floorAt: (x, y) => {
+        const t = this.layer.getTileAtWorldXY(x, y);
+        return !!t && (t.index === T.solid || t.index === T.platform);
+      },
+      bob: () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
+    };
+    for (const m of this.mapEnemies) {
+      const e = createEnemy(m.kind, this, m.x, m.y, world);
+      e.once('destroyed', (x: number, y: number) => this.dropFrom(x, y));
+      this.enemies.add(e);
+    }
+  }
+
+  private shotHits(shot: Projectile, enemy: Enemy): void {
+    if (!shot.active || !enemy.active) return;
+    const killed = enemy.hurt(shot.damage);
+    playOnce(this, shot.level === 3 ? 'fx_compiler_hit' : 'fx_hit', shot.x, shot.y, 20);
+    // charged shots (level 2+) pass through enemies they destroy
+    if (!(killed && shot.level >= 2)) shot.disableBody(true, true);
+  }
+
+  private touchEnemy(enemy: Enemy): void {
+    if (enemy.active && !this.player.isDead) this.player.takeHit(enemy.stats.contact, enemy.body.center.x);
+  }
+
+  private dropFrom(x: number, y: number): void {
+    const kind = rollDrop(Math.random());
+    if (kind) this.pickups.add(new Pickup(this, x, y, kind));
+  }
+
+  private collect(item: Pickup): void {
+    if (!item.active || this.player.isDead) return;
+    const h = this.player.health;
+    switch (item.kind) {
+      case 'healthSmall':
+      case 'healthLarge':
+        heal(h, PICKUPS[item.kind].amount);
+        break;
+      case 'life':
+        h.lives = Math.min(MAX_LIVES, h.lives + 1);
+        break;
+      default:
+        // weapon energy: the weapon system (T10) listens for this
+        this.events.emit('weaponEnergy', item.amount);
+    }
+    item.destroy();
+  }
+
   /** Death animation over: spend a life and respawn (checkpoints arrive in T8). */
   private afterDeath(): void {
     const result = loseLife(this.player.health);
     this.player.respawn(this.spawn.x, this.spawn.y);
+    this.spawnEnemies();
     if (result === 'gameOver') {
       this.events.emit('gameOver');
       const cam = this.cameras.main;

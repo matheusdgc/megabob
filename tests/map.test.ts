@@ -26,3 +26,15 @@ describe('parseMap', () => {
     expect(m.rows).toBe(28);
   });
 });
+
+describe('enemy markers', () => {
+  it('places enemies at the bottom-center of their cell and keeps the tile to the left', () => {
+    const m = parseMap(['#--d-', '#Pm-#', '#####']);
+    expect(m.enemies).toEqual([
+      { kind: 'spamDrone', x: 3 * 16 + 8, y: 16 },
+      { kind: 'pixelMite', x: 2 * 16 + 8, y: 32 },
+    ]);
+    expect(m.tiles[0]![3]).toBe(T.wall);
+    expect(m.tiles[1]![2]).toBe(T.empty); // left of the mite is the P cell
+  });
+});
