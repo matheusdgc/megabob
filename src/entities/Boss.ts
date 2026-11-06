@@ -102,7 +102,10 @@ export abstract class Boss extends Phaser.Physics.Arcade.Sprite {
   /** Takes damage; returns true when this hit destroyed the boss. Respects i-frames. */
   hurt(damage: number): boolean {
     const result = hurtBoss(this._bossState, damage);
-    if (result === 'hurt') this.setTintFill(0xffffff);
+    if (result === 'hurt') {
+      this.setTintFill(0xffffff);
+      this.scene.events.emit('bossHurt');
+    }
     if (result === 'dead') this.onDie();
     return result === 'dead';
   }

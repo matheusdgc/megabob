@@ -13,6 +13,7 @@ import {
   HURT_FRAMES_PLATED,
   MAX_FALL_SPEED,
   MAX_SHOTS,
+  LAND_DUST_FRAMES,
 } from '../data/tuning';
 import type { ActionState } from '../systems/actions';
 import { BOB_LOOPS, type BobPose, bobPose, poseSheet, shotOrigin } from '../systems/bobPose';
@@ -60,6 +61,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   readonly specials: Phaser.Physics.Arcade.Group;
   /** Frames left of the death animation; the scene respawns Bob when it reaches 0. */
   private deathFrames = 0;
+  /** Frames since Bob last stood on the ground (for the landing puff). */
+  private airFrames = 0;
   private readonly decompile: Phaser.GameObjects.Sprite;
   /** Bob's live shots (pooled); enemies overlap against this group. */
   readonly shots: Phaser.Physics.Arcade.Group;
@@ -104,6 +107,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   takeHit(amount: number, fromX: number): HitResult {
     const result = hit(this.health, amount, { plated: this.plated });
     if (result === 'hurt') {
+      this.emit('hurt');
       startHurt(this.motion, this.body.center.x, fromX, this.plated ? HURT_FRAMES_PLATED : HURT_FRAMES);
     } else if (result === 'dead') {
       this.die();
@@ -139,6 +143,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     Object.assign(this.buster, newBuster());
     this.decompile.setPosition(x, y).setFlipX(this.motion.facing < 0).setVisible(true);
     this.decompile.play(fxAnim(this.scene, 'fx_decompile', 10, 0));
+    this.emit('died');
   }
 
   /** Firmware Armor bitmask (0 = none, 15 = full). The boots enable the air dash. */
@@ -159,6 +164,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     tickHealth(this.health);
     const body = this.body;
+    if (body.blocked.down) {
+      if (this.airFrames >= LAND_DUST_FRAMES) this.emit('landed', this.x, this.y);
+      this.airFrames = 0;
+    } else this.airFrames += 1;
     const out = stepMotion(this.motion, input, {
       onGround: body.blocked.down,
       vy: body.velocity.y,
@@ -199,6 +208,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   /** Put Bob back at a spot, standing still. */
   respawn(x: number, y: number): void {
     this.deathFrames = 0;
+    this.airFrames = 0;
     this.decompile.stop().setVisible(false);
     this.setVisible(true);
     this.body.enable = true;

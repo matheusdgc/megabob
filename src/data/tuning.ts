@@ -78,3 +78,25 @@ export const DEATH_FRAMES = 120;
 // --- Bob hitbox (inside the 48x48 sprite cell, feet on the bottom row) ---
 export const BOB_BODY_W = 14;
 export const BOB_BODY_H = 30;
+
+// --- Feedback ("juice"), by importance: routine actions get little or none ---
+export interface FeedbackTier {
+  /** Freeze frame: the whole game stops this many frames (sells the impact). */
+  freeze: number;
+  /** Camera shake, ms and intensity (fraction of the view). Never moves a body. */
+  shakeMs: number;
+  shake: number;
+  /** White screen flash, ms. */
+  flashMs: number;
+}
+export type FeedbackEvent = 'land' | 'enemyKilled' | 'bossHit' | 'bobHurt' | 'bobDeath' | 'bossDefeated';
+export const FEEDBACK: Record<FeedbackEvent, FeedbackTier> = {
+  land: { freeze: 0, shakeMs: 0, shake: 0, flashMs: 0 },
+  enemyKilled: { freeze: 0, shakeMs: 0, shake: 0, flashMs: 0 },
+  bossHit: { freeze: 2, shakeMs: 0, shake: 0, flashMs: 0 },
+  bobHurt: { freeze: 4, shakeMs: 120, shake: 0.004, flashMs: 0 },
+  bobDeath: { freeze: 10, shakeMs: 200, shake: 0.006, flashMs: 0 },
+  bossDefeated: { freeze: 24, shakeMs: 500, shake: 0.01, flashMs: 150 },
+};
+/** Falls shorter than this (airborne frames) land without a dust puff. */
+export const LAND_DUST_FRAMES = 14;

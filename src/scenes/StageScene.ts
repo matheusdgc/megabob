@@ -7,6 +7,7 @@ import { MemoryLeak, MEMORY_LEAK_CONTACT } from '../entities/bosses/MemoryLeak';
 import { Checkpoint } from '../entities/Checkpoint';
 import { Enemy, type EnemyWorld } from '../entities/Enemy';
 import { playOnce } from '../entities/effects';
+import { Feedback } from '../entities/feedback';
 import { createEnemy } from '../entities/enemies';
 import { Pickup } from '../entities/Pickup';
 import type { Projectile } from '../entities/Projectile';
@@ -42,7 +43,7 @@ interface RespawnPoint {
 }
 
 /** Scene events that must not outlive one run of the stage (Phaser keeps them across restarts). */
-const RUN_EVENTS = ['bossIntro', 'bossDefeated', 'bossRoomUnlocked', 'gameOver'] as const;
+const RUN_EVENTS = ['bossIntro', 'bossHurt', 'bossDefeated', 'bossRoomUnlocked', 'gameOver'] as const;
 
 /**
  * A playable stage, built from its `StageDef` (map, camera sections, boss, tileset).
@@ -62,6 +63,7 @@ export class StageScene extends Phaser.Scene {
   private readout?: Phaser.GameObjects.Text;
   private layer!: Phaser.Tilemaps.TilemapLayer;
   private hud!: Hud;
+  private fx!: Feedback;
 
   private sections!: Section[];
   private section!: number;
@@ -95,6 +97,7 @@ export class StageScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.fx = new Feedback(this);
     const parsed = parseMap(this.def.map);
     this.sections = sectionsFromTiles(this.def.sections, TILE);
     this.worldHeight = parsed.rows * TILE;
@@ -122,6 +125,12 @@ export class StageScene extends Phaser.Scene {
     this.physics.add.collider(this.player, layer);
     if (this.door) this.physics.add.collider(this.player, this.door);
     this.player.on('deathDone', () => this.afterDeath());
+    this.player.on('hurt', () => this.fx.play('bobHurt'));
+    this.player.on('died', () => this.fx.play('bobDeath'));
+    this.player.on('landed', (x: number, y: number) => {
+      playOnce(this, 'fx_land_dust', x, y - 8, 20);
+      this.fx.play('land');
+    });
     this.player.arsenal = newArsenal(this.registry.get(OWNED_WEAPONS) ?? []);
     this.player.applyWeaponTint();
     this.hud = new Hud(this);
@@ -150,7 +159,11 @@ export class StageScene extends Phaser.Scene {
 
     // Boss spawns when the door shuts behind Bob
     this.events.once('bossIntro', () => this.spawnBoss());
-    this.events.once('bossDefeated', () => this.onBossDefeated());
+    this.events.on('bossHurt', () => this.fx.play('bossHit'));
+    this.events.once('bossDefeated', () => {
+      this.fx.play('bossDefeated');
+      this.onBossDefeated();
+    });
 
     this.controls = new GameInput(this);
     if (import.meta.env.DEV) this.devKeys();
@@ -162,6 +175,7 @@ export class StageScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       world.off(Phaser.Physics.Arcade.Events.WORLD_STEP, this.tick, this);
       for (const e of RUN_EVENTS) this.events.off(e);
+      this.fx.shutdown();
     });
   }
 
@@ -224,7 +238,7 @@ export class StageScene extends Phaser.Scene {
     const target = cameraScroll(s, { w: cam.width, h: cam.height }, { x: this.player.x, y: this.player.y - CAMERA_LOOK_UP });
     cam.stopFollow();
     cam.removeBounds();
-    this.physics.world.pause();
+    this.fx.hold('section');
     this.tweens.add({
       targets: cam,
       scrollX: target.x,
@@ -233,7 +247,7 @@ export class StageScene extends Phaser.Scene {
       ease: 'Sine.easeInOut',
       onComplete: () => {
         attach();
-        this.physics.world.resume();
+        this.fx.release('section');
       },
     });
   }
@@ -260,6 +274,7 @@ export class StageScene extends Phaser.Scene {
   private shotHits(shot: Projectile, enemy: Enemy): void {
     if (!shot.active || !enemy.active) return;
     const killed = enemy.hurt(shot.damage);
+    if (killed) this.fx.play('enemyKilled');
     playOnce(this, shot.level === 3 ? 'fx_compiler_hit' : 'fx_hit', shot.x, shot.y, 20);
     // charged shots (level 2+) pass through enemies they destroy
     if (!(killed && shot.level >= 2)) shot.disableBody(true, true);
