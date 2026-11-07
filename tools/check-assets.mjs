@@ -15,9 +15,13 @@ import { captureNullContext } from './check-null-context.mjs';
 import { checkNullMotion } from './check-null-motion.mjs';
 import { checkCombatMotion } from './check-combat-motion.mjs';
 import { checkBossRoom } from './check-boss-rooms.mjs';
+import { checkBossLifecycle } from './check-boss-lifecycle.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
+if(process.argv.includes('--boss-rooms')&&process.argv.some(arg=>arg.startsWith('--boss-lifecycle='))) {
+  throw new Error('Run boss-room and boss-lifecycle reviews separately; each owns its StageScene state.');
+}
 const output = join(root, 'art/preview');
 await mkdir(output, { recursive: true });
 const profile = await mkdtemp(join(tmpdir(), 'megabob-assets-'));
@@ -84,6 +88,7 @@ try {
   }
   const scenes = [];
   const bossRooms = [];
+  const bossLifecycle = [];
   let nullContext;
   for (const [query, scene, name] of [['?sprites', 'Debug', 'debug'], ['?stage=raceCondition', 'Stage', 'race-condition'], ['?stage=nullPointer', 'Stage', 'null-pointer'], ['?stage=techDebt', 'Stage', 'tech-debt'], ['?stage=memoryLeak', 'Stage', 'stage']]) {
     const expectedStage = new URLSearchParams(query).get('stage');
@@ -108,6 +113,8 @@ try {
     scenes.push({ scene, ...(expectedStage ? {stage:expectedStage} : {}), verifiedTextures: manifest.length, ...sourceAudit });
     if (expectedStage === 'nullPointer') nullContext = await captureNullContext(send, output);
     if (expectedStage && process.argv.includes('--boss-rooms')) bossRooms.push(await checkBossRoom(send,output,expectedStage));
+    const lifecycleMode=process.argv.find(arg=>arg.startsWith('--boss-lifecycle='))?.split('=')[1];
+    if(expectedStage&&lifecycleMode)bossLifecycle.push(await checkBossLifecycle(send,output,expectedStage,lifecycleMode));
   }
   const colorArg = process.argv.find(arg => arg.startsWith('--stage-colors='));
   const stageColors = colorArg ? await captureStageColors(send, output, colorArg.split('=')[1]) : undefined;
@@ -196,7 +203,7 @@ try {
   const bobWeaponArt = await checkBobWeaponArt(send, output);
   const combatMode=process.argv.find(arg=>arg.startsWith('--combat-review='))?.split('=')[1];
   const combatMotion=combatMode?await checkCombatMotion(send,output,combatMode,process.argv.includes('--combat-clips')):undefined;
-  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, nullMotion, nullContext, interactives, bobWeaponArt, combatMotion, bossRooms, errors, warnings, failedRequests };
+  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, nullMotion, nullContext, interactives, bobWeaponArt, combatMotion, bossRooms, bossLifecycle, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));

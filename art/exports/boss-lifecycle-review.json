@@ -1,0 +1,187 @@
+{
+  "baseline": "8ef22a8",
+  "encounters": [
+    {
+      "stage": "raceCondition",
+      "mode": "after",
+      "restarts": [
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        },
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        },
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        }
+      ],
+      "scope": "Actual StageScene, direct QA room entry; protected Bob, no traversal claim.",
+      "mutexAccepted": true,
+      "mutexPoseStable": true,
+      "mutexReleased": true,
+      "pauseStable": true,
+      "resumeActive": true,
+      "resumeTicks": 9,
+      "deathRestart": {
+        "oldReleased": true,
+        "colliders": 0,
+        "bossAbsent": true,
+        "barAbsent": true,
+        "bobAlive": true,
+        "lifeSpent": true
+      }
+    },
+    {
+      "stage": "nullPointer",
+      "mode": "after",
+      "restarts": [
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        },
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        },
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        }
+      ],
+      "scope": "Actual StageScene, direct QA room entry; protected Bob, no traversal claim.",
+      "mutexAccepted": true,
+      "mutexPoseStable": true,
+      "mutexReleased": true,
+      "pauseStable": true,
+      "resumeActive": true,
+      "resumeTicks": 10,
+      "deathRestart": {
+        "oldReleased": true,
+        "colliders": 0,
+        "bossAbsent": true,
+        "barAbsent": true,
+        "bobAlive": true,
+        "lifeSpent": true
+      }
+    },
+    {
+      "stage": "techDebt",
+      "mode": "after",
+      "restarts": [
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        },
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        },
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        }
+      ],
+      "scope": "Actual StageScene, direct QA room entry; protected Bob, no traversal claim.",
+      "mutexAccepted": true,
+      "mutexPoseStable": true,
+      "mutexReleased": true,
+      "pauseStable": true,
+      "resumeActive": true,
+      "resumeTicks": 9,
+      "transitionEntered": true,
+      "transitionRestartError": null,
+      "transitionOwnerReleased": true,
+      "deathRestart": {
+        "oldReleased": true,
+        "colliders": 0,
+        "bossAbsent": true,
+        "barAbsent": true,
+        "bobAlive": true,
+        "lifeSpent": true
+      }
+    },
+    {
+      "stage": "memoryLeak",
+      "mode": "after",
+      "restarts": [
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        },
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        },
+        {
+          "oldReleased": true,
+          "collidersStable": true,
+          "fullHp": true,
+          "firstForm": true,
+          "listenersStable": true
+        }
+      ],
+      "scope": "Actual StageScene, direct QA room entry; protected Bob, no traversal claim.",
+      "mutexAccepted": true,
+      "mutexPoseStable": true,
+      "mutexReleased": true,
+      "pauseStable": true,
+      "resumeActive": true,
+      "resumeTicks": 9,
+      "deathRestart": {
+        "oldReleased": true,
+        "colliders": 0,
+        "bossAbsent": true,
+        "barAbsent": true,
+        "bobAlive": true,
+        "lifeSpent": true
+      }
+    }
+  ],
+  "regressionsBefore": {
+    "memoryLeakTurnedWhileFrozen": true,
+    "techDebtDelayedEffectError": "TypeError: Cannot read properties of undefined (reading 'anims')"
+  },
+  "repeatedRestarts": 12,
+  "deathRestarts": 4,
+  "transitionRestartCases": 1,
+  "productionPngsChanged": false,
+  "errors": [],
+  "warnings": [],
+  "failedRequests": []
+}

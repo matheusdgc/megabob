@@ -60,6 +60,8 @@ export class TechDebt extends Boss {
   private wasFiring = false;
   private readonly cue: CombatCue;
   private chargeTarget: {x:number;y:number} | undefined;
+  private readonly collapseTimers: Phaser.Time.TimerEvent[] = [];
+  private collapseTween: Phaser.Tweens.Tween | undefined;
 
   constructor(
     scene: Phaser.Scene,
@@ -149,11 +151,11 @@ export class TechDebt extends Boss {
     const blockBody = this.block.body as Phaser.Physics.Arcade.StaticBody;
     blockBody.enable = false;
     for (let i = 0; i < 6; i++) {
-      this.scene.time.delayedCall(i * 160, () =>
+      this.collapseTimers.push(this.scene.time.delayedCall(i * 160, () =>
         playOnce(this.scene, 'fx_boss_explosion', this.faceLeft + 30 + ((i * 53) % 200), this.floorY - 30 - ((i * 37) % 110), 14),
-      );
+      ));
     }
-    this.scene.tweens.add({ targets: [this.wallImg, ...this.reels, ...this.drawers], alpha: 0, duration: 1100, delay: 300 });
+    this.collapseTween = this.scene.tweens.add({ targets: [this.wallImg, ...this.reels, ...this.drawers], alpha: 0, duration: 1100, delay: 300 });
     const cx = this.x;
     const cy = this.y - (48 * CRT_SCALE) / 2;
     this.setScale(1).setTexture('boss_tech_core', 0);
@@ -283,6 +285,10 @@ export class TechDebt extends Boss {
   }
 
   override destroy(fromScene?: boolean): void {
+    for (const timer of this.collapseTimers) timer.remove(false);
+    this.collapseTimers.length = 0;
+    this.collapseTween?.remove();
+    this.collapseTween = undefined;
     this.shots?.destroy(true);
     this.beamGroup?.destroy(true);
     this.wallImg?.destroy();
