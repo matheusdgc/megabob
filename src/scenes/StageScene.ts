@@ -67,7 +67,7 @@ const RUN_EVENTS = ['bossIntro', 'bossHurt', 'bossSfx', 'bossSummon', 'bossPhase
 /**
  * A playable stage, built from its `StageDef` (map, camera sections, boss, tileset).
  * Start it with `scene.start('Stage', { stage })`; all per-run state is reset in `init()`.
- * Dev keys (dev build only): R back to the respawn point, F2 hitboxes + state readout, 1-4 armor
+ * Dev keys (dev build only): R back to the respawn point, F2 hitboxes + state readout (with fps), 1-4 armor
  * parts (4 = Turbo Boots: air dash), H take a 4-point hit from the front, G grant the Garbage Collector.
  * Emits `bossIntro` when the boss door shuts behind Bob, `gameOver` on the last life.
  */
@@ -777,6 +777,11 @@ export class StageScene extends Phaser.Scene {
     const cam = this.cameras.main;
     const word = uiText(this, cam.width / 2, cam.height / 2 - 16, 'READY', { size: 12, origin: 0.5 }).setScrollFactor(0).setDepth(100);
     const ms = first ? Math.max(1400, (this.audio?.sfx.jingle('stageStart') ?? 0) * 1000) : 1000;
+    // measure the boss tracks now, one per frame, so their entrance never hitches (T22)
+    if (first) {
+      const later = [this.def.bossMusic, ...(this.def.bossMusic2 ? [this.def.bossMusic2] : [])];
+      later.forEach((id, i) => this.time.delayedCall(200 + i * 100, () => this.audio?.music.prepare(id)));
+    }
     this.tweens.add({ targets: word, alpha: 0, duration: 120, yoyo: true, repeat: Math.floor(ms / 240) - 1 });
     this.time.delayedCall(ms, () => {
       word.destroy();
@@ -836,7 +841,9 @@ export class StageScene extends Phaser.Scene {
         `ground ${b.blocked.down ? 'Y' : 'n'} wall ${b.blocked.left ? 'L' : b.blocked.right ? 'R' : '-'} coyote ${m.coyote}\n` +
         `hp ${p.health.hp} inv ${p.health.invuln} lives ${p.health.lives}\n` +
         `armor a${p.armor} airdash ${m.airDashesUsed}/${m.airDashes}\n` +
-        `section ${this.section} door ${this.door?.state ?? '-'}`,
+        `section ${this.section} door ${this.door?.state ?? '-'}
+` +
+        `fps ${this.game.loop.actualFps.toFixed(0)} objects ${this.children.list.length}`,
     );
   }
 

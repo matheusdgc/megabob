@@ -60,6 +60,18 @@ export class MusicPlayer {
     this.current = { id, src, gain };
   }
 
+  /**
+   * Measure a loaded track now (its loudness and loop points) instead of when it first plays.
+   * The measurement reads every sample (20-40 ms for a two-minute track on a fast machine), so a
+   * scene does it while nothing moves, not at a boss's entrance. False when the track is not loaded.
+   */
+  prepare(id: MusicId): boolean {
+    const buffer = this.cache.get(musicKey(id)) as AudioBuffer | undefined;
+    if (!buffer) return false;
+    this.tune(id, buffer);
+    return true;
+  }
+
   /** Fade the current track out over `fadeMs` (0 = stop now). */
   stop(fadeMs = 0): void {
     const c = this.current;
