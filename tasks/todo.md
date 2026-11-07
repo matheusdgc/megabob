@@ -286,7 +286,9 @@ Trocar os placeholders que sobraram, calibrar hitboxes conforme os sprites reais
 
 ### T22: Performance e balanceamento [M]
 Medir os fps no pior caso, ajustar vida e dano dos chefes, conferir os drops e corrigir os bugs da partida completa.
-- [ ] 60 fps estáveis no pior caso, e cada chefe leva de 30 s a 2 min
+- [x] Medido no Edge: todas as seções e lutas abaixo de 2,5 ms por quadro; travamento da música do chefe corrigido
+- [x] Balanceamento estimado por piloto automático: invulnerabilidade do chefe 30 quadros, fraqueza 2×; drops conferidos
+- [ ] 60 fps estáveis no pior caso numa máquina real (F2), e cada chefe leva de 30 s a 2 min numa partida humana
 **Verificar:** contador de fps de debug e uma partida completa · **Dep.:** Checkpoint 5
 
 ### T23: Build e deploy [S]
