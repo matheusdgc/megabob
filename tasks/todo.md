@@ -270,6 +270,10 @@ Ligar cada cena à sua faixa do manifesto, incluindo a troca de música entre as
 
 ## Fase 8: Polimento e entrega
 
+### ✅ T20b: Tiros especiais distintos e quadro de recordes [S] (pedidos do usuário, 07/11)
+- [x] Cada arma especial sai do canhão e se move de um jeito próprio (GC em onda, Mutex com trava no alvo, Null Pointer só teleportando)
+- [x] Quadro local dos 10 melhores que zeraram: mortes, inimigos destruídos e tempo, com nome digitado depois dos créditos
+
 ### T21: Arte real em tudo [M]
 Trocar os placeholders que sobraram, calibrar hitboxes conforme os sprites reais e conferir as animações contra o inventário do `art-prompts.md`.
 - [x] Rever movimento e efeitos de Void Eye/Dangling Ref: corrente articulada, garra alinhada ao corpo, flutuação/carga/teletransporte do olho e cursor animado em 16 bits; validar física, congelamento e descarte no navegador.
