@@ -1,0 +1,228 @@
+# Pipeline de arte
+
+`tools/art.py` prepara o lote de efeitos, inimigos, chefes, ícones, tiles, fundos e interface. Usa o Python/Pillow já instalado; não chama serviços de geração. O catálogo de células e tamanhos fica em `tools/art_catalog.py`.
+
+```powershell
+py -3 tools/art.py all
+py -3 tools/art.py ui
+py -3 -m unittest discover -s tools -p test_art.py
+```
+
+Categorias disponíveis: `fx`, `enemies`, `bosses`, `icons`, `tiles`, `bg` e `ui`. Uma execução parcial conserva as outras categorias do manifesto existente; em um checkout novo, execute `all` primeiro.
+
+## Entradas e saídas
+
+- Fontes: `art/raw/`, com os prompts ao lado. O importador compara os hashes SHA-256 antes e depois e falha se alguma fonte mudar.
+- Jogo: 124 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
+- Registro: `public/assets/art-manifest.json` e `src/data/processedArt.ts`, ambos gerados. `src/data/assets.ts` conserva as chaves anteriores e inclui os novos registros.
+- Revisão: contatos, repetições de fundos e `art_report.json` em `art/preview/`, fora do Git. O relatório distingue fontes processadas, conceitos de referência e fontes do pipeline anterior do Bob.
+- Logo: `art/exports/megabob-logo.png`, recortada com transparência e resolução da fonte; `public/assets/ui/title_logo.png`, versão 224×48 para o jogo. A versão atual foi recriada com `imagegen` a pedido do usuário, com contornos suaves, letras abertas e faixas azuis inspiradas na referência IBM. Fonte intacta em `art/raw/ui/U1_logo_readable.png`, prompt integral ao lado e no export. A versão pixelada está preservada em `art/raw/ui/U1_logo.png` e `art/exports/megabob-logo-pixel.png`; a primeira logo continua em `art/raw/ui/U1_logo-original.png`.
+
+**Exceção explícita da logo:** `readable_logo` reduz com Lanczos, conserva a rampa azul e alpha intermediário, sem quantizar nem aplicar a limpeza binária dos sprites. Isso atende ao pedido de menos pixelização. As chaves e os quadros 224×48 continuam compatíveis com as cenas existentes; os demais assets mantêm seu processamento pixel art.
+
+## Composição do título em 480×270
+
+A fonte atual `art/raw/ui/U2_title_cyberpunk.png` foi gerada com a ferramenta integrada `imagegen`, usando o título panorâmico anterior como referência. Traz cidade de servidores mais detalhada, tubos, antenas e luzes ciano/magenta. Não contém Bob: ele agora é um sprite separado. As fontes anteriores `U2_title_bg_wide.png` e U2 original continuam intactas. Prompt integral ao lado da fonte e em `art/exports/megabob-title-wide.prompt.txt`.
+
+**Direção permanente pedida pelo usuário:** cenário, personagens e efeitos continuam em pixel art de 16 bits. O fundo do título usa nearest-neighbor, 480×270, alpha opaco e 32 cores locais, preservando os tons azul-escuros e o detalhe das sombras. Sem suavização, dithering ou efeitos fotográficos. A logo mais suave aprovada acima é uma exceção específica; não expandir essa exceção ao restante da arte.
+
+| Elemento | Textura | Posição e escala sugeridas |
+|---|---|---|
+| Fundo panorâmico | `title_background_wide`, 480×270 | `(0, 0)`, origem superior esquerda, escala 1 |
+| Logo sobre o céu | `title_logo_night`, 224×48 | `(16, 8)`, origem superior esquerda, escala 2 |
+| Bob separado | `title_bob_idle`, quadros 96×96 | pés em `(80,214)`, origem `(0.5,1)`, escala 1; mesmo tamanho aparente |
+
+`title_logo_night` deriva da mesma fonte suave da logo, com contorno claro já desenhado para separar as letras do céu. O encaixe 220×44 dentro do quadro 224×48 preserva as margens. O antigo contorno pixelado e a quantização não são aplicados à nova logo.
+
+`py -3 tools/art.py ui` também monta `art/exports/megabob-title-preview.png` (480×270) e a ampliação nearest-neighbor `art/preview/title_wide_2x.png`. A prévia estática não grava opções no fundo. O GIF `megabob-title-menu.gif` captura a cena real do navegador, incluindo seus textos HTML.
+
+`src/scenes/titleMotion.ts` acrescenta só decoração à cena existente: entrada da logo em 420 ms com desaceleração cúbica e posições inteiras; idle real do Bob (`BOB_LOOPS`, 3 fps); 28 traços discretos de chuva; brilho limitado ao recorte das letras, durante 1 segundo a cada 7,2 segundos. Valores em `src/data/titleArt.ts`. O menu aceita input desde a criação. `prefers-reduced-motion` elimina esses movimentos, inclusive quando muda com a tela aberta. Listeners e máscara são liberados no shutdown, sem acumular a cada retorno. Save, navegação, opções e áudio continuam sob seus componentes existentes.
+
+`node tools/check-title-menu.mjs` verifica os quadros reais do Bob, posição final da logo, alteração de pixels pelo brilho, composição estática com movimento reduzido e contagens estáveis após dois reinícios. Capturas e sequência para GIF ficam em `art/preview/`; resumo publicado em `art/exports/title-menu-review.json`.
+
+O helper `tools/check-title-navigation.mjs` também percorre duas vezes Título → Opções → Título e Título → Seleção → Título com eventos reais de teclado pelo DevTools. Confere que a animação pausa e os textos do título somem sob as opções, que o foco retorna ao item correto e que nenhum efeito do título sobrevive na seleção. Cada retorno conserva 12 objetos e seis listeners de update na composição atual. O teste respeita o frame sem teclas exigido para armar cada novo menu e o cursor preservado pelo fluxo existente. Nenhuma arte ou regra de navegação precisou mudar. A preferência do sistema reduz a decoração; a opção do jogo `SCREEN SHAKE & FLASH` mantém seu escopo existente de tremor/flash.
+
+## Seleção de fases em 480×270
+
+`tools/ui_art.py` recompõe as peças de U3: preserva os cantos da moldura, redimensiona só as bordas e monta o interior com cinco slots quadrados. Retratos e texto não ficam gravados no fundo. O cadeado e o foco são texturas independentes.
+
+| Textura | Tamanho | Uso |
+|---|---|---|
+| `stage_select_wide` | 480×270 | Fundo e cinco molduras vazias, em `(0, 0)`, origem superior esquerda |
+| `stage_locked_wide` | 64×64 | Cobertura do slot da fortaleza enquanto bloqueada, centrada em `(240, 208)` |
+| `stage_focus` | 72×72 | Cantos amarelos de foco, centrados no slot selecionado |
+
+Centros: Memory Leak `(240,62)`, Race Condition `(112,135)`, Bob `(240,135)`, Null Pointer `(368,135)` e fortaleza `(240,208)`. Cada moldura tem 64×64; os retratos dos chefes permanecem em 48×48 e o de Bob em 32×32, sem deformação.
+
+`py -3 tools/art.py ui` exporta `art/exports/stage-select-layout.json` e as prévias `megabob-stage-select-locked.png` / `megabob-stage-select-unlocked.png`. As ampliações em `art/preview/` usam nearest-neighbor. São exemplos visuais de estado; os critérios de liberação, a escolha de fase e o save pertencem à T13.
+
+## HUD e pausa em 480×270
+
+U4 também fornece os componentes abaixo. Os arquivos anteriores continuam disponíveis.
+
+| Textura | Tamanho | Uso |
+|---|---|---|
+| `hud_meter_frame` | 12×72 | Moldura com canal transparente de 6×56, começando em `(3,8)` |
+| `hud_segment_blue` | 6×1 | Segmento de vida |
+| `hud_segment_yellow` | 6×1 | Segmento de energia |
+| `pause_panel_wide` | 352×208 | Painel vazio, centralizado no viewport, canto superior esquerdo `(64,31)` |
+
+O canal comporta 28 segmentos em passo de 2 px (1 px preenchido, 1 px vazio). Para o segmento `i`, de baixo para cima, usar `x = frameX + 3` e `y = frameY + 8 + 56 - 2 - 2*i`. Preencher o fundo do canal com `#161616`. A prévia usa molduras em `(8,10)` e `(26,10)`.
+
+`art/exports/hud-pause-layout.json` registra o painel, medidores, contador de vidas, linhas das armas e centros das quatro peças. Os ícones `armor_*` têm quadro 0 colorido/coletado e quadro 1 cinza/inativo; na pausa de exemplo são ampliados 2× com nearest-neighbor.
+
+Prévias: `megabob-hud-preview.png`, `megabob-pause-start-preview.png` e `megabob-pause-complete-preview.png` em `art/exports/`, com ampliações em `art/preview/`. O cenário é uma composição de demonstração com os assets de Memory Leak. Texto e valores existem só nessas prévias; as texturas de jogo ficam vazias para a integração em T13/T21. As prévias não aplicam efeitos de armas, peças, coleta ou pausa ao jogo.
+
+## Apresentações de chefes, armas e upgrades
+
+`tools/presentation_art.py` deriva `boss_intro_panel` (416×112) e `reward_panel` (416×192) da moldura U4 com cantos preservados. As duas texturas são vazias, usam a paleta global e alpha binário. Não incluem texto, retrato ou sprite do Bob.
+
+`art/exports/presentation-layout.json` descreve um container ancorado no centro do viewport de referência 480×270, com deslocamento de metade da moldura e posições locais para seus filhos. Usar escala inteira com letterbox; manter retratos e Bob a 2× com nearest-neighbor. As quatro prévias de upgrades usam somente o bit da peça correspondente. Os ícones da armadura mostram o quadro 0, coletado.
+
+O job `ui` produz onze prévias `megabob-boss-*-preview.png`, `megabob-weapon-*-preview.png` e `megabob-upgrade-*-preview.png`, além da galeria `megabob-presentations.png`. Textos são amostras de composição; descrições vêm do SPEC e as teclas Q/E representam o binding padrão. A cena deve resolver o binding atual e o momento de confirmar. As artes estão prontas para integração; este job não altera `WeaponGetScene`, introduções de chefe ou instalação de peças.
+
+QA: `art/preview/presentation_asset_report.json` registra as verificações do pack gamedev. O smoke test também renderiza as duas molduras no Phaser em uma cena temporária, com retrato/Bob/ícone/texto separados; screenshots `browser-presentation-boss.png` e `browser-presentation-reward.png`. A cena existe somente no processo de validação.
+
+## Encerramento e Game Over
+
+`ending_background` é uma imagem opaca 480×270, sem texto ou logo. A fonte adicional `art/raw/ui/U5_ending_bg.png` foi criada com a ferramenta integrada `imagegen`, tomando como referências `U2_title_bg_wide.png` e o Bob fornecido pelo usuário em `F:/Downloads/bob-standing-BECrMjXJ.webp`. O Bob mostra os dois olhos e acena à esquerda; o céu azul à direita permanece livre para os créditos. Fonte preservada em 1672×941, prompt integral ao lado e em `art/exports/megabob-ending.prompt.txt`. O processamento usa nearest-neighbor e a paleta global de 29 cores.
+
+O job `ui` exporta `megabob-ending-preview.png` e `megabob-game-over-preview.png`, além de `end-screen-layout.json`. O layout usa um container centralizado no viewport de referência com escala inteira/letterbox. No encerramento, a logo existente fica separada em `(240,16)` e a área de créditos em `(248,132,216,90)`; os nomes e licenças reais devem vir da cena. A prévia traz somente a mensagem de conclusão e agradecimento, sem inventar créditos.
+
+Game Over reutiliza `reward_panel` e `bob_hurt[0]` ampliado 2×. A ação de voltar à seleção tem retângulo/foco renderizado em código, sem gerar outra textura. O layout indica foco inicial, mas não implementa input, save ou navegação. As cenas de produção continuam com as tarefas T13/T19/T20.
+
+As três imagens de saída foram conferidas pelo verificador do pack gamedev (dimensões, paleta e opacidade) e no Phaser. Relatório em `art/preview/end_screen_asset_report.json`; screenshots `browser-end-screen-ending.png` e `browser-end-screen-gameOver.png`. A fonte extra leva o inventário a 68 PNGs brutos, todos preservados durante a importação.
+
+## Terreno e camadas para 480×270
+
+A revisão segue `create-game-assets` e `phaser-core` do pack gamedev, preservando Phaser 3.90. Os materiais foram conferidos em repetições 3×3, em composições na escala nativa e no renderizador do jogo. O utilitário `asset_report.py` do pack verificou dimensões, alpha e limite de 29 cores; relatório local em `art/preview/gamedev_asset_report.json`.
+
+Nos quatro tilesets, quadros 0–11 e 15–17 preenchem 16×16. Plataformas 12–14 ocupam a largura de 16 px e começam em `y=0`, mantendo o perfil fino. Isso remove as margens vazias que faziam o chão parecer separado e a plataforma ficar abaixo da linha de contato. `tiles_test` recebe a mesma normalização. Índices, tamanhos e colisões permanecem os mesmos; os detalhes aparecem em `frameSizing` e `topAlignedFrames` no manifesto.
+
+As doze camadas originais continuam em 512×224. Cada uma ganhou a variante de chave `<chave_original>_wide`, em 512×270: FAR e MID ficam ancoradas embaixo; NEAR fica no alto. FAR estende sua linha superior para cobrir o céu, sem escalar os prédios; MID acrescenta transparência acima e NEAR abaixo. Os deslocamentos já estão gravados na imagem: desenhar todas em `(0,0)` com origem superior esquerda e repetir horizontalmente, sem esticar. Em Tech Debt, apenas MID/NEAR novas recebem uma rampa mais escura, mantendo os CRTs verdes para separar cenário e piso. A transformação está declarada em `depthAdjusted`. As fontes brutas ficam intactas; a revisão de cor T1 descrita abaixo atualiza ambas as alturas processadas.
+
+`py -3 tools/art.py all`, ou os jobs `bg`/`tiles` após a primeira geração completa, montam `art/exports/megabob-environments.png` e quatro imagens `megabob-environment-<tema>.png`. `environment-art-layout.json` registra as chaves das camadas e tiles. São composições para revisar escala, contraste e encaixes; os mapas jogáveis continuam nas tarefas de fase. Repetições ampliadas dos tiles e camadas ficam em `art/preview/`.
+
+## Regras do processamento
+
+### Contraste da primeira fase
+
+**Preservar a textura é requisito do usuário.** A primeira tentativa, que achatava o fundo e o interior dos blocos, foi rejeitada. `tools/memory_colors.py` agora usa mapas de cor bijetivos: azul acinzentado no fundo, metal quente nas superfícies e verde-água original nos perigos. Cada tom de entrada continua distinto; não se pintam faixas novas, não se preenchem regiões e não se suavizam detalhes. O quadro 16 do lodo permanece idêntico. A alteração atinge somente as seis camadas T1 e `tiles_memory_leak`; dimensões, alpha, índices, colisões, outras fases e fontes brutas são preservados. O manifesto registra `colorRoles: memory-cool-warm-textured`.
+
+As paletas locais ficam em `memory_colors.py`, sem ampliar os candidatos da quantização padrão nem afetar as outras fases. T1 usa 2/16/17 cores visíveis nas camadas FAR/MID/NEAR e 32 no strip de tiles completo (33 entradas contando transparência). O limite padrão de 29 continua nos demais assets. `py -3 tools/review_memory_palette.py` compara as assinaturas espaciais das 30 regiões com o commit `f4eb18a`, anterior ao achatamento: cores podem mudar, mas todos os padrões de pixels devem permanecer. O relatório `art/exports/memory-color-profile.json` inclui os mapas de cor e as verificações; o QA do pack está em `art/preview/gamedev_memory_palette_report.json`.
+
+Comparações da versão rejeitada com a restauração: `art/exports/megabob-memory-contrast.png` e a versão `-gray.png`; captura nativa atual em `megabob-memory-palette.png`. O comando `node tools/check-assets.mjs http://127.0.0.1:5173 --stage-colors=after` captura entrada, plataformas, poço, checkpoint, sala do chefe e uma amostra estática do lodo em altura de inspeção; `before` registra a referência antes da alteração. As capturas ficam em `art/preview/memory-contrast-{before,after}/`; o script de revisão precisa delas para regenerar as comparações. A galeria `megabob-memory-context.png` mostra entrada, checkpoint, lodo e uma pose do chefe no cenário. São inspeções visuais, não uma partida completa.
+
+### Estados dos elementos interativos
+
+`tools/check-stage-interactives.mjs` usa as classes reais `Checkpoint` e `BossDoor` em uma cena descartável com as mesmas profundidades de fundo da fase. Confere ativação única do terminal, quadros off/on e ponto de respawn preservado. Na porta, confere quadros fechado/meio/aberto, bloqueio liberado somente quando aberta, fechamento com um único retorno `shut` e reset para fechado. As dimensões do corpo permanecem constantes. Não altera os componentes de produção.
+
+Depois do smoke test, `py -3 tools/review_memory_palette.py` exporta `megabob-memory-interactives.png`, o detalhe 2× `megabob-memory-interactives-detail.png` e `stage-interactives-review.json` em `art/exports/`. Os estados já têm leitura distinta na composição atual; sprites, paleta, texturas e regras foram mantidos. A prancha é uma inspeção dos componentes, sem substituir uma partida completa.
+
+### Contraste dos inimigos de Null Pointer
+
+Pedido específico do usuário: destacar as ameaças da terceira fase sem perder textura ou o estilo de 16 bits. `tools/null_enemy_colors.py` aplica mapas de cor bijetivos somente a `enemy_void_eye`, `enemy_dangling_ref` e `null_cursor`: olho em âmbar/creme, corrente e garra em ciano/metal azul claro, cursor com bordas quentes. Todos os tons continuam distintos (12, 11 e 8), dentro da paleta global já existente. O cursor é compartilhado com o chefe Null Pointer. Não altera as cores do Bob, o corpo do chefe, os mapas ou os cenários.
+
+Reproduzir com `py -3 tools/art.py enemies` e `py -3 tools/art.py bosses` (ou `all`). `py -3 tools/review_null_enemies.py` compara os nove quadros com `1df2de2`: dimensões, alpha e padrão espacial dos tons devem ser idênticos; a aplicação das novas cores deve coincidir exatamente com o mapa. Também exige que os seis fundos T3 e o tileset continuem idênticos ao baseline. Relatório `art/exports/null-enemy-contrast-review.json` e antes/depois `megabob-null-enemy-contrast.png`.
+
+`tools/check-null-enemy-art.mjs` usa VoidEye, DanglingRef e EnemyShot reais: verifica os quatro quadros do olho, as três poses da garra, o estado desaparecido sem colisão e o cursor disparado, mantendo corpos 18×18, 18×16 e 10×10. O smoke test abre também `?stage=nullPointer`; capturas e fontes verificadas ficam em `art/preview/`. A composição de comparação é estática, sem simular uma partida completa.
+
+`tools/check-null-context.mjs`, chamado pelo mesmo smoke test durante a visita a Null Pointer, captura quatro pontos nas três seções de combate: primeiro olho, teto baixo com garras, paredes finas e ponte temporária. Usa os inimigos nas posições originais do mapa, com física suspensa e câmera deslocada apenas no navegador isolado de QA; restaura seção/câmera/visibilidade ao terminar. Não representa um percurso jogado. Após `node tools/check-assets.mjs http://localhost:5173`, execute `py -3 tools/review_null_enemies.py` para gerar `megabob-null-enemy-context.png` e `null-enemy-context-review.json`. A inspeção confirmou a separação das cores atuais; nenhum novo ajuste nos assets foi necessário.
+
+### Movimento e efeitos dos inimigos T3
+
+A pedido do usuário, `DanglingRef` agora articula a corrente em pixels e posiciona o recorte da garra original na ponta do pêndulo, em vez de alternar três desenhos inteiros enquanto a colisão se desloca continuamente. Os três recortes mantêm seus pixels e mudam de pose durante o arco; o teto continua sendo o ponto fixo. Corpo 18×16, comprimento, período e fase relativa entre vizinhos preservados. A corrente é decorativa e não causa contato; a caixa acompanha a garra.
+
+`VoidEye` flutua em uma onda de três pixels, com posições inteiras e sem deriva. A carga converge em quatro pontos âmbar; disparo, desaparecimento e retorno têm fragmentos locais curtos. O olho invisível também fica sem corpo. Corrigido o centro da colisão 18×18 para coincidir com o desenho e com a origem do disparo. O cursor compartilhado com o chefe agora alterna os dois quadros existentes a 10 fps. Tempos de ataque, dano, paletas e PNGs de produção preservados. Ajustes visuais em `NULL_ENEMY_ART` (`tuning.ts`); cálculo puro de poses em `nullEnemyMotion.ts`. As duas entidades usam corpos cinemáticos para o Arcade não somar novamente o deslocamento da pose no `postUpdate`.
+
+`tools/check-null-motion.mjs` simula 180 passos pela ordem real `WORLD_STEP` → `postUpdate` e captura 45 imagens: verifica alinhamento entre recorte/corpo, invisibilidade inofensiva, contato na garra, teto sem contato, congelamento por Mutex, animação do cursor e descarte dos dois objetos gráficos. `py -3 tools/review_null_motion.py` monta `art/exports/megabob-null-enemy-motion.gif` e `null-enemy-motion-review.json`. O antes foi capturado no código de `1f9d54d`; as imagens intermediárias ficam em `art/preview/null-motion-{before,after}/`. Trata-se de uma composição de animação no Phaser, sem representar uma partida completa. Não remover texturas para alterar contraste.
+
+### Sprites e apresentação dos chefes
+
+Race Condition agora é conferido por `tools/check-race-art.mjs`: 1.800 passos fixos normais e 1.800 em fúria, quadros 0–5, dano 6, derrota 7, quatro rotações das lâminas, um/dois clones e colisões de 28×48 / 44×22. `race_afterimage` passou a ter ancoragem inferior: o desenho estava 15 px acima dos pés. O importador acrescenta contorno claro de um pixel, mantendo os 2.158 pixels internos originais, sem reamostragem, no mesmo quadro 96×80. Opacidades 0,35/0,75, dano e tempos permanecem iguais. `tools/review_race_art.py` confere os pixels contra `12f4020` e exporta `megabob-race-clones.png` / `race-art-review.json`. As capturas são inspeções estáticas, não uma partida completa.
+
+O smoke test também abre `?stage=raceCondition`, espera o identificador real da fase e verifica seus PNGs e as texturas das plataformas móveis. O relatório dedicado fica em `art/preview/texture-sources-race-condition.json`; Memory Leak continua sendo aberto por último para preservar o contexto dos demais helpers.
+
+`py -3 tools/review_bosses.py` verifica 20 assets / 57 quadros: tamanho, alpha binário, paleta e ausência de quadros vazios. Exporta `boss-{memory-leak,race-condition,null-pointer,tech-core}-review.png`, `megabob-memory-leak-idle.gif` e `boss-art-review.json` em `art/exports/`. Tech Debt parede/partes, retratos e projéteis também entram na auditoria técnica. A cobertura de execução dos quatro chefes é lida do relatório de combate abaixo; contatos de poses, sozinhos, não comprovam ataques.
+
+### Revisão dos inimigos T1/T2 e dos quatro chefes
+
+`node tools/check-assets.mjs http://localhost:5173 --combat-review=after --combat-clips` abre as quatro fases e audita seis inimigos (Pixel Mite, Spam Drone, Drip, Heap Crab, Thread Runner, Clock Spike) e os quatro chefes em cenários controlados. São 26.400 passos de física, com lógica dentro de WORLD_STEP e medições após postUpdate, além das capturas a cada quatro passos. Os testes exigem todos os estados previstos, alinhamento dos corpos, congelamento estável, remoção dos efeitos e ausência de perigos ativos após a derrota. Tech Debt cobre parede/núcleo, normal/fúria, patches e laser; o laser deve sair na altura do núcleo. Nenhuma captura representa uma partida completa.
+
+`syncBodyTransform` preserva o movimento já integrado ao mudar forma/origem/textura: aplicado ao Drip, à postura do Race Condition e à transição do Tech Debt. Memory Leak e Null Pointer usam corpos cinemáticos e sincronizam os teletransportes. Lodo pooled restaura corpo/movimento ao disparar, assenta a poça no chão e é desativado com o chefe. O núcleo final compromete o ponto de carga e chega a ele no tempo de aviso já definido; beam/corpo ficam alinhados. Goo e cursors reaproveitados pelo Tech Debt animam os quadros existentes.
+
+`CombatCue` desenha somente pequenos retângulos da paleta existente: queda/impacto do Drip, carga/liberação do Crab/Spike, rev/derrapagem do Runner e transições dos chefes. Sem tremor/flash de tela. Efeitos avançam no mesmo tick da IA, congelam com ela e pertencem à vida da entidade. Apresentação pura em `enemyArt.ts` devolve o braço do Crab após lançar e espaça as poses de aviso; números em `COMBAT_ART`. Corpos de Drone/Spike centralizados nos sprites. Os PNGs e texturas do cenário permanecem iguais a `bae475a`.
+
+Após o checker, `py -3 tools/review_combat_motion.py` publica `combat-motion-review.json` e três GIFs em `art/exports/`: `megabob-stage1-enemies-motion.gif`, `megabob-stage2-enemies-motion.gif` e `megabob-bosses-motion.gif`. Capturas intermediárias ficam em `art/preview/combat-clips/`; a referência anterior foi capturada em `bae475a` por `--combat-review=before`. O script exige também o smoke test sem erros, avisos ou falhas de rede.
+
+### Integração nas salas reais dos chefes
+
+`node tools/check-assets.mjs http://localhost:5173 --boss-rooms` chama `tools/check-boss-rooms.mjs` na `StageScene` real de cada fase: tiles, UI, boss factory e colliders de produção. A entrada é direta na sala para QA, com Bob protegido durante a simulação. Um tiro real do pool deve atingir o chefe; o teste remove a proteção por um único contato controlado para confirmar o callback de dano de um perigo. Confere normal/fúria, parede/núcleo, poças assentadas no chão real, barra de vida e remoção de ataques/minions na derrota. Não é prova de percurso nem de uma partida completa.
+
+A sala real revelou recorte do Race Condition na parede: poses opacas chegam a 44 px do centro, enquanto ele parava a 24 px da borda. `RACE_VISUAL_WALL_MARGIN` agora é 60 px (silhueta + um tile da parede). Ao iniciar um dash no limite, o chefe e as cópias escolhem o interior da arena mesmo se Bob estiver mais perto do canto; os arremessos continuam mirando Bob. Velocidade, avisos, dano e ciclo de ataques mantidos. O checker mede os pixels opacos nos dois sentidos e exige passagem de ponta a ponta, evitando tanto recortes quanto dashes parados no canto. Nenhum PNG foi alterado.
+
+`py -3 tools/review_boss_rooms.py` exige as quatro salas aprovadas e console/rede limpos, preserva os PNGs de produção e publica `art/exports/megabob-boss-room-review.png` / `boss-room-review.json`. Imagens intermediárias em `art/preview/boss-rooms/`. Em workspace compartilhado, pode-se usar uma instância de Vite com HMR desligado para evitar recargas durante o teste; a URL é argumento do checker.
+
+### Congelamento, pausa e reinício dos chefes
+
+`node tools/check-assets.mjs http://localhost:5173 --boss-lifecycle=after` testa a StageScene real dos quatro encontros: Mutex mantém a pose mesmo com mudança de alvo, pausa mantém o estado e a retomada volta a avançar a física, três reinícios repetidos por chefe conservam colliders/listeners e removem os objetos antigos, e a morte real de Bob despende uma vida e remove o encontro. Execute separadamente de `--boss-rooms`, pois ambos alteram a cena de QA.
+
+Foram reproduzidos em `8ef22a8` e corrigidos: Memory Leak ainda mudava a orientação durante Mutex; Tech Debt mantinha explosões e tween da parede após ser removido durante a transformação (reinício rápido), causando callback com `scene` indefinida. A orientação agora respeita `isFrozen`; timers/tween da transformação pertencem ao chefe e são cancelados em `destroy`. Padrões, tempos, dano e PNGs preservados. `py -3 tools/review_boss_lifecycle.py` publica `art/exports/boss-lifecycle-review.json`, comparando os arquivos de referência `art/preview/boss-lifecycle-*-before.json` com a execução corrigida. A inspeção usa entrada direta de QA, sem representar percurso completo.
+
+### Orientação dos cursores hostis
+
+Os dois quadros de `null_cursor` apontam originalmente para a esquerda. O Void Eye invertia essa convenção e não girava seus tiros diagonais; Null Pointer e Tech Debt já usavam rotação. `hostileCursorPose` (`src/systems/projectileArt.ts`) unifica os três emissores e trata o resíduo numérico dos disparos verticais. Apenas apresentação: velocidade, dano, corpos 10×10 / 12×10, dois quadros e PNGs mantidos.
+
+`node tools/check-assets.mjs http://localhost:5173 --cursor-directions=after` chama os emissores reais de EnemyShot, Null Pointer e Tech Debt em oito direções; verifica alinhamento da ponta com a velocidade, dimensões e ciclo 0/1. `py -3 tools/review_cursor_directions.py` exige 24 combinações, referência anterior com a falha e console/rede limpos, exportando `art/exports/megabob-cursor-direction-review.png` e `cursor-direction-review.json`. Referência `aaa47a1`, intermediários em `art/preview/cursor-directions-*`. Os marcadores cinza são guias exclusivos da inspeção.
+
+O Memory Leak implementado estava preso no quadro 0. `src/systems/memoryLeakArt.ts` agora seleciona idle, disparo, afundamento, emergência e dano a partir dos estados/timers existentes. A derrota continua usando a explosão e o ocultamento atuais. Bolhas/poças alternam seus dois quadros; ao reutilizar um projétil, textura e origem voltam para `memory_goo` e `(0.5,0.5)`, corrigindo a poça que reaparecia voando. Dimensões das hitboxes, ataques, tempos de luta e dano são preservados.
+
+Cinco testes unitários cobrem os quadros por estado. O helper `tools/check-boss-art.mjs` reproduziu as falhas antes da correção e confirmou os quadros 0–5, dano no 6 e a reutilização de bolhas/poças no Phaser. Também verifica que o chefe espelha sua arte para olhar o Bob à direita, volta à esquerda e mantém o último sentido se os dois estão alinhados. O espelhamento não altera a hitbox. A comparação `art/exports/megabob-memory-leak-facing.png` mostra os dois sentidos em poses de inspeção; a escolha de quadros/ataques segue os estados existentes. Relatório e screenshots em `art/preview/boss-art-runtime-report.json` / `browser-boss-memory-leak-{left,right}.png`; a cena de QA é descartável e não modifica o mapa jogável.
+
+O fundo magenta é removido com tolerância, preservando roxos e branco. Os strips usam alpha binário, nearest-neighbor e a paleta padrão de `tools/palette.py`, com os mapas locais de T1 descritos acima. Cada animação mantém uma escala compartilhada e a ancoragem declarada. Quadros vazios intencionais mantêm seus índices; vazios inesperados e recortes que excedam o quadro são erros.
+
+Folhas com espaçamento irregular usam os intervalos de conteúdo; folhas de efeitos e tiles usam a grade declarada. Os tiles têm 16×16. Os fundos geram três camadas de 512×224 por fase: FAR com duas cores para preservar silhuetas, MID e NEAR com transparência. A correção de bordas garante igualdade entre as colunas inicial e final; as prévias repetidas permitem conferir a composição visual da emenda.
+
+B1, A1, três conceitos de chefes e o logo anterior são referências, sem saída de runtime. Bob B2–B10, a armadura e air dash continuam no pipeline `py -3 tools/sprites.py bob`. O encaixe considera o desenho inteiro, restringe posições aos 48×48 e limita a escala compartilhada de poses grandes, sem recorte. `compile[0]` compartilha as partículas neutras entre todas as combinações. As duas poses horizontais B6 usam divisões anatômicas anotadas por peça. O relatório atual está sem avisos; veja `art/REGENERATE.md`.
+
+### Refinamento do Bob em 16 bits
+
+A pedido do usuário, o menu e todas as 145 folhas / 594 poses do jogo receberam tratamento mais definido, reutilizando as fontes aprovadas. `tools/bob_colors.py` conserva as 29 cores base e acrescenta 12 tons intermediários nas rampas neutra, azul e roxa, total de 41 candidatos. Só Bob/armadura usam essa paleta. O importador mantém a máscara binária exata do processamento anterior e usa amostragem Lanczos apenas para a cor interna, quantizada nessas rampas. Não há alpha suave, filtro de blur no jogo, mudança de pose, máscara de armadura ou escala de gameplay.
+
+No menu, `title_bob_idle` deriva diretamente da fonte B2 em três quadros 96×96, com o personagem a aproximadamente 72 px de altura. Substitui a ampliação 2× do sprite de gameplay, mantendo a mesma área 96×96, os pés em `(80,214)` e a sequência/fps de `BOB_LOOPS`. A exibição continua em pixels, escala 1; cenário e logo não foram redesenhados. `py -3 tools/art.py ui` reproduz essa variante.
+
+`py -3 tools/review_bob_refinement.py` compara todos os PNGs de gameplay com o commit `397c487`: dimensões e cada byte de alpha devem permanecer idênticos. Confere também os hashes das 70 fontes PNG e a paleta local. Comparação visual `art/exports/megabob-bob-refinement.png`; dados e hashes em `bob-refinement-review.json`. `tools/review_animations.py` usa a nova paleta e continua verificando os 594 quadros e os ciclos das 16 armaduras.
+
+`tools/check-bob-weapon-art.mjs` confere o renderizador real do `Player` em 448 combinações: quatro cores de arma × 16 armaduras × sete poses (idle, corrida, tiro em corrida, dash, parede, dano e air dash/fallback). Verifica textura, orientação, persistência da cor, restauração do Buster sem tint e dimensões/offset da colisão. O helper cria uma cena descartável no navegador isolado e exporta 16 composições estáticas sobre os quatro temas; não percorre os mapas nem testa armas futuras. Galeria `art/exports/megabob-weapon-color-review.png` e relatório `bob-weapon-art-review.json`. As cores existentes permaneceram distinguíveis; nenhuma mudança adicional de sprite, paleta ou gameplay foi necessária. A revisão de Memory Leak também voltou a passar com o Bob refinado.
+
+Testes do enquadramento: `py -3 -m unittest discover -s tools -p test_bob_fit.py`. Para executar todos os testes Python, use `py -3 -m unittest discover -s tools -p 'test_*.py'`.
+
+## Validação no jogo
+
+### Identidade dos PNGs carregados
+
+`tools/check-texture-sources.mjs` complementa a conferência de quadros com a origem e o conteúdo das 269 texturas registradas. As fontes precisam ser imagens carregadas; os pixels RGBA decodificados são comparados por SHA-256 com o arquivo PNG esperado, usando o mesmo decodificador do navegador. Isso evita depender da URL temporária de blob usada pelo loader do Phaser. Os bitmaps esperados são fechados após a leitura e a decodificação roda com concorrência limitada.
+
+O mesmo verificador precisa rejeitar dois controles negativos: um placeholder criado pelo gerador real do Boot e um PNG de tamanho idêntico com um pixel alterado. Ambos existem só na sessão isolada e são descartados. A auditoria também confere os vínculos ativos do jogador, inimigos, checkpoints, porta, cenário e lodo com suas texturas esperadas. Nos `TileSprite`, usa o padrão `displayTexture`; o canvas interno gerado pelo Phaser não é um placeholder de arte.
+
+Relatórios detalhados em `art/preview/texture-sources-{debug,stage}.json`; resumo desta revisão em `art/exports/texture-source-audit.json`. A checagem abre `?stage=memoryLeak` explicitamente, mantendo a inspeção da primeira fase independente da tela inicial. Ela verifica as fontes e os vínculos atuais, sem aprovar uma partida completa ou as cenas ainda em implementação. Nenhuma imagem de produção é alterada.
+
+### Revisão dos ciclos do Bob
+
+`py -3 tools/review_animations.py` lê os 145 strips do Bob, verifica seus 594 quadros (tamanho, conteúdo, alpha e paleta) e garante que nenhum PNG bruto ou de produção mudou. A sequência e o fps vêm diretamente de `BOB_LOOPS` em `src/systems/bobPose.ts`. Não define tempos novos para as poses ligadas ao estado do personagem.
+
+O comando exporta `art/exports/megabob-idle-review.gif` (3 fps), `megabob-run-review.gif` (12 fps) e `megabob-shoot-review.gif` (8 fps). Cada GIF compara as 16 combinações de armadura, com pixels ampliados 2× e linha de base. A escala de tempo do formato GIF é de 10 ms: os intervalos alternam para manter a duração total, com erro máximo de 5 ms no ciclo completo. Corrida e corrida com tiro duram ambas 500 ms. Metadados e hashes ficam em `bob-animation-review.json`; sete contatos de poses ficam em `art/preview/bob_*_pose_review.png`.
+
+O smoke test verifica também os três ciclos no Phaser, nas 16 combinações, usando uma cena temporária e o avanço de `AnimationState`. Confere 288 posições de quadro, fps e 48 retornos ao primeiro quadro. O helper `tools/check-animation-loops.mjs` verifica o hash da definição; se ela mudar, regenere os GIFs/relatório antes de executar o smoke test. Isso confere a arte e as sequências; não substitui os checkpoints de jogabilidade.
+
+```powershell
+npm.cmd test
+npm.cmd run typecheck
+npm.cmd run build
+# Com o servidor de desenvolvimento em http://127.0.0.1:5173:
+node tools/check-assets.mjs
+```
+
+O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 124 texturas do lote e os 145 strips do Bob (269 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script. Para outro servidor local, passe a URL: `node tools/check-assets.mjs http://127.0.0.1:5174`.
+
+O lote está carregado pelo Boot e o mapa de teste usa os tiles reais. Animações e componentes ficam disponíveis para as tarefas de inimigos, chefes, fases e menus; o importador não implementa essas mecânicas.

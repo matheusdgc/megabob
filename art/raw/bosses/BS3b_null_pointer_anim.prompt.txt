@@ -1,0 +1,16 @@
+Use case: stylized-concept. Asset for the original 16-bit side-scrolling platformer Megabob.
+Match the attached references' compact readable pixel-art craft: hard square pixels and deliberate clusters, dark #161616 outline approximately one logical pixel thick, limited flat color ramps (maximum four shades per ramp), top-left light, SNES/Mega Drive-era look. Designs should read clearly at the specified logical game size before enlargement. No antialiasing, gradients, blur, soft shadows, bloom, glow halos, dithering, noise or 3D rendering. Bright indicators/energy use flat pale pixel clusters, never soft glow.
+One horizontal row of equally sized cells unless explicitly specified otherwise. Same boss design, scale, camera and anchors in all frames, consistent ground baseline for grounded poses; airborne/partial poses remain anchored within their cells. Generous empty gutters, full silhouettes uncropped, no overlap between cells. All boss body poses FACE LEFT, toward the player, unless a specific front-facing exception is given.
+Opaque flat MAGENTA #FF00FF background outside the sprites; white/highlight areas inside objects stay opaque. No scenery, floor, cast shadow, grid, borders, captions, labels, numbers, readable text, watermark or unrequested props/effects. All designs original; do not copy any existing game character or hero armor.
+
+SPECIFIC SHEET BS3b_null_pointer_anim:
+Use NULL POINTER concept as identity: thin hollow black humanoid void, purple-white outline/checker patches, LEFT-pointing cursor-arrow head, detached floating hands. EXACTLY EIGHT cells in ONE row, facing LEFT:
+1 IDLE A, floating;
+2 IDLE B, slight vertical bob and a few altered outline/checker pixels;
+3 TELEPORT OUT, silhouette sliced into horizontally offset glitch strips, mostly separating;
+4 TELEPORT IN, SAME strips closer together reassembling, clearly more complete than frame 3;
+5 SHOOT, cursor head thrust LEFT and detached hands spread, no projectile;
+6 SUMMON, detached hands raised, a few purple square pixels around them;
+7 HURT, recoiling RIGHT with broken outline;
+8 DEFEATED, collapsed into ONE SINGLE small purple-white square PIXEL at the same central anchor, no visible body.
+Use clean solid black interiors, crisp purple/white clusters. No soft fading, aura, teleport rings, human face, skull, conventional hero armor or extra characters.

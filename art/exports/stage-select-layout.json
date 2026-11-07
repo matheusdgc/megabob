@@ -1,0 +1,31 @@
+{
+  "viewport": [
+    480,
+    270
+  ],
+  "slotSize": 64,
+  "portraitMaxSize": 48,
+  "focusSize": 72,
+  "centers": {
+    "memoryLeak": [
+      240,
+      62
+    ],
+    "raceCondition": [
+      112,
+      135
+    ],
+    "bob": [
+      240,
+      135
+    ],
+    "nullPointer": [
+      368,
+      135
+    ],
+    "techDebt": [
+      240,
+      208
+    ]
+  }
+}

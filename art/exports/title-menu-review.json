@@ -1,0 +1,116 @@
+{
+  "initial": {
+    "menu": [
+      "START",
+      "OPTIONS"
+    ],
+    "children": 12,
+    "listeners": 6
+  },
+  "normal": {
+    "frames": [
+      1,
+      0,
+      2
+    ],
+    "bobY": 214,
+    "bobTexture": "title_bob_idle",
+    "bobDisplay": [
+      96,
+      96
+    ],
+    "logo": {
+      "alpha": 1,
+      "y": 8
+    },
+    "shine": 0,
+    "children": 12,
+    "listeners": 6
+  },
+  "shineSeen": true,
+  "shineAffectsPixels": true,
+  "preferenceState": {
+    "reduced": true,
+    "active": [
+      "Title"
+    ]
+  },
+  "reduced": {
+    "frames": [
+      0
+    ],
+    "bobY": 214,
+    "bobTexture": "title_bob_idle",
+    "bobDisplay": [
+      96,
+      96
+    ],
+    "logo": {
+      "alpha": 1,
+      "y": 8
+    },
+    "shine": 0,
+    "children": 12,
+    "listeners": 6
+  },
+  "reducedPixelsStable": true,
+  "restarts": [
+    {
+      "children": 12,
+      "listeners": 6
+    },
+    {
+      "children": 12,
+      "listeners": 6
+    }
+  ],
+  "navigation": {
+    "input": "native DevTools keyboard events",
+    "options": [
+      {
+        "paused": true,
+        "labelsHidden": true,
+        "animationPaused": true,
+        "returnCursor": 1,
+        "children": 12,
+        "listeners": 6
+      },
+      {
+        "paused": true,
+        "labelsHidden": true,
+        "animationPaused": true,
+        "returnCursor": 1,
+        "children": 12,
+        "listeners": 6
+      }
+    ],
+    "selection": [
+      {
+        "departedDecorationCount": 0,
+        "returnDecorationCount": 3,
+        "children": 12,
+        "listeners": 6
+      },
+      {
+        "departedDecorationCount": 0,
+        "returnDecorationCount": 3,
+        "children": 12,
+        "listeners": 6
+      }
+    ]
+  },
+  "errors": [],
+  "warnings": [],
+  "failedRequests": [],
+  "background": {
+    "size": [
+      480,
+      270
+    ],
+    "visibleColors": 32,
+    "opaque": true,
+    "sampling": "nearest-neighbor",
+    "sha256": "7acd328ee76da8938979f7083678c70a0d932b2f109fce154ca2fa5eb1de082e"
+  },
+  "scope": "Main-menu visual animation, operating-system reduced-motion preference, scene restart, and real keyboard round trips through Options and StageSelect. Not a gameplay playthrough or physical-gamepad check."
+}

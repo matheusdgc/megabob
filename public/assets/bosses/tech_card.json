@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "tech_card_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "sourceSize": {
+        "w": 12,
+        "h": 8
+      }
+    }
+  },
+  "meta": {
+    "image": "tech_card.png",
+    "size": {
+      "w": 12,
+      "h": 8
+    },
+    "scale": "1"
+  }
+}

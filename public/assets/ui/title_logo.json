@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "title_logo_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 224,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 224,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 224,
+        "h": 48
+      }
+    }
+  },
+  "meta": {
+    "image": "title_logo.png",
+    "size": {
+      "w": 224,
+      "h": 48
+    },
+    "scale": "1"
+  }
+}

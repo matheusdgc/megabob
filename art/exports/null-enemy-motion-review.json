@@ -1,0 +1,26 @@
+{
+  "logicHz": 60,
+  "captureEvery": 4,
+  "metrics": {
+    "clawAlignmentError": 0,
+    "eyeAlignmentError": 0,
+    "hiddenEyeHarmful": false,
+    "bodySizes": [
+      "18x18/18x16"
+    ],
+    "freezeStable": true,
+    "clawContact": true,
+    "ceilingHarmless": true,
+    "ownedGraphics": 2,
+    "graphicsReleased": true
+  },
+  "scope": "Controlled enemy fixture; not a stage traversal.",
+  "logicFrames": 180,
+  "beforeAfterCaptures": 45,
+  "productionPngsChanged": false,
+  "hoverPositions": 6,
+  "cursorFrames": [
+    0,
+    1
+  ]
+}

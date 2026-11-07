@@ -1,0 +1,147 @@
+import { type BossId, BOSS_WEAPON, type WeaponId } from '../data/weapons';
+import { type Bindings, normalizeBindings } from './bindings';
+import { newRun, type RunStats } from './scores';
+
+/**
+ * Progress save (gamedev save-systems skill): plain data, a version stamp from day one,
+ * validated on load, a backup of the last good save, and a fresh save when nothing is usable.
+ * Pure apart from the `KeyValueStore` it is handed (localStorage in the game, a fake in tests).
+ */
+
+/** 2: the run's stats for the records (`run`). Version 1 saves migrate in parseSave. */
+export const SAVE_VERSION = 2;
+export const SAVE_KEY = 'megabob.save';
+export const BACKUP_KEY = 'megabob.save.bak';
+
+/** The three stage bosses; beating all of them opens the fortress. */
+export const STAGE_BOSSES: readonly BossId[] = ['memoryLeak', 'raceCondition', 'nullPointer'];
+const SPECIALS: readonly WeaponId[] = ['garbageCollector', 'mutexLock', 'nullPointer'];
+
+export interface Volumes {
+  master: number;
+  music: number;
+  sfx: number;
+}
+
+export interface SaveData {
+  version: typeof SAVE_VERSION;
+  /** Bosses beaten (stage order is free). */
+  cleared: BossId[];
+  /** Special weapons won (the buster is always owned). */
+  weapons: WeaponId[];
+  /** Firmware Armor bitmask: head 1, arm 2, body 4, legs 8. */
+  armor: number;
+  /** Rebound controls and volume sliders (T13b), when the player changed them. */
+  bindings?: Bindings;
+  volume?: Volumes;
+  /** Accessibility: no screen shake or flash. */
+  reduceMotion?: boolean;
+  /** This run's deaths, enemies destroyed and time, for the records. */
+  run: RunStats;
+}
+
+export const newSave = (): SaveData => ({ version: SAVE_VERSION, cleared: [], weapons: [], armor: 0, run: newRun() });
+
+/** Add to the run's counters (a death, enemies destroyed, time in a stage). Returns a new save. */
+export function addToRun(s: SaveData, add: Partial<Pick<RunStats, 'deaths' | 'kills' | 'frames'>>): SaveData {
+  const r = s.run;
+  return { ...s, run: { ...r, deaths: r.deaths + (add.deaths ?? 0), kills: r.kills + (add.kills ?? 0), frames: r.frames + (add.frames ?? 0) } };
+}
+
+/** Something was achieved (a boss, an armor part): the title offers Continue. */
+export const hasProgress = (s: SaveData): boolean => s.cleared.length > 0 || s.armor !== 0;
+
+export const fortressUnlocked = (s: SaveData): boolean => STAGE_BOSSES.every((b) => s.cleared.includes(b));
+
+/** A boss beaten: recorded once, and its weapon won. Returns a new save. */
+export function recordClear(s: SaveData, boss: BossId): SaveData {
+  const weapon = BOSS_WEAPON[boss];
+  return {
+    ...s,
+    cleared: s.cleared.includes(boss) ? s.cleared : [...s.cleared, boss],
+    weapons: weapon && !s.weapons.includes(weapon) ? [...s.weapons, weapon] : s.weapons,
+  };
+}
+
+const uniqueOf = <T extends string>(raw: unknown, allowed: readonly T[]): T[] =>
+  Array.isArray(raw) ? [...new Set(raw.filter((v): v is T => allowed.includes(v as T)))] : [];
+
+const slider = (v: unknown, fallback: number): number => (typeof v === 'number' && v >= 0 && v <= 1 ? v : fallback);
+
+/**
+ * A save from untrusted text: null when it is not a save at all (bad JSON, wrong shape, or a
+ * version this build does not know). Known fields are kept and cleaned; bad values are dropped.
+ */
+export function parseSave(text: string | null): SaveData | null {
+  if (!text) return null;
+  let raw: unknown;
+  try {
+    raw = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (!raw || typeof raw !== 'object') return null;
+  const r = raw as Record<string, unknown>;
+  if (r.version !== 1 && r.version !== SAVE_VERSION) return null;
+  const s: SaveData = {
+    version: SAVE_VERSION,
+    cleared: uniqueOf(r.cleared, [...STAGE_BOSSES, 'techDebt' as BossId]),
+    weapons: uniqueOf(r.weapons, SPECIALS),
+    armor: Number.isInteger(r.armor) ? (r.armor as number) & 15 : 0,
+    run: parseRun(r.version === 1 ? undefined : r.run),
+  };
+  // version 1 had no run stats: a run already under way cannot enter the records honestly
+  if (r.version === 1 && hasProgress(s)) s.run.ranked = false;
+  if (r.bindings) s.bindings = normalizeBindings(r.bindings);
+  if (r.volume && typeof r.volume === 'object') {
+    const v = r.volume as Record<string, unknown>;
+    s.volume = { master: slider(v.master, 0.8), music: slider(v.music, 0.7), sfx: slider(v.sfx, 0.8) };
+  }
+  if (r.reduceMotion === true) s.reduceMotion = true;
+  return s;
+}
+
+function parseRun(raw: unknown): RunStats {
+  const run = newRun();
+  if (!raw || typeof raw !== 'object') return run;
+  const r = raw as Record<string, unknown>;
+  for (const k of ['deaths', 'kills', 'frames'] as const) {
+    const v = r[k];
+    if (Number.isInteger(v) && (v as number) >= 0) run[k] = v as number;
+  }
+  if (r.ranked === false) run.ranked = false;
+  return run;
+}
+
+export const serializeSave = (s: SaveData): string => JSON.stringify(s);
+
+/** What the save needs from storage (window.localStorage fits). */
+export interface KeyValueStore {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+}
+
+/** The save, else its backup, else a fresh one. Never throws (storage may be disabled). */
+export function loadSave(store: KeyValueStore | null): SaveData {
+  try {
+    return parseSave(store?.getItem(SAVE_KEY) ?? null) ?? parseSave(store?.getItem(BACKUP_KEY) ?? null) ?? newSave();
+  } catch {
+    return newSave();
+  }
+}
+
+/** Write the save, keeping the previous good one as the backup. False when storage refused. */
+export function writeSave(store: KeyValueStore | null, s: SaveData): boolean {
+  if (!store) return false;
+  try {
+    const previous = store.getItem(SAVE_KEY);
+    if (previous && parseSave(previous)) store.setItem(BACKUP_KEY, previous);
+    store.setItem(SAVE_KEY, serializeSave(s));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** A volume slider moved one step (tenths), kept within 0..1. */
+export const stepVolume = (v: number, dir: 1 | -1): number => Math.round(Math.min(1, Math.max(0, v + dir * 0.1)) * 10) / 10;

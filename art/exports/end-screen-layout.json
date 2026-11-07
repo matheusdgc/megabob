@@ -1,0 +1,101 @@
+{
+  "viewport": [
+    480,
+    270
+  ],
+  "filtering": "nearest",
+  "scaling": "integer-fit-letterbox",
+  "containerAnchor": [
+    0.5,
+    0.5
+  ],
+  "offset": [
+    -240,
+    -135
+  ],
+  "textBakedIntoAssets": false,
+  "ending": {
+    "background": "ending_background",
+    "logo": {
+      "texture": "title_logo_night",
+      "position": [
+        240,
+        16
+      ],
+      "size": [
+        224,
+        48
+      ]
+    },
+    "heading": {
+      "position": [
+        248,
+        78
+      ],
+      "fontSize": 13
+    },
+    "thanks": {
+      "position": [
+        248,
+        100
+      ],
+      "fontSize": 12
+    },
+    "creditClipRect": [
+      248,
+      132,
+      216,
+      90
+    ],
+    "creditText": "Use verified runtime credits; no sample names are provided."
+  },
+  "gameOver": {
+    "panel": {
+      "texture": "reward_panel",
+      "position": [
+        32,
+        39
+      ]
+    },
+    "bob": {
+      "texture": "bob_hurt",
+      "frame": 0,
+      "position": [
+        54,
+        90
+      ],
+      "integerScale": 2
+    },
+    "heading": {
+      "position": [
+        168,
+        74
+      ],
+      "fontSize": 24
+    },
+    "description": {
+      "position": [
+        168,
+        116
+      ],
+      "fontSize": 10,
+      "lineHeight": 18
+    },
+    "action": {
+      "center": [
+        240,
+        204
+      ],
+      "rect": [
+        118,
+        188,
+        244,
+        32
+      ],
+      "fontSize": 12,
+      "label": "VOLTAR \u00c0 SELE\u00c7\u00c3O",
+      "initialFocus": true
+    },
+    "controls": "Scene resolves confirm binding; art does not handle input."
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "weapons": [
+    "buster",
+    "garbageCollector",
+    "mutexLock",
+    "nullPointer"
+  ],
+  "armorVariants": 16,
+  "poseVariants": 7,
+  "verifiedBindings": 448,
+  "body": [
+    14,
+    30
+  ],
+  "mismatches": [],
+  "backgroundThemes": [
+    "memory_leak",
+    "race_condition",
+    "null_pointer",
+    "tech_debt"
+  ],
+  "scope": "Actual Player visual bindings, configured weapon tints and static art compositions over four theme backgrounds. Does not exercise future weapon mechanics, full stage playthroughs or gamepad input.",
+  "productionArtChanged": false
+}

@@ -1,0 +1,18 @@
+Use case: stylized-concept. Assets for the original 16-bit SIDE-SCROLLING platformer Megabob. Match the approved Bob reference's crisp pixel clusters, limited flat shading and readable hard-edged shapes; do NOT draw Bob, characters, enemies, bosses or weapons.
+Authentic SNES/Mega Drive pixel art, compact square pixels and dark local-color outlines, at most four shades per ramp, light from above/top-left. STRICT ORTHOGONAL 2D SIDE-VIEW platformer tiles, not isometric, not 3D perspective. No antialiasing, gradients, soft lighting, cast shadows, bloom/glow halos, blur, dithering noise, realistic textures, typography, labels, tile numbers, grid lines, borders, watermark or UI.
+Color lights/glowing hazards use crisp flat bright pixels. Use only the stage's specified palette. Objects must read at the specified small logical game resolution before enlargement.
+
+Create a TILESET with square 16x16-LOGICAL-PIXEL tiles arranged on an INVISIBLE regular SIX-COLUMN by FOUR-ROW grid. EXACTLY ONE EMPTY TILE WIDTH (16 logical pixels) of spacing between all adjacent tile cells both horizontally and vertically, plus empty outer margins. Each occupied tile fits entirely inside its own 16x16 square; same pixel scale across all cells. No decorative cell frames or grid drawn.
+The 20 BASE cells, in reading order:
+ROW 1: C1 ground TOP EDGE; C2 ground FILL; C3 LEFT exposed side edge; C4 RIGHT exposed side edge; C5 OUTER TOP-LEFT corner; C6 OUTER TOP-RIGHT corner.
+ROW 2: C1 OUTER BOTTOM-LEFT corner; C2 OUTER BOTTOM-RIGHT corner; C3 INNER TOP-LEFT concave corner; C4 INNER TOP-RIGHT concave corner; C5 INNER BOTTOM-LEFT concave corner; C6 INNER BOTTOM-RIGHT concave corner.
+ROW 3: C1 thin ONE-WAY PLATFORM left cap; C2 same platform repeatable MIDDLE; C3 same platform right cap; C4 repeatable SOLID WALL COLUMN segment; C5 stage-specific DEADLY HAZARD; C6 darker LOW-CONTRAST NON-SOLID background wall tile.
+ROW 4: C1 decorative PROP 1; C2 decorative PROP 2; C3-C6 reserved for the stated stage-specific extras or remain EMPTY.
+Platform left/middle/right share an exact height and top surface so they can join. Ground edge/fill/corners use a consistent material and pattern so they can join into terrain. Exposed edges and concave/convex corners must be visually distinct. Do NOT draw complete level scenes, assembled terrain rooms, giant props or characters.
+BACKGROUND: OPAQUE FLAT MAGENTA #FF00FF outside tile/object silhouettes and in every empty spacer or unused cell. White/light object areas stay opaque. No magenta inside solid intended terrain.
+THEME: LEGACY FORTRESS: stacked beige 1970s mainframe cabinets, tape reel walls, tangled cables, CRT screens with green static, battered patched industrial panels.
+PALETTE: legacy #3E2B1F #8D6E4F #C9B48A #EFE3C2, CRT green #198038 #42BE65, neutrals #161616 #393939 #6F6F6F #A8A8A8. Backgrounds dark brown/charcoal, sparing muted beige and green.
+HAZARD: EXPOSED SPARKING WIRES: broken black/brown wire ends with crisp CRT-green/yellow square sparks, within one tile
+PROPS: PROP 1 small beige tape-reel cabinet fixture; PROP 2 compact green-static CRT terminal, no face or text, each fitting one tile
+EXTRA CELLS: ROW 4 C3-C6 are EMPTY MAGENTA, no extra sprites.
+References are STYLE/material only. Do NOT draw the boss, Bob, angry CRT faces, whole computer-wall scenery or any character. Terrain should be beige/brown mechanical cabinet panels that join into a fortress.

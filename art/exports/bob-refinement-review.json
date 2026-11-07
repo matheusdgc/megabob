@@ -1,0 +1,816 @@
+{
+  "baseline": "397c487",
+  "strips": 145,
+  "frames": 594,
+  "paletteColors": 41,
+  "alphaAndLayoutUnchanged": true,
+  "rawPngSourcesUnchanged": true,
+  "menuFrame": [
+    96,
+    96
+  ],
+  "gameplayFrame": [
+    48,
+    48
+  ],
+  "sourceCount": 70,
+  "rawPngSha256": {
+    "art/raw/bg/T1_memory_leak_bg.png": "621e33212af7b2c60b22ded2211a52f592a6ec30d7196c4f988985fa55639c61",
+    "art/raw/bg/T2_race_condition_bg.png": "8cca09288775883a5001cc5d91ed5ce35a3711913b0f8285ecd92705e8e2de2e",
+    "art/raw/bg/T3_null_pointer_bg.png": "6a3297fbe36365ba1f974f701c46328ddb89ccdc717069cf4e271ef58ab8dc8f",
+    "art/raw/bg/T4_tech_debt_bg.png": "835c0cfa151fb9c75917bc99cce01c10f26558cd1b09ded9370f9bce58f14729",
+    "art/raw/bob/B10_victory.png": "3d4bc81108766a34fac817bccf682b9f0b741cca49f15799cc8436f758435a10",
+    "art/raw/bob/B11_icons.png": "f3d038dde99103ed80a6d92bef54e91e2d9d4d6ec56998ce17b37cf6521bb59f",
+    "art/raw/bob/B1_bob_sheet.png": "a5d9b85359a9685baa42a72b84a252a123421d12a05241d84b796d341c6645bb",
+    "art/raw/bob/B2_idle.png": "eacb49246f90194fcdc630a1e7b578b36d171231066f85d59d6a49ddf6cfa078",
+    "art/raw/bob/B3_run.png": "1e224dc6e0539751e9686f7445b982a33e01a08e73dc640568c7ad5844b3c4d7",
+    "art/raw/bob/B4_jump_fall.png": "177206b421862028de225c6136f5a944922fbfa66f25ff7787b4552f68d5039e",
+    "art/raw/bob/B5_shoot.png": "5823c9b73fd9878d9b603f99021ea87677743a1713636680ace4c48b39d8ad29",
+    "art/raw/bob/B6_dash.png": "05229ff043b21c7ba0e51441a24177080b92bdb4ddd7e021e6d5f69ddad2ad55",
+    "art/raw/bob/B7_wall.png": "19521595272e21aa0fb65b772f85e69052c56e1d07207a492fcbabc2c332fe7e",
+    "art/raw/bob/B8_hurt.png": "4ecde8fe6bf2c5922e06428f9b7fdb9dc651ca60e49ec9a2326b9126ece1acaa",
+    "art/raw/bob/B9_compile_in.png": "7c5382429d9946c66f56bb13cdd0f7e45004aac38c121cafee9e0ce6c571690f",
+    "art/raw/bob_armor/A1_armor_sheet.png": "bef8404d10250095ffe78e1471dcc6ef05a2b4f2bb5427b8de0facbf356ef144",
+    "art/raw/bob_armor/A2_air_dash.png": "37d8e7a820a321ce3b89bc2a2e49b4ac0adb9c7d57a4df825c85eafa0e4146a3",
+    "art/raw/bob_armor/A2_B10_victory.png": "16868b789f1d63d87805a360f99ab39cf27d731e7ff601efef2b840c55377a61",
+    "art/raw/bob_armor/A2_B2_idle.png": "9d015ca19312e1f0c143a44521fd424e486a67783bd0f9b53809bcdf2456bce4",
+    "art/raw/bob_armor/A2_B3_run.png": "ef877316c2b2054b568b9795a3e58c0aa2259244bd3b7317b7c15d2a492a0e04",
+    "art/raw/bob_armor/A2_B4_jump_fall.png": "f37f4bcc0e316b9f26bb3ae99dda70af8074cfbb0f0bf2186056b8f44b0ef58f",
+    "art/raw/bob_armor/A2_B5_shoot.png": "81acf8a2d7288cfd3f783e4afb9b8ee192094712547ad4604e4f5aeb4f0b3dbf",
+    "art/raw/bob_armor/A2_B6_dash.png": "2117c3712436b2ba6bfb3c840afa3d41473bbe42949c185363cbf8800a016269",
+    "art/raw/bob_armor/A2_B7_wall.png": "82d1d56ae228df14b0434a8e13a9f81349137da0572c790e0d99ebd42015c8ec",
+    "art/raw/bob_armor/A2_B8_hurt.png": "6ec8d9eee4f59fb2a7a803cca0f820d3f4c70768f0918a16b01532e077324c0c",
+    "art/raw/bob_armor/A2_B9_compile_in.png": "db3997f2c92e684e6b1cfe1022737c015aad670e192f03378c0304b4de9b0fd1",
+    "art/raw/bob_armor/A3_update_terminal.png": "4252eca7cbb0a977e56608a32f77f133ee8377f2d0d749353af7f590753bf85c",
+    "art/raw/bob_armor/A4_part_icons.png": "b8420ceb56b872d97da8f16444f6dc3a47fb549476f020bdbebf6156ce9d26fb",
+    "art/raw/bosses/BS1a_memory_leak_sheet.png": "55fddf7c9670e095744176eb9a3d944e21a6af68495788b2dda4152bb5e338df",
+    "art/raw/bosses/BS1b_memory_leak_anim.png": "b8ae77252679d24f273e5d5e1518f4b6bfe83c9190a68c67ab660793f1eb9349",
+    "art/raw/bosses/BS1c_memory_leak_extras.png": "697050ee41bc52043598bdad9c71d97624037aed593fa3d288ebe1a78a8026a4",
+    "art/raw/bosses/BS2a_race_condition_sheet.png": "3911812824697c2b9e920c4ab771ab4b77d617d91ab9f335264e0c7259ebc67d",
+    "art/raw/bosses/BS2b_race_condition_anim.png": "c20ae0c66a3db03415af8ee41e3fa5d4591933283923f97629b1994bc539643a",
+    "art/raw/bosses/BS2c_race_condition_extras.png": "2cc6410b6ca081e0ab68d9175348bfa4e28c4c03864b52eda34762dad5fa4175",
+    "art/raw/bosses/BS3a_null_pointer_sheet.png": "5b500c4f3775744b0a9c47c45562f47e7577df33c10bd5e237c29ec2f4e02484",
+    "art/raw/bosses/BS3b_null_pointer_anim.png": "75b9e47c87b0d22947e79069d5184d2d2d3bf9dee634fc3899e39022f11526dc",
+    "art/raw/bosses/BS3c_null_pointer_extras.png": "fa335244f16b476c0f992269672267e486eea166c12c6dd01eb4794921fd80e2",
+    "art/raw/bosses/BS4a_tech_debt_sheet.png": "b34fb8a0aa5ca7be6be38a1ca7699466e1faefb89f0ac7a4650e6535a11042a9",
+    "art/raw/bosses/BS4b_tech_debt_parts.png": "989525ae538fb851e36b056cd54b785e4040fe59f5eb0a897b4b8644c8536515",
+    "art/raw/bosses/BS4c_tech_debt_core.png": "d132db000f83d1acb5f2f70420f3ffc4d8402d20707cd6df6e6538dfccc580da",
+    "art/raw/enemies/E10_deprecated_bot.png": "af10eb78b7216e77f46e8dc57f5d2997d45d820af5a1fe2e286db21b29bc18bc",
+    "art/raw/enemies/E1_pixel_mite.png": "e73463bd99621bf655c7e0997957554cbec9cfd2c98a9c9279660b19b08542af",
+    "art/raw/enemies/E2_spam_drone.png": "2e1da7285acdc2ee6c1488e6b1fd90c36252b8c8e92788cce53fa6891b02c942",
+    "art/raw/enemies/E3_drip.png": "d18548419e4e9d3c2d51760204a10e30f4e591d0d5a97a6b912fb65f8f464fbf",
+    "art/raw/enemies/E4_heap_crab.png": "838bc1666445ae8306351775b942f3ff7daaf310ceb598439bcdb49dd723645f",
+    "art/raw/enemies/E5_thread_runner.png": "951373f61c08770109a4cda525bf828b2b658131c64f3a48c15993fe8cd19c95",
+    "art/raw/enemies/E6_clock_spike.png": "d2af1f1df6950dccd6f58473139139db6de3625c4c3c5acfac2747bfc253f773",
+    "art/raw/enemies/E7_void_eye.png": "cd72132ad3081f2d05b1a08f85693dab3655b609b7092684338d282b3fbea026",
+    "art/raw/enemies/E8_dangling_ref.png": "1c554d7a1be0d2b7ae8a46bfc3eb8c8eb40e7509bbffc9288c6608d0626554aa",
+    "art/raw/enemies/E9_legacy_turret.png": "ad7e7c81fc6343d0fe8c3ae9359d1eac5e861bdf48d41110d40fd3979df6c4c9",
+    "art/raw/fx/A5_compiler_shot.png": "9b8bd1955c95d2ecff7304569908ee9ccff92472ce3d2fd92ba77483edf27f03",
+    "art/raw/fx/FX1_buster.png": "e1508fef6d15bb72e45f6b455bf92a00e2ad1da528ad2dbabf545a8279d0b029",
+    "art/raw/fx/FX2_weapons.png": "f4ce614726aaa605b82e5b3a5c10b77506bc792cd7e99ca0dc412c12a9fcea7a",
+    "art/raw/fx/FX3_explosions.png": "6da3577b40d287e2b8dbe1bcf84869e63dde25b0968df16a7e210d0278a308f8",
+    "art/raw/fx/FX4_movement.png": "fc4c0b493383b891790d9e7642a4f093a3d9594f5587915db08c496f72a82684",
+    "art/raw/fx/FX5_pickups.png": "f649efa6c9a1ae355a5c26b1d0814ccd94c9c6712e6663d475046a231ded258c",
+    "art/raw/tiles/T1_memory_leak_tiles.png": "a3e99d4330498940b44502d928850687923b2cf69f66db6740d361c44de62587",
+    "art/raw/tiles/T2_race_condition_tiles.png": "6979b4cafc6b704151a139e288aa17d5831fd0a2977e30a65aa1a06fb96a1883",
+    "art/raw/tiles/T3_null_pointer_tiles.png": "027cc03b64835c365242e2afe658466408a8ee20a257eadbe8f046d9226d3a17",
+    "art/raw/tiles/T4_tech_debt_tiles.png": "1736957617a61566c51bb76c53293f751153206e87b6a788882f857a7d793632",
+    "art/raw/tiles/T5_common.png": "c24f7c77fb7f3e76d4fa97e1c0f4d828e28bdb1144e09dce1e52f5dcf4c067d3",
+    "art/raw/ui/U1_logo-original.png": "7c55f957fa3b358fbfbfb68d8e721f82c4faefe529eadb4b0418fe7a22ec4e20",
+    "art/raw/ui/U1_logo.png": "9a91b40d70614a208565cbfd4709dafb2648ace1d7bc772d6766f898057faa4b",
+    "art/raw/ui/U1_logo_readable.png": "4e87e39234f4f2fbddec6a99eb950736f3103d52356e585f2cdf05fd90caa2ef",
+    "art/raw/ui/U2_title_bg.png": "ed01df8bad875a4c20b9cf9ff3e085a6fd5ff0bf9484da5f97c57839bc183615",
+    "art/raw/ui/U2_title_bg_wide.png": "c29807ca325321cb2a1b5e44ff165dce317fcf1ef0ba17ba32634f65e10f01fb",
+    "art/raw/ui/U2_title_cyberpunk.png": "cd4f5cdc6a6f781b9a1c90a559a8993c6187de7698e28be125d1f58efcf77e2c",
+    "art/raw/ui/U3_stage_select.png": "1dd6e4482e8c3a433d49ff447c57eb30ee2447f8673156b80857942327cf075e",
+    "art/raw/ui/U4_hud.png": "8f73dfd4ecd7a742cb4e633d284360e2872ebf6cb1991e9785e683cd5ce7681a",
+    "art/raw/ui/U5_ending_bg.png": "a4607d618c04fa8ec6fbe56d1b4d4e8345aafeb514fe2bce252cddd3c0b580fb"
+  },
+  "entries": [
+    {
+      "file": "bob_airdash_a15.png",
+      "frames": 2,
+      "changedPixels": 578
+    },
+    {
+      "file": "bob_compile.png",
+      "frames": 5,
+      "changedPixels": 796
+    },
+    {
+      "file": "bob_compile_a1.png",
+      "frames": 5,
+      "changedPixels": 992
+    },
+    {
+      "file": "bob_compile_a10.png",
+      "frames": 5,
+      "changedPixels": 954
+    },
+    {
+      "file": "bob_compile_a11.png",
+      "frames": 5,
+      "changedPixels": 1150
+    },
+    {
+      "file": "bob_compile_a12.png",
+      "frames": 5,
+      "changedPixels": 958
+    },
+    {
+      "file": "bob_compile_a13.png",
+      "frames": 5,
+      "changedPixels": 1154
+    },
+    {
+      "file": "bob_compile_a14.png",
+      "frames": 5,
+      "changedPixels": 1004
+    },
+    {
+      "file": "bob_compile_a15.png",
+      "frames": 5,
+      "changedPixels": 1200
+    },
+    {
+      "file": "bob_compile_a2.png",
+      "frames": 5,
+      "changedPixels": 842
+    },
+    {
+      "file": "bob_compile_a3.png",
+      "frames": 5,
+      "changedPixels": 1038
+    },
+    {
+      "file": "bob_compile_a4.png",
+      "frames": 5,
+      "changedPixels": 846
+    },
+    {
+      "file": "bob_compile_a5.png",
+      "frames": 5,
+      "changedPixels": 1042
+    },
+    {
+      "file": "bob_compile_a6.png",
+      "frames": 5,
+      "changedPixels": 892
+    },
+    {
+      "file": "bob_compile_a7.png",
+      "frames": 5,
+      "changedPixels": 1088
+    },
+    {
+      "file": "bob_compile_a8.png",
+      "frames": 5,
+      "changedPixels": 908
+    },
+    {
+      "file": "bob_compile_a9.png",
+      "frames": 5,
+      "changedPixels": 1104
+    },
+    {
+      "file": "bob_dash.png",
+      "frames": 4,
+      "changedPixels": 851
+    },
+    {
+      "file": "bob_dash_a1.png",
+      "frames": 4,
+      "changedPixels": 950
+    },
+    {
+      "file": "bob_dash_a10.png",
+      "frames": 4,
+      "changedPixels": 932
+    },
+    {
+      "file": "bob_dash_a11.png",
+      "frames": 4,
+      "changedPixels": 1031
+    },
+    {
+      "file": "bob_dash_a12.png",
+      "frames": 4,
+      "changedPixels": 927
+    },
+    {
+      "file": "bob_dash_a13.png",
+      "frames": 4,
+      "changedPixels": 1026
+    },
+    {
+      "file": "bob_dash_a14.png",
+      "frames": 4,
+      "changedPixels": 941
+    },
+    {
+      "file": "bob_dash_a15.png",
+      "frames": 4,
+      "changedPixels": 1040
+    },
+    {
+      "file": "bob_dash_a2.png",
+      "frames": 4,
+      "changedPixels": 865
+    },
+    {
+      "file": "bob_dash_a3.png",
+      "frames": 4,
+      "changedPixels": 964
+    },
+    {
+      "file": "bob_dash_a4.png",
+      "frames": 4,
+      "changedPixels": 860
+    },
+    {
+      "file": "bob_dash_a5.png",
+      "frames": 4,
+      "changedPixels": 959
+    },
+    {
+      "file": "bob_dash_a6.png",
+      "frames": 4,
+      "changedPixels": 874
+    },
+    {
+      "file": "bob_dash_a7.png",
+      "frames": 4,
+      "changedPixels": 973
+    },
+    {
+      "file": "bob_dash_a8.png",
+      "frames": 4,
+      "changedPixels": 918
+    },
+    {
+      "file": "bob_dash_a9.png",
+      "frames": 4,
+      "changedPixels": 1017
+    },
+    {
+      "file": "bob_hurt.png",
+      "frames": 2,
+      "changedPixels": 490
+    },
+    {
+      "file": "bob_hurt_a1.png",
+      "frames": 2,
+      "changedPixels": 603
+    },
+    {
+      "file": "bob_hurt_a10.png",
+      "frames": 2,
+      "changedPixels": 527
+    },
+    {
+      "file": "bob_hurt_a11.png",
+      "frames": 2,
+      "changedPixels": 640
+    },
+    {
+      "file": "bob_hurt_a12.png",
+      "frames": 2,
+      "changedPixels": 545
+    },
+    {
+      "file": "bob_hurt_a13.png",
+      "frames": 2,
+      "changedPixels": 658
+    },
+    {
+      "file": "bob_hurt_a14.png",
+      "frames": 2,
+      "changedPixels": 552
+    },
+    {
+      "file": "bob_hurt_a15.png",
+      "frames": 2,
+      "changedPixels": 665
+    },
+    {
+      "file": "bob_hurt_a2.png",
+      "frames": 2,
+      "changedPixels": 497
+    },
+    {
+      "file": "bob_hurt_a3.png",
+      "frames": 2,
+      "changedPixels": 610
+    },
+    {
+      "file": "bob_hurt_a4.png",
+      "frames": 2,
+      "changedPixels": 515
+    },
+    {
+      "file": "bob_hurt_a5.png",
+      "frames": 2,
+      "changedPixels": 628
+    },
+    {
+      "file": "bob_hurt_a6.png",
+      "frames": 2,
+      "changedPixels": 522
+    },
+    {
+      "file": "bob_hurt_a7.png",
+      "frames": 2,
+      "changedPixels": 635
+    },
+    {
+      "file": "bob_hurt_a8.png",
+      "frames": 2,
+      "changedPixels": 520
+    },
+    {
+      "file": "bob_hurt_a9.png",
+      "frames": 2,
+      "changedPixels": 633
+    },
+    {
+      "file": "bob_idle.png",
+      "frames": 3,
+      "changedPixels": 674
+    },
+    {
+      "file": "bob_idle_a1.png",
+      "frames": 3,
+      "changedPixels": 776
+    },
+    {
+      "file": "bob_idle_a10.png",
+      "frames": 3,
+      "changedPixels": 737
+    },
+    {
+      "file": "bob_idle_a11.png",
+      "frames": 3,
+      "changedPixels": 839
+    },
+    {
+      "file": "bob_idle_a12.png",
+      "frames": 3,
+      "changedPixels": 760
+    },
+    {
+      "file": "bob_idle_a13.png",
+      "frames": 3,
+      "changedPixels": 862
+    },
+    {
+      "file": "bob_idle_a14.png",
+      "frames": 3,
+      "changedPixels": 788
+    },
+    {
+      "file": "bob_idle_a15.png",
+      "frames": 3,
+      "changedPixels": 890
+    },
+    {
+      "file": "bob_idle_a2.png",
+      "frames": 3,
+      "changedPixels": 702
+    },
+    {
+      "file": "bob_idle_a3.png",
+      "frames": 3,
+      "changedPixels": 804
+    },
+    {
+      "file": "bob_idle_a4.png",
+      "frames": 3,
+      "changedPixels": 725
+    },
+    {
+      "file": "bob_idle_a5.png",
+      "frames": 3,
+      "changedPixels": 827
+    },
+    {
+      "file": "bob_idle_a6.png",
+      "frames": 3,
+      "changedPixels": 753
+    },
+    {
+      "file": "bob_idle_a7.png",
+      "frames": 3,
+      "changedPixels": 855
+    },
+    {
+      "file": "bob_idle_a8.png",
+      "frames": 3,
+      "changedPixels": 709
+    },
+    {
+      "file": "bob_idle_a9.png",
+      "frames": 3,
+      "changedPixels": 811
+    },
+    {
+      "file": "bob_jump.png",
+      "frames": 5,
+      "changedPixels": 1113
+    },
+    {
+      "file": "bob_jump_a1.png",
+      "frames": 5,
+      "changedPixels": 1343
+    },
+    {
+      "file": "bob_jump_a10.png",
+      "frames": 5,
+      "changedPixels": 1274
+    },
+    {
+      "file": "bob_jump_a11.png",
+      "frames": 5,
+      "changedPixels": 1504
+    },
+    {
+      "file": "bob_jump_a12.png",
+      "frames": 5,
+      "changedPixels": 1203
+    },
+    {
+      "file": "bob_jump_a13.png",
+      "frames": 5,
+      "changedPixels": 1433
+    },
+    {
+      "file": "bob_jump_a14.png",
+      "frames": 5,
+      "changedPixels": 1293
+    },
+    {
+      "file": "bob_jump_a15.png",
+      "frames": 5,
+      "changedPixels": 1523
+    },
+    {
+      "file": "bob_jump_a2.png",
+      "frames": 5,
+      "changedPixels": 1203
+    },
+    {
+      "file": "bob_jump_a3.png",
+      "frames": 5,
+      "changedPixels": 1433
+    },
+    {
+      "file": "bob_jump_a4.png",
+      "frames": 5,
+      "changedPixels": 1132
+    },
+    {
+      "file": "bob_jump_a5.png",
+      "frames": 5,
+      "changedPixels": 1362
+    },
+    {
+      "file": "bob_jump_a6.png",
+      "frames": 5,
+      "changedPixels": 1222
+    },
+    {
+      "file": "bob_jump_a7.png",
+      "frames": 5,
+      "changedPixels": 1452
+    },
+    {
+      "file": "bob_jump_a8.png",
+      "frames": 5,
+      "changedPixels": 1184
+    },
+    {
+      "file": "bob_jump_a9.png",
+      "frames": 5,
+      "changedPixels": 1414
+    },
+    {
+      "file": "bob_run.png",
+      "frames": 6,
+      "changedPixels": 1211
+    },
+    {
+      "file": "bob_run_a1.png",
+      "frames": 6,
+      "changedPixels": 1429
+    },
+    {
+      "file": "bob_run_a10.png",
+      "frames": 6,
+      "changedPixels": 1425
+    },
+    {
+      "file": "bob_run_a11.png",
+      "frames": 6,
+      "changedPixels": 1643
+    },
+    {
+      "file": "bob_run_a12.png",
+      "frames": 6,
+      "changedPixels": 1390
+    },
+    {
+      "file": "bob_run_a13.png",
+      "frames": 6,
+      "changedPixels": 1608
+    },
+    {
+      "file": "bob_run_a14.png",
+      "frames": 6,
+      "changedPixels": 1523
+    },
+    {
+      "file": "bob_run_a15.png",
+      "frames": 6,
+      "changedPixels": 1741
+    },
+    {
+      "file": "bob_run_a2.png",
+      "frames": 6,
+      "changedPixels": 1344
+    },
+    {
+      "file": "bob_run_a3.png",
+      "frames": 6,
+      "changedPixels": 1562
+    },
+    {
+      "file": "bob_run_a4.png",
+      "frames": 6,
+      "changedPixels": 1309
+    },
+    {
+      "file": "bob_run_a5.png",
+      "frames": 6,
+      "changedPixels": 1527
+    },
+    {
+      "file": "bob_run_a6.png",
+      "frames": 6,
+      "changedPixels": 1442
+    },
+    {
+      "file": "bob_run_a7.png",
+      "frames": 6,
+      "changedPixels": 1660
+    },
+    {
+      "file": "bob_run_a8.png",
+      "frames": 6,
+      "changedPixels": 1292
+    },
+    {
+      "file": "bob_run_a9.png",
+      "frames": 6,
+      "changedPixels": 1510
+    },
+    {
+      "file": "bob_shoot.png",
+      "frames": 7,
+      "changedPixels": 1612
+    },
+    {
+      "file": "bob_shoot_a1.png",
+      "frames": 7,
+      "changedPixels": 1999
+    },
+    {
+      "file": "bob_shoot_a10.png",
+      "frames": 7,
+      "changedPixels": 1775
+    },
+    {
+      "file": "bob_shoot_a11.png",
+      "frames": 7,
+      "changedPixels": 2162
+    },
+    {
+      "file": "bob_shoot_a12.png",
+      "frames": 7,
+      "changedPixels": 1797
+    },
+    {
+      "file": "bob_shoot_a13.png",
+      "frames": 7,
+      "changedPixels": 2184
+    },
+    {
+      "file": "bob_shoot_a14.png",
+      "frames": 7,
+      "changedPixels": 1873
+    },
+    {
+      "file": "bob_shoot_a15.png",
+      "frames": 7,
+      "changedPixels": 2260
+    },
+    {
+      "file": "bob_shoot_a2.png",
+      "frames": 7,
+      "changedPixels": 1688
+    },
+    {
+      "file": "bob_shoot_a3.png",
+      "frames": 7,
+      "changedPixels": 2075
+    },
+    {
+      "file": "bob_shoot_a4.png",
+      "frames": 7,
+      "changedPixels": 1710
+    },
+    {
+      "file": "bob_shoot_a5.png",
+      "frames": 7,
+      "changedPixels": 2097
+    },
+    {
+      "file": "bob_shoot_a6.png",
+      "frames": 7,
+      "changedPixels": 1786
+    },
+    {
+      "file": "bob_shoot_a7.png",
+      "frames": 7,
+      "changedPixels": 2173
+    },
+    {
+      "file": "bob_shoot_a8.png",
+      "frames": 7,
+      "changedPixels": 1699
+    },
+    {
+      "file": "bob_shoot_a9.png",
+      "frames": 7,
+      "changedPixels": 2086
+    },
+    {
+      "file": "bob_victory.png",
+      "frames": 2,
+      "changedPixels": 558
+    },
+    {
+      "file": "bob_victory_a1.png",
+      "frames": 2,
+      "changedPixels": 618
+    },
+    {
+      "file": "bob_victory_a10.png",
+      "frames": 2,
+      "changedPixels": 616
+    },
+    {
+      "file": "bob_victory_a11.png",
+      "frames": 2,
+      "changedPixels": 676
+    },
+    {
+      "file": "bob_victory_a12.png",
+      "frames": 2,
+      "changedPixels": 611
+    },
+    {
+      "file": "bob_victory_a13.png",
+      "frames": 2,
+      "changedPixels": 671
+    },
+    {
+      "file": "bob_victory_a14.png",
+      "frames": 2,
+      "changedPixels": 624
+    },
+    {
+      "file": "bob_victory_a15.png",
+      "frames": 2,
+      "changedPixels": 684
+    },
+    {
+      "file": "bob_victory_a2.png",
+      "frames": 2,
+      "changedPixels": 571
+    },
+    {
+      "file": "bob_victory_a3.png",
+      "frames": 2,
+      "changedPixels": 631
+    },
+    {
+      "file": "bob_victory_a4.png",
+      "frames": 2,
+      "changedPixels": 566
+    },
+    {
+      "file": "bob_victory_a5.png",
+      "frames": 2,
+      "changedPixels": 626
+    },
+    {
+      "file": "bob_victory_a6.png",
+      "frames": 2,
+      "changedPixels": 579
+    },
+    {
+      "file": "bob_victory_a7.png",
+      "frames": 2,
+      "changedPixels": 639
+    },
+    {
+      "file": "bob_victory_a8.png",
+      "frames": 2,
+      "changedPixels": 603
+    },
+    {
+      "file": "bob_victory_a9.png",
+      "frames": 2,
+      "changedPixels": 663
+    },
+    {
+      "file": "bob_wall.png",
+      "frames": 3,
+      "changedPixels": 763
+    },
+    {
+      "file": "bob_wall_a1.png",
+      "frames": 3,
+      "changedPixels": 838
+    },
+    {
+      "file": "bob_wall_a10.png",
+      "frames": 3,
+      "changedPixels": 833
+    },
+    {
+      "file": "bob_wall_a11.png",
+      "frames": 3,
+      "changedPixels": 908
+    },
+    {
+      "file": "bob_wall_a12.png",
+      "frames": 3,
+      "changedPixels": 808
+    },
+    {
+      "file": "bob_wall_a13.png",
+      "frames": 3,
+      "changedPixels": 883
+    },
+    {
+      "file": "bob_wall_a14.png",
+      "frames": 3,
+      "changedPixels": 841
+    },
+    {
+      "file": "bob_wall_a15.png",
+      "frames": 3,
+      "changedPixels": 916
+    },
+    {
+      "file": "bob_wall_a2.png",
+      "frames": 3,
+      "changedPixels": 796
+    },
+    {
+      "file": "bob_wall_a3.png",
+      "frames": 3,
+      "changedPixels": 871
+    },
+    {
+      "file": "bob_wall_a4.png",
+      "frames": 3,
+      "changedPixels": 771
+    },
+    {
+      "file": "bob_wall_a5.png",
+      "frames": 3,
+      "changedPixels": 846
+    },
+    {
+      "file": "bob_wall_a6.png",
+      "frames": 3,
+      "changedPixels": 804
+    },
+    {
+      "file": "bob_wall_a7.png",
+      "frames": 3,
+      "changedPixels": 879
+    },
+    {
+      "file": "bob_wall_a8.png",
+      "frames": 3,
+      "changedPixels": 800
+    },
+    {
+      "file": "bob_wall_a9.png",
+      "frames": 3,
+      "changedPixels": 875
+    }
+  ]
+}

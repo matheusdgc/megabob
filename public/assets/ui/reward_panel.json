@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "reward_panel_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 192
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 416,
+        "h": 192
+      },
+      "sourceSize": {
+        "w": 416,
+        "h": 192
+      }
+    }
+  },
+  "meta": {
+    "image": "reward_panel.png",
+    "size": {
+      "w": 416,
+      "h": 192
+    },
+    "scale": "1"
+  }
+}

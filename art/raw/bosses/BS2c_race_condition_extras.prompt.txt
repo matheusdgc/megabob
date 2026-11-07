@@ -1,0 +1,14 @@
+Use case: stylized-concept. Asset for the original 16-bit side-scrolling platformer Megabob.
+Match the attached references' compact readable pixel-art craft: hard square pixels and deliberate clusters, dark #161616 outline approximately one logical pixel thick, limited flat color ramps (maximum four shades per ramp), top-left light, SNES/Mega Drive-era look. Designs should read clearly at the specified logical game size before enlargement. No antialiasing, gradients, blur, soft shadows, bloom, glow halos, dithering, noise or 3D rendering. Bright indicators/energy use flat pale pixel clusters, never soft glow.
+One horizontal row of equally sized cells unless explicitly specified otherwise. Same boss design, scale, camera and anchors in all frames, consistent ground baseline for grounded poses; airborne/partial poses remain anchored within their cells. Generous empty gutters, full silhouettes uncropped, no overlap between cells. All boss body poses FACE LEFT, toward the player, unless a specific front-facing exception is given.
+Opaque flat MAGENTA #FF00FF background outside the sprites; white/highlight areas inside objects stay opaque. No scenery, floor, cast shadow, grid, borders, captions, labels, numbers, readable text, watermark or unrequested props/effects. All designs original; do not copy any existing game character or hero armor.
+
+SPECIFIC SHEET BS2c_race_condition_extras:
+Same RACE CONDITION design as concept. EXACTLY SIX cells in ONE row:
+1 square head/upper-body PORTRAIT for stage select, impatient angular visor and chest stopwatch, no panel or border;
+2 clock-hand BLADE projectile at 0 degrees;
+3 the SAME blade at 90 degrees;
+4 the SAME blade at 180 degrees;
+5 the SAME blade at 270 degrees;
+6 one full-body SPEED AFTERIMAGE silhouette in a SINGLE flat DARK-RED tone (#750E13), facing LEFT in low running/dash pose.
+Blade is the same clock-hand forearm design, substantially smaller than portrait/body, crisp metal needle/hand shape and mechanical pivot; no trails. Afterimage has no internal details or face/clock drawing, a solid dark-red sprite. Opaque magenta background visible through empty silhouette gaps. No extra robot bodies or projectiles.

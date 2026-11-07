@@ -1,0 +1,12 @@
+Use case: stylized-concept. Asset: A3_update_terminal, upgrade kiosk animation for Megabob. The reference shows the project's Firmware Armor pixel style and server-hardware motif ONLY. Do not draw Bob or floating armor items.
+Design ONE ORIGINAL tall slim server-rack kiosk called Update Terminal: white and IBM-blue shell, rectangular vent slits, small cable bundles at base, broad glass-front pod large enough for Bob to stand inside (about 32x56 logical pixels in game), vertical progress bar of blue LED segments down one side. Strict front/slight side platformer view matching the game's equipment. Square mechanical shapes, compact dark outline, no face, no lettering.
+EXACTLY SIX equal-size full-object animation frames in ONE horizontal row, same terminal design/scale, same ground baseline and position per cell:
+1 CLOSED IDLE, glass front closed, side LEDs dark/dim.
+2 ACTIVATING, glass still closed, vertical LEDs visibly filling upward in blue, no glow bloom.
+3 OPEN, glass panel mechanically slid UP into overhead housing, pod opening exposed and EMPTY, inner light shown by flat pale-blue pixels only.
+4 INSTALLING A, pod open, sparse blue square pixels streaming downward through the EMPTY interior.
+5 INSTALLING B, same pod open, blue square pixel pattern further down in a distinct animation phase.
+6 INSTALLING C, same pod open, third phase with distinct pixel positions.
+Important: no character inside ANY frame; Bob is drawn separately by code. Preserve exact matching exterior shell across all six. Door opening visually readable. Blue installation squares only in interior of frames 4-6. No laser, smoke, aura or soft lighting.
+Authentic 16-bit console pixel art matching the attached Bob sheet. Crisp square pixels, compact readable clusters, dark #161616 one-logical-pixel outline, top-left light, limited flat ramps (max four shades each). White/cool greys and IBM blues #001D6C #0043CE #0F62FE #4589FF #A6C8FF, with Bob's existing restrained purple accent. No antialiasing, gradients, soft shadows, glow, blur, dithering or noise. PNG with a uniform opaque PURE MAGENTA #FF00FF background outside all objects, opaque white on objects, hard clean pixel edges, no clouds, fringes, stray marks, scenery, floor, cast shadows, grid, borders, captions, labels, numbering, watermark or text. Bob's chest coding symbol is allowed. Original designs only.
+Flat opaque pure magenta #FF00FF background. No labels, words, arrows, grid, captions or extra objects. Leave clear magenta gutters around each uncropped kiosk.

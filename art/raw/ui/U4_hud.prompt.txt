@@ -1,0 +1,17 @@
+Use case: stylized-concept. UI art for the original 16-bit side-scrolling platformer Megabob.
+Authentic SNES/Mega Drive-era PIXEL ART, deliberate hard square pixel clusters, compact readable forms, dark #161616 outline about one logical pixel thick, limited flat shading (max four shades per ramp), top-left light. No antialiasing, gradients, soft shadows, blur, bloom/glow halos, dithering noise, photorealism, smooth vector art or 3D rendering. Do not copy the logo or UI of any existing game.
+Main palette: IBM blue #001D6C #0043CE #0F62FE #4589FF #A6C8FF, neutrals #161616 #393939 #6F6F6F #A8A8A8 #E0E0E0 #FFFFFF. Teal #004144 #007D79 #08BDBA #9EF0F0, yellow #F1C21B and purple #31135E #6929C4 #A56EFF #E8DAFF only where specified.
+No labels, captions, numbering, watermark, grid, explanatory text or unrequested words. Logo is the ONLY asset that may contain a word. All other UI text is added by game code.
+
+SPECIFIC ASSET U4_hud:
+Create HUD COMPONENTS for Megabob, EXACTLY EIGHT isolated objects in ONE horizontal row, left-to-right:
+1 EMPTY VERTICAL HEALTH-BAR FRAME, about 8 logical pixels wide and 64 tall, slim metal ends with squared-pixel rounded corners, IBM-blue trim and dark outline. Its long inner channel is EMPTY PURE MAGENTA, no filled health, no ticks, no preinstalled segments.
+2 ONE HEALTH SEGMENT alone: a small horizontal LIGHT-BLUE rectangle sized to fit across that narrow inner channel. One segment only, not a whole bar or row of segments.
+3 ONE WEAPON-ENERGY SEGMENT alone: same small rectangle shape/size as cell 2, but YELLOW.
+4 BLUE BLASTER-SHOT ICON, about 16x16 logical pixels, small right-facing white-blue pellet.
+5 TEAL VORTEX ICON, about 16x16, crisp swirling teal orb.
+6 YELLOW PADLOCK ICON, about 16x16, clear closed shackle and square body.
+7 PURPLE CURSOR-ARROW ICON, about 16x16, RIGHT-pointing asymmetrical mouse-cursor triangle with notched tail, not a generic symmetrical directional arrow.
+8 PAUSE-MENU PANEL BACKGROUND alone: a broad DARK CHARCOAL empty rectangle about 64x48 logical pixels, pixel-rounded corners and clean IBM-BLUE border. Interior entirely empty dark charcoal, no text, menu rows, buttons, labels or placeholder lines.
+The references define projectile/icon shapes and palette ONLY; do not copy their multi-row sheet layouts or draw extra effects. Uniform logical pixel scale: segments are TINY and must fit inside health frame; the menu panel is broader than all icons, health frame taller than icons. Generous magenta gutters, same vertical centerline, all components uncropped. Exactly eight components, no duplicate frames or whole HUD mockup.
+All background outside the eight components and the empty health-frame channel is OPAQUE FLAT MAGENTA #FF00FF for removal. Keep white/light-blue/yellow artwork opaque. No cast shadows, glow, grid, labels, digits, logo, player sprite or extra icons.

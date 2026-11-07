@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "t1_memory_leak_far_wide_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 512,
+        "h": 270
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 512,
+        "h": 270
+      },
+      "sourceSize": {
+        "w": 512,
+        "h": 270
+      }
+    }
+  },
+  "meta": {
+    "image": "t1_memory_leak_far_wide.png",
+    "size": {
+      "w": 512,
+      "h": 270
+    },
+    "scale": "1"
+  }
+}

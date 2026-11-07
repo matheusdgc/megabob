@@ -1,0 +1,84 @@
+{
+  "viewport": [
+    480,
+    270
+  ],
+  "themes": {
+    "memory_leak": {
+      "label": "Memory Leak",
+      "layers": [
+        "t1_memory_leak_far_wide",
+        "t1_memory_leak_mid_wide",
+        "t1_memory_leak_near_wide"
+      ],
+      "layerSize": [
+        512,
+        270
+      ],
+      "tiles": "tiles_memory_leak",
+      "tileSize": 16,
+      "topAlignedPlatforms": [
+        12,
+        13,
+        14
+      ]
+    },
+    "race_condition": {
+      "label": "Race Condition",
+      "layers": [
+        "t2_race_condition_far_wide",
+        "t2_race_condition_mid_wide",
+        "t2_race_condition_near_wide"
+      ],
+      "layerSize": [
+        512,
+        270
+      ],
+      "tiles": "tiles_race_condition",
+      "tileSize": 16,
+      "topAlignedPlatforms": [
+        12,
+        13,
+        14
+      ]
+    },
+    "null_pointer": {
+      "label": "Null Pointer",
+      "layers": [
+        "t3_null_pointer_far_wide",
+        "t3_null_pointer_mid_wide",
+        "t3_null_pointer_near_wide"
+      ],
+      "layerSize": [
+        512,
+        270
+      ],
+      "tiles": "tiles_null_pointer",
+      "tileSize": 16,
+      "topAlignedPlatforms": [
+        12,
+        13,
+        14
+      ]
+    },
+    "tech_debt": {
+      "label": "Tech Debt",
+      "layers": [
+        "t4_tech_debt_far_wide",
+        "t4_tech_debt_mid_wide",
+        "t4_tech_debt_near_wide"
+      ],
+      "layerSize": [
+        512,
+        270
+      ],
+      "tiles": "tiles_tech_debt",
+      "tileSize": 16,
+      "topAlignedPlatforms": [
+        12,
+        13,
+        14
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "frames": {
+    "hud_segment_blue_0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 1
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 1
+      },
+      "sourceSize": {
+        "w": 6,
+        "h": 1
+      }
+    }
+  },
+  "meta": {
+    "image": "hud_segment_blue.png",
+    "size": {
+      "w": 6,
+      "h": 1
+    },
+    "scale": "1"
+  }
+}

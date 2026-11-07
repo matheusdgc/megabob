@@ -1,0 +1,78 @@
+{
+  "baseline": "1df2de2",
+  "assets": [
+    {
+      "key": "enemy_void_eye",
+      "frames": 4,
+      "frame": [
+        32,
+        32
+      ],
+      "tones": 12,
+      "changedColorPixels": 259,
+      "patternAndAlphaPreserved": true
+    },
+    {
+      "key": "enemy_dangling_ref",
+      "frames": 3,
+      "frame": [
+        40,
+        48
+      ],
+      "tones": 11,
+      "changedColorPixels": 412,
+      "patternAndAlphaPreserved": true
+    },
+    {
+      "key": "null_cursor",
+      "frames": 2,
+      "frame": [
+        16,
+        16
+      ],
+      "tones": 8,
+      "changedColorPixels": 76,
+      "patternAndAlphaPreserved": true
+    }
+  ],
+  "frames": 9,
+  "runtime": {
+    "eyeFrames": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "clawFrames": [
+      0,
+      1,
+      2
+    ],
+    "eyeBodies": [
+      "18x18"
+    ],
+    "clawBodies": [
+      "18x16"
+    ],
+    "firedCursorShots": 2,
+    "goneHarmless": true,
+    "cursor": {
+      "texture": "null_cursor",
+      "body": [
+        10,
+        10
+      ]
+    }
+  },
+  "sceneryFilesUnchanged": [
+    "public/assets/bg/t3_null_pointer_far.png",
+    "public/assets/bg/t3_null_pointer_far_wide.png",
+    "public/assets/bg/t3_null_pointer_mid.png",
+    "public/assets/bg/t3_null_pointer_mid_wide.png",
+    "public/assets/bg/t3_null_pointer_near.png",
+    "public/assets/bg/t3_null_pointer_near_wide.png",
+    "public/assets/tiles/tiles_null_pointer.png"
+  ],
+  "texturePatternsPreserved": true,
+  "scope": "Threat colors and actual enemy animation bindings; shared cursor also belongs to the Null Pointer boss. No gameplay or map changes."
+}

@@ -1,0 +1,326 @@
+{
+  "baseline": "bae475a",
+  "actors": [
+    {
+      "kind": "pixelMite",
+      "stage": 1,
+      "logicTicks": 2400,
+      "alignmentBefore": 0,
+      "alignmentAfter": 0,
+      "states": [
+        ":walk"
+      ],
+      "frames": [
+        0,
+        1
+      ],
+      "projectileFrames": {},
+      "freezeStable": true,
+      "cueReleased": true,
+      "defeat": null
+    },
+    {
+      "kind": "spamDrone",
+      "stage": 1,
+      "logicTicks": 2400,
+      "alignmentBefore": 0.0,
+      "alignmentAfter": 0.0,
+      "states": [
+        ":dive",
+        ":hover",
+        ":rest",
+        ":rise"
+      ],
+      "frames": [
+        0,
+        1,
+        2
+      ],
+      "projectileFrames": {},
+      "freezeStable": true,
+      "cueReleased": true,
+      "defeat": null
+    },
+    {
+      "kind": "drip",
+      "stage": 1,
+      "logicTicks": 2400,
+      "alignmentBefore": 5.657,
+      "alignmentAfter": 0.0,
+      "states": [
+        ":crawl",
+        ":fall",
+        ":hang",
+        ":splat"
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "projectileFrames": {},
+      "freezeStable": true,
+      "cueReleased": true,
+      "defeat": null
+    },
+    {
+      "kind": "heapCrab",
+      "stage": 1,
+      "logicTicks": 2400,
+      "alignmentBefore": 0.0,
+      "alignmentAfter": 0.0,
+      "states": [
+        ":recover",
+        ":walk",
+        ":windup"
+      ],
+      "frames": [
+        0,
+        1,
+        2
+      ],
+      "projectileFrames": {
+        "memory_block": [
+          0
+        ]
+      },
+      "freezeStable": true,
+      "cueReleased": true,
+      "defeat": null
+    },
+    {
+      "kind": "threadRunner",
+      "stage": 2,
+      "logicTicks": 2400,
+      "alignmentBefore": 0,
+      "alignmentAfter": 0,
+      "states": [
+        ":brake",
+        ":idle",
+        ":rev",
+        ":rush"
+      ],
+      "frames": [
+        0,
+        1,
+        2
+      ],
+      "projectileFrames": {},
+      "freezeStable": true,
+      "cueReleased": true,
+      "defeat": null
+    },
+    {
+      "kind": "clockSpike",
+      "stage": 2,
+      "logicTicks": 2400,
+      "alignmentBefore": 0,
+      "alignmentAfter": 0,
+      "states": [
+        ":charge",
+        ":fire",
+        ":idle"
+      ],
+      "frames": [
+        0,
+        1,
+        2
+      ],
+      "projectileFrames": {
+        "clock_spike_shot": [
+          0
+        ]
+      },
+      "freezeStable": true,
+      "cueReleased": true,
+      "defeat": null
+    },
+    {
+      "kind": "memoryLeak",
+      "stage": 1,
+      "logicTicks": 2400,
+      "alignmentBefore": 290.012,
+      "alignmentAfter": 0,
+      "states": [
+        ":dive",
+        ":fury_volley",
+        ":fury_wait",
+        ":idle_enter",
+        ":lurk",
+        ":rise",
+        ":volley",
+        ":volley_wait"
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "projectileFrames": {
+        "memory_goo": [
+          0,
+          1
+        ],
+        "memory_puddle": [
+          0,
+          1
+        ]
+      },
+      "freezeStable": true,
+      "cueReleased": true,
+      "defeat": {
+        "visible": false,
+        "body": false,
+        "hazards": 0
+      }
+    },
+    {
+      "kind": "raceCondition",
+      "stage": 2,
+      "logicTicks": 2400,
+      "alignmentBefore": 28.636,
+      "alignmentAfter": 0,
+      "states": [
+        ":dash",
+        ":idle",
+        ":skid",
+        ":split",
+        ":throw",
+        ":windup"
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "projectileFrames": {
+        "clock_blade": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "race_afterimage": [
+          0
+        ]
+      },
+      "freezeStable": true,
+      "cueReleased": true,
+      "defeat": {
+        "visible": false,
+        "body": false,
+        "hazards": 0
+      }
+    },
+    {
+      "kind": "nullPointer",
+      "stage": 3,
+      "logicTicks": 2400,
+      "alignmentBefore": 336,
+      "alignmentAfter": 0,
+      "states": [
+        ":hidden",
+        ":idle",
+        ":in",
+        ":out",
+        ":shoot",
+        ":summon"
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "projectileFrames": {
+        "null_cursor": [
+          0,
+          1
+        ],
+        "null_missing_tile": [
+          0
+        ]
+      },
+      "freezeStable": true,
+      "cueReleased": true,
+      "defeat": {
+        "visible": false,
+        "body": false,
+        "hazards": 0
+      }
+    },
+    {
+      "kind": "techDebt",
+      "stage": 4,
+      "logicTicks": 4800,
+      "alignmentBefore": 15.133,
+      "alignmentAfter": 0.0,
+      "states": [
+        "1:fire",
+        "1:idle",
+        "1:open",
+        "1:summon",
+        "2:charge",
+        "2:fire",
+        "2:idle",
+        "2:patch"
+      ],
+      "frames": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "projectileFrames": {
+        "tech_laser": [
+          0
+        ],
+        "tech_card": [
+          0
+        ],
+        "memory_goo": [
+          0,
+          1
+        ],
+        "clock_blade": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "null_cursor": [
+          0,
+          1
+        ]
+      },
+      "freezeStable": true,
+      "cueReleased": true,
+      "defeat": {
+        "visible": false,
+        "body": false,
+        "hazards": 0
+      }
+    }
+  ],
+  "actorsReviewed": 10,
+  "bossesReviewed": 4,
+  "fixedLogicTicks": 26400,
+  "productionPngsChanged": false,
+  "scope": "Real combat entities in controlled physics fixtures; no full-playthrough claim.",
+  "browserErrors": [],
+  "browserWarnings": [],
+  "failedRequests": []
+}

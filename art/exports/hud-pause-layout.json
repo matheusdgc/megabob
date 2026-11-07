@@ -1,0 +1,80 @@
+{
+  "viewport": [
+    480,
+    270
+  ],
+  "pausePanel": {
+    "position": [
+      64,
+      31
+    ],
+    "size": [
+      352,
+      208
+    ]
+  },
+  "meter": {
+    "size": [
+      12,
+      72
+    ],
+    "channel": [
+      3,
+      8,
+      6,
+      56
+    ],
+    "capacity": 28,
+    "pitch": 2,
+    "healthPosition": [
+      8,
+      10
+    ],
+    "energyPosition": [
+      26,
+      10
+    ]
+  },
+  "lifeIconPosition": [
+    8,
+    112
+  ],
+  "lifeTextPosition": [
+    27,
+    114
+  ],
+  "weaponRows": {
+    "iconX": 106,
+    "textX": 122,
+    "cursorX": 86,
+    "centersY": [
+      112,
+      140,
+      168,
+      196
+    ]
+  },
+  "armorCenters": {
+    "head": [
+      288,
+      118
+    ],
+    "arm": [
+      360,
+      118
+    ],
+    "body": [
+      288,
+      178
+    ],
+    "legs": [
+      360,
+      178
+    ]
+  },
+  "armorIconSize": 32,
+  "armorSourceFrames": {
+    "collected": 0,
+    "inactive": 1
+  }
+}

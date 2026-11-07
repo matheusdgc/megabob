@@ -1,0 +1,2867 @@
+[
+  {
+    "key": "fx_buster",
+    "group": "fx",
+    "file": "assets/fx/fx_buster.png",
+    "frameWidth": 12,
+    "frameHeight": 8,
+    "frames": 2,
+    "source": "fx/FX1_buster.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ]
+    ]
+  },
+  {
+    "key": "fx_buster_c1",
+    "group": "fx",
+    "file": "assets/fx/fx_buster_c1.png",
+    "frameWidth": 24,
+    "frameHeight": 12,
+    "frames": 2,
+    "source": "fx/FX1_buster.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ]
+    ]
+  },
+  {
+    "key": "fx_buster_c2",
+    "group": "fx",
+    "file": "assets/fx/fx_buster_c2.png",
+    "frameWidth": 32,
+    "frameHeight": 16,
+    "frames": 3,
+    "source": "fx/FX1_buster.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "fx_charge1",
+    "group": "fx",
+    "file": "assets/fx/fx_charge1.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 3,
+    "source": "fx/FX1_buster.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "fx_charge2",
+    "group": "fx",
+    "file": "assets/fx/fx_charge2.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 3,
+    "source": "fx/FX1_buster.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        5
+      ]
+    ]
+  },
+  {
+    "key": "fx_muzzle",
+    "group": "fx",
+    "file": "assets/fx/fx_muzzle.png",
+    "frameWidth": 12,
+    "frameHeight": 12,
+    "frames": 2,
+    "source": "fx/FX1_buster.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        4,
+        0
+      ],
+      [
+        4,
+        1
+      ]
+    ]
+  },
+  {
+    "key": "fx_compiler",
+    "group": "fx",
+    "file": "assets/fx/fx_compiler.png",
+    "frameWidth": 44,
+    "frameHeight": 16,
+    "frames": 4,
+    "source": "fx/A5_compiler_shot.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "fx_compiler_hit",
+    "group": "fx",
+    "file": "assets/fx/fx_compiler_hit.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 4,
+    "source": "fx/A5_compiler_shot.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "fx_charge3",
+    "group": "fx",
+    "file": "assets/fx/fx_charge3.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 3,
+    "source": "fx/A5_compiler_shot.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "fx_gc",
+    "group": "fx",
+    "file": "assets/fx/fx_gc.png",
+    "frameWidth": 24,
+    "frameHeight": 24,
+    "frames": 4,
+    "source": "fx/FX2_weapons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "fx_mutex",
+    "group": "fx",
+    "file": "assets/fx/fx_mutex.png",
+    "frameWidth": 14,
+    "frameHeight": 14,
+    "frames": 2,
+    "source": "fx/FX2_weapons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ]
+    ]
+  },
+  {
+    "key": "fx_mutex_shell",
+    "group": "fx",
+    "file": "assets/fx/fx_mutex_shell.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 2,
+    "source": "fx/FX2_weapons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "fx_null",
+    "group": "fx",
+    "file": "assets/fx/fx_null.png",
+    "frameWidth": 24,
+    "frameHeight": 12,
+    "frames": 3,
+    "source": "fx/FX2_weapons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "fx_null_glitch",
+    "group": "fx",
+    "file": "assets/fx/fx_null_glitch.png",
+    "frameWidth": 24,
+    "frameHeight": 16,
+    "frames": 2,
+    "source": "fx/FX2_weapons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ]
+    ]
+  },
+  {
+    "key": "fx_decompile",
+    "group": "fx",
+    "file": "assets/fx/fx_decompile.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 6,
+    "source": "fx/FX4_movement.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        5
+      ]
+    ]
+  },
+  {
+    "key": "fx_hit",
+    "group": "fx",
+    "file": "assets/fx/fx_hit.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 3,
+    "source": "fx/FX3_explosions.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "fx_explosion",
+    "group": "fx",
+    "file": "assets/fx/fx_explosion.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 5,
+    "source": "fx/FX3_explosions.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ]
+    ]
+  },
+  {
+    "key": "fx_boss_explosion",
+    "group": "fx",
+    "file": "assets/fx/fx_boss_explosion.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "frames": 6,
+    "source": "fx/FX3_explosions.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        2,
+        5
+      ]
+    ]
+  },
+  {
+    "key": "fx_deflect",
+    "group": "fx",
+    "file": "assets/fx/fx_deflect.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 3,
+    "source": "fx/FX3_explosions.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "fx_dash_dust",
+    "group": "fx",
+    "file": "assets/fx/fx_dash_dust.png",
+    "frameWidth": 32,
+    "frameHeight": 16,
+    "frames": 4,
+    "source": "fx/FX4_movement.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "fx_wall_dust",
+    "group": "fx",
+    "file": "assets/fx/fx_wall_dust.png",
+    "frameWidth": 16,
+    "frameHeight": 24,
+    "frames": 3,
+    "source": "fx/FX4_movement.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "fx_land_dust",
+    "group": "fx",
+    "file": "assets/fx/fx_land_dust.png",
+    "frameWidth": 32,
+    "frameHeight": 16,
+    "frames": 3,
+    "source": "fx/FX4_movement.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "pickup_health_small",
+    "group": "fx",
+    "file": "assets/fx/pickup_health_small.png",
+    "frameWidth": 12,
+    "frameHeight": 12,
+    "frames": 2,
+    "source": "fx/FX5_pickups.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ]
+    ]
+  },
+  {
+    "key": "pickup_health_large",
+    "group": "fx",
+    "file": "assets/fx/pickup_health_large.png",
+    "frameWidth": 20,
+    "frameHeight": 20,
+    "frames": 2,
+    "source": "fx/FX5_pickups.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "pickup_energy_small",
+    "group": "fx",
+    "file": "assets/fx/pickup_energy_small.png",
+    "frameWidth": 12,
+    "frameHeight": 12,
+    "frames": 2,
+    "source": "fx/FX5_pickups.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "key": "pickup_energy_large",
+    "group": "fx",
+    "file": "assets/fx/pickup_energy_large.png",
+    "frameWidth": 20,
+    "frameHeight": 20,
+    "frames": 2,
+    "source": "fx/FX5_pickups.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        6
+      ],
+      [
+        0,
+        7
+      ]
+    ]
+  },
+  {
+    "key": "pickup_life",
+    "group": "fx",
+    "file": "assets/fx/pickup_life.png",
+    "frameWidth": 20,
+    "frameHeight": 20,
+    "frames": 2,
+    "source": "fx/FX5_pickups.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        8
+      ],
+      [
+        0,
+        9
+      ]
+    ]
+  },
+  {
+    "key": "enemy_pixel_mite",
+    "group": "enemies",
+    "file": "assets/enemies/enemy_pixel_mite.png",
+    "frameWidth": 24,
+    "frameHeight": 24,
+    "frames": 3,
+    "source": "enemies/E1_pixel_mite.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "enemy_spam_drone",
+    "group": "enemies",
+    "file": "assets/enemies/enemy_spam_drone.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 3,
+    "source": "enemies/E2_spam_drone.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "enemy_drip",
+    "group": "enemies",
+    "file": "assets/enemies/enemy_drip.png",
+    "frameWidth": 32,
+    "frameHeight": 40,
+    "frames": 4,
+    "source": "enemies/E3_drip.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "enemy_heap_crab",
+    "group": "enemies",
+    "file": "assets/enemies/enemy_heap_crab.png",
+    "frameWidth": 40,
+    "frameHeight": 32,
+    "frames": 3,
+    "source": "enemies/E4_heap_crab.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "memory_block",
+    "group": "enemies",
+    "file": "assets/enemies/memory_block.png",
+    "frameWidth": 8,
+    "frameHeight": 8,
+    "frames": 1,
+    "source": "enemies/E4_heap_crab.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "enemy_thread_runner",
+    "group": "enemies",
+    "file": "assets/enemies/enemy_thread_runner.png",
+    "frameWidth": 48,
+    "frameHeight": 32,
+    "frames": 3,
+    "source": "enemies/E5_thread_runner.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "enemy_clock_spike",
+    "group": "enemies",
+    "file": "assets/enemies/enemy_clock_spike.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 3,
+    "source": "enemies/E6_clock_spike.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "clock_spike_shot",
+    "group": "enemies",
+    "file": "assets/enemies/clock_spike_shot.png",
+    "frameWidth": 12,
+    "frameHeight": 12,
+    "frames": 1,
+    "source": "enemies/E6_clock_spike.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "enemy_void_eye",
+    "group": "enemies",
+    "file": "assets/enemies/enemy_void_eye.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 4,
+    "source": "enemies/E7_void_eye.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "enemy_dangling_ref",
+    "group": "enemies",
+    "file": "assets/enemies/enemy_dangling_ref.png",
+    "frameWidth": 40,
+    "frameHeight": 48,
+    "frames": 3,
+    "source": "enemies/E8_dangling_ref.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "enemy_legacy_turret",
+    "group": "enemies",
+    "file": "assets/enemies/enemy_legacy_turret.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 3,
+    "source": "enemies/E9_legacy_turret.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "punched_card",
+    "group": "enemies",
+    "file": "assets/enemies/punched_card.png",
+    "frameWidth": 12,
+    "frameHeight": 8,
+    "frames": 1,
+    "source": "enemies/E9_legacy_turret.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "enemy_deprecated_bot",
+    "group": "enemies",
+    "file": "assets/enemies/enemy_deprecated_bot.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 4,
+    "source": "enemies/E10_deprecated_bot.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "boss_memory_leak",
+    "group": "bosses",
+    "file": "assets/bosses/boss_memory_leak.png",
+    "frameWidth": 96,
+    "frameHeight": 80,
+    "frames": 8,
+    "source": "bosses/BS1b_memory_leak_anim.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        0,
+        7
+      ]
+    ]
+  },
+  {
+    "key": "boss_race_condition",
+    "group": "bosses",
+    "file": "assets/bosses/boss_race_condition.png",
+    "frameWidth": 96,
+    "frameHeight": 80,
+    "frames": 8,
+    "source": "bosses/BS2b_race_condition_anim.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        0,
+        7
+      ]
+    ]
+  },
+  {
+    "key": "boss_null_pointer",
+    "group": "bosses",
+    "file": "assets/bosses/boss_null_pointer.png",
+    "frameWidth": 80,
+    "frameHeight": 80,
+    "frames": 8,
+    "source": "bosses/BS3b_null_pointer_anim.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        0,
+        6
+      ],
+      [
+        0,
+        7
+      ]
+    ]
+  },
+  {
+    "key": "portrait_memory_leak",
+    "group": "bosses",
+    "file": "assets/bosses/portrait_memory_leak.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 1,
+    "source": "bosses/BS1c_memory_leak_extras.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "memory_goo",
+    "group": "bosses",
+    "file": "assets/bosses/memory_goo.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 2,
+    "source": "bosses/BS1c_memory_leak_extras.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "memory_puddle",
+    "group": "bosses",
+    "file": "assets/bosses/memory_puddle.png",
+    "frameWidth": 32,
+    "frameHeight": 16,
+    "frames": 2,
+    "source": "bosses/BS1c_memory_leak_extras.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ]
+    ]
+  },
+  {
+    "key": "portrait_race_condition",
+    "group": "bosses",
+    "file": "assets/bosses/portrait_race_condition.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 1,
+    "source": "bosses/BS2c_race_condition_extras.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "clock_blade",
+    "group": "bosses",
+    "file": "assets/bosses/clock_blade.png",
+    "frameWidth": 24,
+    "frameHeight": 24,
+    "frames": 4,
+    "source": "bosses/BS2c_race_condition_extras.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ]
+    ]
+  },
+  {
+    "key": "race_afterimage",
+    "group": "bosses",
+    "file": "assets/bosses/race_afterimage.png",
+    "frameWidth": 96,
+    "frameHeight": 80,
+    "frames": 1,
+    "source": "bosses/BS2c_race_condition_extras.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "key": "portrait_null_pointer",
+    "group": "bosses",
+    "file": "assets/bosses/portrait_null_pointer.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 1,
+    "source": "bosses/BS3c_null_pointer_extras.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "null_cursor",
+    "group": "bosses",
+    "file": "assets/bosses/null_cursor.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 2,
+    "source": "bosses/BS3c_null_pointer_extras.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "null_missing_tile",
+    "group": "bosses",
+    "file": "assets/bosses/null_missing_tile.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 2,
+    "source": "bosses/BS3c_null_pointer_extras.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ]
+    ]
+  },
+  {
+    "key": "boss_tech_debt",
+    "group": "bosses",
+    "file": "assets/bosses/boss_tech_debt.png",
+    "frameWidth": 256,
+    "frameHeight": 192,
+    "frames": 1,
+    "source": "bosses/BS4a_tech_debt_sheet.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "tech_debt_core_portrait",
+    "group": "bosses",
+    "file": "assets/bosses/tech_debt_core_portrait.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 1,
+    "source": "bosses/BS4a_tech_debt_sheet.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "tech_crt",
+    "group": "bosses",
+    "file": "assets/bosses/tech_crt.png",
+    "frameWidth": 64,
+    "frameHeight": 48,
+    "frames": 3,
+    "source": "bosses/BS4b_tech_debt_parts.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        7
+      ]
+    ]
+  },
+  {
+    "key": "tech_drawer",
+    "group": "bosses",
+    "file": "assets/bosses/tech_drawer.png",
+    "frameWidth": 48,
+    "frameHeight": 32,
+    "frames": 2,
+    "source": "bosses/BS4b_tech_debt_parts.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "tech_reels",
+    "group": "bosses",
+    "file": "assets/bosses/tech_reels.png",
+    "frameWidth": 48,
+    "frameHeight": 32,
+    "frames": 2,
+    "source": "bosses/BS4b_tech_debt_parts.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "key": "tech_card",
+    "group": "bosses",
+    "file": "assets/bosses/tech_card.png",
+    "frameWidth": 12,
+    "frameHeight": 8,
+    "frames": 1,
+    "source": "bosses/BS4b_tech_debt_parts.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        6
+      ]
+    ]
+  },
+  {
+    "key": "boss_tech_core",
+    "group": "bosses",
+    "file": "assets/bosses/boss_tech_core.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "frames": 6,
+    "source": "bosses/BS4c_tech_debt_core.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "key": "tech_laser",
+    "group": "bosses",
+    "file": "assets/bosses/tech_laser.png",
+    "frameWidth": 32,
+    "frameHeight": 8,
+    "frames": 1,
+    "source": "bosses/BS4c_tech_debt_core.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        6
+      ]
+    ]
+  },
+  {
+    "key": "bob_life",
+    "group": "icons",
+    "file": "assets/icons/bob_life.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 1,
+    "source": "bob/B11_icons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "bob_portrait",
+    "group": "icons",
+    "file": "assets/icons/bob_portrait.png",
+    "frameWidth": 32,
+    "frameHeight": 32,
+    "frames": 1,
+    "source": "bob/B11_icons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        1
+      ]
+    ]
+  },
+  {
+    "key": "update_terminal",
+    "group": "icons",
+    "file": "assets/icons/update_terminal.png",
+    "frameWidth": 40,
+    "frameHeight": 64,
+    "frames": 6,
+    "source": "bob_armor/A3_update_terminal.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "key": "armor_head",
+    "group": "icons",
+    "file": "assets/icons/armor_head.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 2,
+    "source": "bob_armor/A4_part_icons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "armor_arm",
+    "group": "icons",
+    "file": "assets/icons/armor_arm.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 2,
+    "source": "bob_armor/A4_part_icons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ]
+  },
+  {
+    "key": "armor_body",
+    "group": "icons",
+    "file": "assets/icons/armor_body.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 2,
+    "source": "bob_armor/A4_part_icons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        2
+      ],
+      [
+        1,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "armor_legs",
+    "group": "icons",
+    "file": "assets/icons/armor_legs.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 2,
+    "source": "bob_armor/A4_part_icons.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        3
+      ],
+      [
+        1,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "tiles_memory_leak",
+    "group": "tiles",
+    "file": "assets/tiles/tiles_memory_leak.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 24,
+    "source": "tiles/T1_memory_leak_tiles.png",
+    "emptyFrames": [
+      20,
+      21,
+      22,
+      23
+    ],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        5
+      ]
+    ],
+    "frameSizing": {
+      "0": "fill",
+      "1": "fill",
+      "2": "fill",
+      "3": "fill",
+      "4": "fill",
+      "5": "fill",
+      "6": "fill",
+      "7": "fill",
+      "8": "fill",
+      "9": "fill",
+      "10": "fill",
+      "11": "fill",
+      "12": "width",
+      "13": "width",
+      "14": "width",
+      "15": "fill",
+      "16": "fill",
+      "17": "fill"
+    },
+    "colorRoles": "memory-cool-warm-textured",
+    "topAlignedFrames": [
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "key": "tiles_race_condition",
+    "group": "tiles",
+    "file": "assets/tiles/tiles_race_condition.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 24,
+    "source": "tiles/T2_race_condition_tiles.png",
+    "emptyFrames": [
+      22,
+      23
+    ],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        5
+      ]
+    ],
+    "frameSizing": {
+      "0": "fill",
+      "1": "fill",
+      "2": "fill",
+      "3": "fill",
+      "4": "fill",
+      "5": "fill",
+      "6": "fill",
+      "7": "fill",
+      "8": "fill",
+      "9": "fill",
+      "10": "fill",
+      "11": "fill",
+      "12": "width",
+      "13": "width",
+      "14": "width",
+      "15": "fill",
+      "16": "fill",
+      "17": "fill"
+    },
+    "topAlignedFrames": [
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "key": "tiles_null_pointer",
+    "group": "tiles",
+    "file": "assets/tiles/tiles_null_pointer.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 24,
+    "source": "tiles/T3_null_pointer_tiles.png",
+    "emptyFrames": [
+      22,
+      23
+    ],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        5
+      ]
+    ],
+    "frameSizing": {
+      "0": "fill",
+      "1": "fill",
+      "2": "fill",
+      "3": "fill",
+      "4": "fill",
+      "5": "fill",
+      "6": "fill",
+      "7": "fill",
+      "8": "fill",
+      "9": "fill",
+      "10": "fill",
+      "11": "fill",
+      "12": "width",
+      "13": "width",
+      "14": "width",
+      "15": "fill",
+      "16": "fill",
+      "17": "fill"
+    },
+    "topAlignedFrames": [
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "key": "tiles_tech_debt",
+    "group": "tiles",
+    "file": "assets/tiles/tiles_tech_debt.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 24,
+    "source": "tiles/T4_tech_debt_tiles.png",
+    "emptyFrames": [
+      20,
+      21,
+      22,
+      23
+    ],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        0,
+        5
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        1,
+        5
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        2,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        3,
+        5
+      ]
+    ],
+    "frameSizing": {
+      "0": "fill",
+      "1": "fill",
+      "2": "fill",
+      "3": "fill",
+      "4": "fill",
+      "5": "fill",
+      "6": "fill",
+      "7": "fill",
+      "8": "fill",
+      "9": "fill",
+      "10": "fill",
+      "11": "fill",
+      "12": "width",
+      "13": "width",
+      "14": "width",
+      "15": "fill",
+      "16": "fill",
+      "17": "fill"
+    },
+    "topAlignedFrames": [
+      12,
+      13,
+      14
+    ]
+  },
+  {
+    "key": "boss_door",
+    "group": "tiles",
+    "file": "assets/tiles/boss_door.png",
+    "frameWidth": 32,
+    "frameHeight": 48,
+    "frames": 3,
+    "source": "tiles/T5_common.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "checkpoint",
+    "group": "tiles",
+    "file": "assets/tiles/checkpoint.png",
+    "frameWidth": 16,
+    "frameHeight": 32,
+    "frames": 2,
+    "source": "tiles/T5_common.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ]
+    ]
+  },
+  {
+    "key": "moving_platform",
+    "group": "tiles",
+    "file": "assets/tiles/moving_platform.png",
+    "frameWidth": 48,
+    "frameHeight": 16,
+    "frames": 1,
+    "source": "tiles/T5_common.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "key": "tiles_test",
+    "group": "tiles",
+    "file": "assets/tiles/tiles_test.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 4,
+    "source": "tiles/T1_memory_leak_tiles.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        2,
+        5
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        2,
+        1
+      ]
+    ],
+    "frameSizing": {
+      "0": "fill",
+      "1": "fill",
+      "2": "fill",
+      "3": "width"
+    },
+    "topAlignedFrames": [
+      3
+    ]
+  },
+  {
+    "key": "title_logo",
+    "group": "ui",
+    "file": "assets/ui/title_logo.png",
+    "frameWidth": 224,
+    "frameHeight": 48,
+    "frames": 1,
+    "source": "ui/U1_logo_readable.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "title_logo_night",
+    "group": "ui",
+    "file": "assets/ui/title_logo_night.png",
+    "frameWidth": 224,
+    "frameHeight": 48,
+    "frames": 1,
+    "source": "ui/U1_logo_readable.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "title_background",
+    "group": "ui",
+    "file": "assets/ui/title_background.png",
+    "frameWidth": 256,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "ui/U2_title_bg.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "title_background_wide",
+    "group": "ui",
+    "file": "assets/ui/title_background_wide.png",
+    "frameWidth": 480,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "ui/U2_title_cyberpunk.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "stage_select",
+    "group": "ui",
+    "file": "assets/ui/stage_select.png",
+    "frameWidth": 256,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "ui/U3_stage_select.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "stage_locked",
+    "group": "ui",
+    "file": "assets/ui/stage_locked.png",
+    "frameWidth": 48,
+    "frameHeight": 48,
+    "frames": 1,
+    "source": "ui/U3_stage_select.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "hud_health_frame",
+    "group": "ui",
+    "file": "assets/ui/hud_health_frame.png",
+    "frameWidth": 8,
+    "frameHeight": 64,
+    "frames": 1,
+    "source": "ui/U4_hud.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "hud_health_segment",
+    "group": "ui",
+    "file": "assets/ui/hud_health_segment.png",
+    "frameWidth": 4,
+    "frameHeight": 2,
+    "frames": 1,
+    "source": "ui/U4_hud.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        1
+      ]
+    ]
+  },
+  {
+    "key": "hud_weapon_segment",
+    "group": "ui",
+    "file": "assets/ui/hud_weapon_segment.png",
+    "frameWidth": 4,
+    "frameHeight": 2,
+    "frames": 1,
+    "source": "ui/U4_hud.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        2
+      ]
+    ]
+  },
+  {
+    "key": "icon_buster",
+    "group": "ui",
+    "file": "assets/ui/icon_buster.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 1,
+    "source": "ui/U4_hud.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        3
+      ]
+    ]
+  },
+  {
+    "key": "icon_gc",
+    "group": "ui",
+    "file": "assets/ui/icon_gc.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 1,
+    "source": "ui/U4_hud.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        4
+      ]
+    ]
+  },
+  {
+    "key": "icon_mutex",
+    "group": "ui",
+    "file": "assets/ui/icon_mutex.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 1,
+    "source": "ui/U4_hud.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        5
+      ]
+    ]
+  },
+  {
+    "key": "icon_null",
+    "group": "ui",
+    "file": "assets/ui/icon_null.png",
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frames": 1,
+    "source": "ui/U4_hud.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        6
+      ]
+    ]
+  },
+  {
+    "key": "pause_panel",
+    "group": "ui",
+    "file": "assets/ui/pause_panel.png",
+    "frameWidth": 128,
+    "frameHeight": 96,
+    "frames": 1,
+    "source": "ui/U4_hud.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        7
+      ]
+    ]
+  },
+  {
+    "key": "t1_memory_leak_far",
+    "group": "bg",
+    "file": "assets/bg/t1_memory_leak_far.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T1_memory_leak_bg.png",
+    "edgeMismatchBefore": 42,
+    "edgeMismatchAfter": 0,
+    "colorRoles": "memory-cool-warm-textured"
+  },
+  {
+    "key": "t1_memory_leak_far_wide",
+    "group": "bg",
+    "file": "assets/bg/t1_memory_leak_far_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T1_memory_leak_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t1_memory_leak_far",
+    "anchor": "bottom",
+    "depthAdjusted": false,
+    "colorRoles": "memory-cool-warm-textured"
+  },
+  {
+    "key": "t1_memory_leak_mid",
+    "group": "bg",
+    "file": "assets/bg/t1_memory_leak_mid.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T1_memory_leak_bg.png",
+    "edgeMismatchBefore": 122,
+    "edgeMismatchAfter": 0,
+    "colorRoles": "memory-cool-warm-textured"
+  },
+  {
+    "key": "t1_memory_leak_mid_wide",
+    "group": "bg",
+    "file": "assets/bg/t1_memory_leak_mid_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T1_memory_leak_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t1_memory_leak_mid",
+    "anchor": "bottom",
+    "depthAdjusted": false,
+    "colorRoles": "memory-cool-warm-textured"
+  },
+  {
+    "key": "t1_memory_leak_near",
+    "group": "bg",
+    "file": "assets/bg/t1_memory_leak_near.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T1_memory_leak_bg.png",
+    "edgeMismatchBefore": 2,
+    "edgeMismatchAfter": 0,
+    "colorRoles": "memory-cool-warm-textured"
+  },
+  {
+    "key": "t1_memory_leak_near_wide",
+    "group": "bg",
+    "file": "assets/bg/t1_memory_leak_near_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T1_memory_leak_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t1_memory_leak_near",
+    "anchor": "top",
+    "depthAdjusted": false,
+    "colorRoles": "memory-cool-warm-textured"
+  },
+  {
+    "key": "t2_race_condition_far",
+    "group": "bg",
+    "file": "assets/bg/t2_race_condition_far.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T2_race_condition_bg.png",
+    "edgeMismatchBefore": 12,
+    "edgeMismatchAfter": 0
+  },
+  {
+    "key": "t2_race_condition_far_wide",
+    "group": "bg",
+    "file": "assets/bg/t2_race_condition_far_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T2_race_condition_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t2_race_condition_far",
+    "anchor": "bottom",
+    "depthAdjusted": false
+  },
+  {
+    "key": "t2_race_condition_mid",
+    "group": "bg",
+    "file": "assets/bg/t2_race_condition_mid.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T2_race_condition_bg.png",
+    "edgeMismatchBefore": 68,
+    "edgeMismatchAfter": 0
+  },
+  {
+    "key": "t2_race_condition_mid_wide",
+    "group": "bg",
+    "file": "assets/bg/t2_race_condition_mid_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T2_race_condition_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t2_race_condition_mid",
+    "anchor": "bottom",
+    "depthAdjusted": false
+  },
+  {
+    "key": "t2_race_condition_near",
+    "group": "bg",
+    "file": "assets/bg/t2_race_condition_near.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T2_race_condition_bg.png",
+    "edgeMismatchBefore": 48,
+    "edgeMismatchAfter": 0
+  },
+  {
+    "key": "t2_race_condition_near_wide",
+    "group": "bg",
+    "file": "assets/bg/t2_race_condition_near_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T2_race_condition_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t2_race_condition_near",
+    "anchor": "top",
+    "depthAdjusted": false
+  },
+  {
+    "key": "t3_null_pointer_far",
+    "group": "bg",
+    "file": "assets/bg/t3_null_pointer_far.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T3_null_pointer_bg.png",
+    "edgeMismatchBefore": 187,
+    "edgeMismatchAfter": 0
+  },
+  {
+    "key": "t3_null_pointer_far_wide",
+    "group": "bg",
+    "file": "assets/bg/t3_null_pointer_far_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T3_null_pointer_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t3_null_pointer_far",
+    "anchor": "bottom",
+    "depthAdjusted": false
+  },
+  {
+    "key": "t3_null_pointer_mid",
+    "group": "bg",
+    "file": "assets/bg/t3_null_pointer_mid.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T3_null_pointer_bg.png",
+    "edgeMismatchBefore": 11,
+    "edgeMismatchAfter": 0
+  },
+  {
+    "key": "t3_null_pointer_mid_wide",
+    "group": "bg",
+    "file": "assets/bg/t3_null_pointer_mid_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T3_null_pointer_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t3_null_pointer_mid",
+    "anchor": "bottom",
+    "depthAdjusted": false
+  },
+  {
+    "key": "t3_null_pointer_near",
+    "group": "bg",
+    "file": "assets/bg/t3_null_pointer_near.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T3_null_pointer_bg.png",
+    "edgeMismatchBefore": 7,
+    "edgeMismatchAfter": 0
+  },
+  {
+    "key": "t3_null_pointer_near_wide",
+    "group": "bg",
+    "file": "assets/bg/t3_null_pointer_near_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T3_null_pointer_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t3_null_pointer_near",
+    "anchor": "top",
+    "depthAdjusted": false
+  },
+  {
+    "key": "t4_tech_debt_far",
+    "group": "bg",
+    "file": "assets/bg/t4_tech_debt_far.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T4_tech_debt_bg.png",
+    "edgeMismatchBefore": 3,
+    "edgeMismatchAfter": 0
+  },
+  {
+    "key": "t4_tech_debt_far_wide",
+    "group": "bg",
+    "file": "assets/bg/t4_tech_debt_far_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T4_tech_debt_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t4_tech_debt_far",
+    "anchor": "bottom",
+    "depthAdjusted": false
+  },
+  {
+    "key": "t4_tech_debt_mid",
+    "group": "bg",
+    "file": "assets/bg/t4_tech_debt_mid.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T4_tech_debt_bg.png",
+    "edgeMismatchBefore": 122,
+    "edgeMismatchAfter": 0
+  },
+  {
+    "key": "t4_tech_debt_mid_wide",
+    "group": "bg",
+    "file": "assets/bg/t4_tech_debt_mid_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T4_tech_debt_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t4_tech_debt_mid",
+    "anchor": "bottom",
+    "depthAdjusted": true
+  },
+  {
+    "key": "t4_tech_debt_near",
+    "group": "bg",
+    "file": "assets/bg/t4_tech_debt_near.png",
+    "frameWidth": 512,
+    "frameHeight": 224,
+    "frames": 1,
+    "source": "bg/T4_tech_debt_bg.png",
+    "edgeMismatchBefore": 25,
+    "edgeMismatchAfter": 0
+  },
+  {
+    "key": "t4_tech_debt_near_wide",
+    "group": "bg",
+    "file": "assets/bg/t4_tech_debt_near_wide.png",
+    "frameWidth": 512,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "bg/T4_tech_debt_bg.png",
+    "edgeMismatchBefore": 0,
+    "edgeMismatchAfter": 0,
+    "extendedFrom": "t4_tech_debt_near",
+    "anchor": "top",
+    "depthAdjusted": true
+  },
+  {
+    "key": "stage_select_wide",
+    "group": "ui",
+    "file": "assets/ui/stage_select_wide.png",
+    "frameWidth": 480,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "ui/U3_stage_select.png"
+  },
+  {
+    "key": "stage_locked_wide",
+    "group": "ui",
+    "file": "assets/ui/stage_locked_wide.png",
+    "frameWidth": 64,
+    "frameHeight": 64,
+    "frames": 1,
+    "source": "ui/U3_stage_select.png"
+  },
+  {
+    "key": "stage_focus",
+    "group": "ui",
+    "file": "assets/ui/stage_focus.png",
+    "frameWidth": 72,
+    "frameHeight": 72,
+    "frames": 1,
+    "source": "ui/U3_stage_select.png"
+  },
+  {
+    "key": "hud_meter_frame",
+    "group": "ui",
+    "file": "assets/ui/hud_meter_frame.png",
+    "frameWidth": 12,
+    "frameHeight": 72,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "hud_segment_blue",
+    "group": "ui",
+    "file": "assets/ui/hud_segment_blue.png",
+    "frameWidth": 6,
+    "frameHeight": 1,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "hud_segment_yellow",
+    "group": "ui",
+    "file": "assets/ui/hud_segment_yellow.png",
+    "frameWidth": 6,
+    "frameHeight": 1,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "pause_panel_wide",
+    "group": "ui",
+    "file": "assets/ui/pause_panel_wide.png",
+    "frameWidth": 352,
+    "frameHeight": 208,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "boss_intro_panel",
+    "group": "ui",
+    "file": "assets/ui/boss_intro_panel.png",
+    "frameWidth": 416,
+    "frameHeight": 112,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "reward_panel",
+    "group": "ui",
+    "file": "assets/ui/reward_panel.png",
+    "frameWidth": 416,
+    "frameHeight": 192,
+    "frames": 1,
+    "source": "ui/U4_hud.png"
+  },
+  {
+    "key": "ending_background",
+    "group": "ui",
+    "file": "assets/ui/ending_background.png",
+    "frameWidth": 480,
+    "frameHeight": 270,
+    "frames": 1,
+    "source": "ui/U5_ending_bg.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ]
+    ]
+  },
+  {
+    "key": "title_bob_idle",
+    "group": "ui",
+    "file": "assets/ui/title_bob_idle.png",
+    "frameWidth": 96,
+    "frameHeight": 96,
+    "frames": 3,
+    "source": "bob/B2_idle.png",
+    "emptyFrames": [],
+    "sourceCells": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ]
+    ]
+  }
+]

@@ -1,0 +1,196 @@
+{
+  "stage": "nullPointer",
+  "scope": "Static camera samples; original map placements, no traversal claim.",
+  "samples": [
+    {
+      "name": "first-eye",
+      "section": 0,
+      "scroll": [
+        100,
+        2
+      ],
+      "enemies": [
+        {
+          "texture": "enemy_void_eye",
+          "frame": 0,
+          "x": 360,
+          "y": 160,
+          "body": [
+            18,
+            18
+          ]
+        },
+        {
+          "texture": "enemy_dangling_ref",
+          "frame": 0,
+          "x": 536,
+          "y": 176,
+          "body": [
+            18,
+            16
+          ]
+        },
+        {
+          "texture": "enemy_dangling_ref",
+          "frame": 2,
+          "x": 568,
+          "y": 176,
+          "body": [
+            18,
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "name": "low-ceiling",
+      "section": 0,
+      "scroll": [
+        340,
+        2
+      ],
+      "enemies": [
+        {
+          "texture": "enemy_void_eye",
+          "frame": 0,
+          "x": 360,
+          "y": 160,
+          "body": [
+            18,
+            18
+          ]
+        },
+        {
+          "texture": "enemy_dangling_ref",
+          "frame": 0,
+          "x": 536,
+          "y": 176,
+          "body": [
+            18,
+            16
+          ]
+        },
+        {
+          "texture": "enemy_dangling_ref",
+          "frame": 2,
+          "x": 568,
+          "y": 176,
+          "body": [
+            18,
+            16
+          ]
+        },
+        {
+          "texture": "enemy_pixel_mite",
+          "frame": 0,
+          "x": 616,
+          "y": 240,
+          "body": [
+            18,
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "name": "thin-walls",
+      "section": 1,
+      "scroll": [
+        1000,
+        2
+      ],
+      "enemies": [
+        {
+          "texture": "enemy_spam_drone",
+          "frame": 0,
+          "x": 1416,
+          "y": 160,
+          "body": [
+            20,
+            16
+          ]
+        },
+        {
+          "texture": "enemy_void_eye",
+          "frame": 0,
+          "x": 1176,
+          "y": 192,
+          "body": [
+            18,
+            18
+          ]
+        },
+        {
+          "texture": "enemy_void_eye",
+          "frame": 0,
+          "x": 1304,
+          "y": 192,
+          "body": [
+            18,
+            18
+          ]
+        },
+        {
+          "texture": "enemy_pixel_mite",
+          "frame": 0,
+          "x": 1064,
+          "y": 240,
+          "body": [
+            18,
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "name": "vanishing-bridge",
+      "section": 2,
+      "scroll": [
+        1720,
+        2
+      ],
+      "enemies": [
+        {
+          "texture": "enemy_void_eye",
+          "frame": 0,
+          "x": 1736,
+          "y": 144,
+          "body": [
+            18,
+            18
+          ]
+        },
+        {
+          "texture": "enemy_void_eye",
+          "frame": 0,
+          "x": 2024,
+          "y": 176,
+          "body": [
+            18,
+            18
+          ]
+        },
+        {
+          "texture": "enemy_dangling_ref",
+          "frame": 2,
+          "x": 1800,
+          "y": 176,
+          "body": [
+            18,
+            16
+          ]
+        },
+        {
+          "texture": "enemy_pixel_mite",
+          "frame": 0,
+          "x": 1960,
+          "y": 240,
+          "body": [
+            18,
+            16
+          ]
+        }
+      ]
+    }
+  ]
+}

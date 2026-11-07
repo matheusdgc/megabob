@@ -1,0 +1,16 @@
+Use case: stylized-concept. Asset for the original 16-bit side-scrolling platformer Megabob.
+Match the attached references' compact readable pixel-art craft: hard square pixels and deliberate clusters, dark #161616 outline approximately one logical pixel thick, limited flat color ramps (maximum four shades per ramp), top-left light, SNES/Mega Drive-era look. Designs should read clearly at the specified logical game size before enlargement. No antialiasing, gradients, blur, soft shadows, bloom, glow halos, dithering, noise or 3D rendering. Bright indicators/energy use flat pale pixel clusters, never soft glow.
+One horizontal row of equally sized cells unless explicitly specified otherwise. Same boss design, scale, camera and anchors in all frames, consistent ground baseline for grounded poses; airborne/partial poses remain anchored within their cells. Generous empty gutters, full silhouettes uncropped, no overlap between cells. All boss body poses FACE LEFT, toward the player, unless a specific front-facing exception is given.
+Opaque flat MAGENTA #FF00FF background outside the sprites; white/highlight areas inside objects stay opaque. No scenery, floor, cast shadow, grid, borders, captions, labels, numbers, readable text, watermark or unrequested props/effects. All designs original; do not copy any existing game character or hero armor.
+
+SPECIFIC SHEET BS4c_tech_debt_core:
+Use ONLY the smaller EXPOSED CRT CORE from the concept as the identity reference, not the wall-sized boss. Same beige/brown CRT bezel, simple angry green screen face and hanging cable tails. Float and FACE LEFT in side/three-quarter view, green face still visible.
+EXACTLY SEVEN cells in ONE horizontal row:
+1 IDLE A, CRT floating, cable tails sway one way;
+2 IDLE B, same CRT with small vertical bob and cables swaying other way;
+3 LASER CHARGE, face/screen bright saturated GREEN using solid pixel clusters, no exterior halo;
+4 LASER FIRE, screen FILLED GREEN, core recoils RIGHT, no full beam attached;
+5 HURT, CRT recoiling, broken face flicker;
+6 DEFEATED, cracked screen with crisp grey/green static pixel pattern, few small yellow/green square sparks, cable tails slumping;
+7 separate HORIZONTAL CRT LASER SEGMENT, about 32 logical pixels long, straight rectangular green beam with bright pale-green center and darker green edges, identical left/right end cross-sections so it can TILE SEAMLESSLY horizontally. No end caps, arrows, muzzle or core in this cell.
+Core about 48 logical pixels tall across first six cells; same scale, bezel and cables. No full mainframe wall, no floor, glow bloom, soft static, long attached beam or extra objects.

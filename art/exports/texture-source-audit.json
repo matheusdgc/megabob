@@ -1,0 +1,208 @@
+{
+  "method": "SHA-256 of decoded RGBA pixels: loaded texture versus expected PNG decoded by the same browser",
+  "scenes": [
+    {
+      "scene": "Debug",
+      "verifiedTextures": 269,
+      "verifiedPngSources": 269,
+      "activeBindingsVerified": 0,
+      "placeholderControlDetected": true,
+      "alteredImageControlDetected": true
+    },
+    {
+      "scene": "Stage",
+      "stage": "raceCondition",
+      "verifiedTextures": 269,
+      "verifiedPngSources": 269,
+      "activeBindingsVerified": 14,
+      "placeholderControlDetected": true,
+      "alteredImageControlDetected": true
+    },
+    {
+      "scene": "Stage",
+      "stage": "nullPointer",
+      "verifiedTextures": 269,
+      "verifiedPngSources": 269,
+      "activeBindingsVerified": 12,
+      "placeholderControlDetected": true,
+      "alteredImageControlDetected": true
+    },
+    {
+      "scene": "Stage",
+      "stage": "memoryLeak",
+      "verifiedTextures": 269,
+      "verifiedPngSources": 269,
+      "activeBindingsVerified": 13,
+      "placeholderControlDetected": true,
+      "alteredImageControlDetected": true
+    }
+  ],
+  "activeStageBindings": [
+    {
+      "role": "player",
+      "texture": "bob_idle"
+    },
+    {
+      "role": "enemy:drip",
+      "texture": "enemy_drip"
+    },
+    {
+      "role": "enemy:drip",
+      "texture": "enemy_drip"
+    },
+    {
+      "role": "enemy:heapCrab",
+      "texture": "enemy_heap_crab"
+    },
+    {
+      "role": "enemy:heapCrab",
+      "texture": "enemy_heap_crab"
+    },
+    {
+      "role": "checkpoint",
+      "texture": "checkpoint"
+    },
+    {
+      "role": "checkpoint",
+      "texture": "checkpoint"
+    },
+    {
+      "role": "bossDoor",
+      "texture": "boss_door"
+    },
+    {
+      "role": "parallax:0",
+      "texture": "t1_memory_leak_far_wide"
+    },
+    {
+      "role": "parallax:1",
+      "texture": "t1_memory_leak_mid_wide"
+    },
+    {
+      "role": "parallax:2",
+      "texture": "t1_memory_leak_near_wide"
+    },
+    {
+      "role": "terrain",
+      "texture": "tiles_memory_leak"
+    },
+    {
+      "role": "risingGoo",
+      "texture": "tiles_memory_leak"
+    }
+  ],
+  "controls": {
+    "generatedPlaceholderRejected": true,
+    "sameSizeAlteredImageRejected": true
+  },
+  "scope": "Registered raster assets in Debug, Memory Leak, Race Condition and Null Pointer; not a complete gameplay playthrough",
+  "productionAssetsChanged": false,
+  "activeRaceBindings": [
+    {
+      "role": "player",
+      "texture": "bob_idle"
+    },
+    {
+      "role": "enemy:spamDrone",
+      "texture": "enemy_spam_drone"
+    },
+    {
+      "role": "enemy:threadRunner",
+      "texture": "enemy_thread_runner"
+    },
+    {
+      "role": "enemy:clockSpike",
+      "texture": "enemy_clock_spike"
+    },
+    {
+      "role": "enemy:pixelMite",
+      "texture": "enemy_pixel_mite"
+    },
+    {
+      "role": "enemy:threadRunner",
+      "texture": "enemy_thread_runner"
+    },
+    {
+      "role": "checkpoint",
+      "texture": "checkpoint"
+    },
+    {
+      "role": "bossDoor",
+      "texture": "boss_door"
+    },
+    {
+      "role": "parallax:0",
+      "texture": "t2_race_condition_far_wide"
+    },
+    {
+      "role": "parallax:1",
+      "texture": "t2_race_condition_mid_wide"
+    },
+    {
+      "role": "parallax:2",
+      "texture": "t2_race_condition_near_wide"
+    },
+    {
+      "role": "terrain",
+      "texture": "tiles_race_condition"
+    },
+    {
+      "role": "movingPlatform",
+      "texture": "moving_platform"
+    },
+    {
+      "role": "movingPlatform",
+      "texture": "moving_platform"
+    }
+  ],
+  "activeNullBindings": [
+    {
+      "role": "player",
+      "texture": "bob_idle"
+    },
+    {
+      "role": "enemy:voidEye",
+      "texture": "enemy_void_eye"
+    },
+    {
+      "role": "enemy:voidEye",
+      "texture": "enemy_void_eye"
+    },
+    {
+      "role": "enemy:danglingRef",
+      "texture": "enemy_dangling_ref"
+    },
+    {
+      "role": "enemy:danglingRef",
+      "texture": "enemy_dangling_ref"
+    },
+    {
+      "role": "enemy:pixelMite",
+      "texture": "enemy_pixel_mite"
+    },
+    {
+      "role": "checkpoint",
+      "texture": "checkpoint"
+    },
+    {
+      "role": "bossDoor",
+      "texture": "boss_door"
+    },
+    {
+      "role": "parallax:0",
+      "texture": "t3_null_pointer_far_wide"
+    },
+    {
+      "role": "parallax:1",
+      "texture": "t3_null_pointer_mid_wide"
+    },
+    {
+      "role": "parallax:2",
+      "texture": "t3_null_pointer_near_wide"
+    },
+    {
+      "role": "terrain",
+      "texture": "tiles_null_pointer"
+    }
+  ]
+}
