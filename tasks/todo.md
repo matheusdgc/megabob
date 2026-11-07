@@ -272,6 +272,7 @@ Ligar cada cena à sua faixa do manifesto, incluindo a troca de música entre as
 
 ### T21: Arte real em tudo [M]
 Trocar os placeholders que sobraram, calibrar hitboxes conforme os sprites reais e conferir as animações contra o inventário do `art-prompts.md`.
+- [x] Rever movimento e efeitos de Void Eye/Dangling Ref: corrente articulada, garra alinhada ao corpo, flutuação/carga/teletransporte do olho e cursor animado em 16 bits; validar física, congelamento e descarte no navegador.
 - [ ] Nenhum placeholder visível no jogo
 **Verificar:** percorrer o jogo · **Dep.:** T4b
 

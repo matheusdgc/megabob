@@ -106,3 +106,15 @@ export const FEEDBACK: Record<FeedbackEvent, FeedbackTier> = {
 };
 /** Falls shorter than this (airborne frames) land without a dust puff. */
 export const LAND_DUST_FRAMES = 14;
+
+// --- Null Pointer enemies: pixel motion and local feedback ---
+export const NULL_ENEMY_ART = {
+  hoverHeight: 3, hoverPeriod: 120,
+  chargeRadius: 11, chargeEndRadius: 5,
+  pulseFrames: 12, returnFrames: 16,
+  chainLink: 4,
+  burstStartRadius: 5, burstTravel: 13,
+  cursorFrameTicks: 6,
+  amber: 0xf1c21b, cream: 0xefe3c2,
+  cyan: 0x08bdba, chainShadow: 0x004144, chainLight: 0x9ef0f0,
+} as const;

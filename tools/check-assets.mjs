@@ -12,6 +12,7 @@ import { checkBobWeaponArt } from './check-bob-weapon-art.mjs';
 import { checkRaceArt } from './check-race-art.mjs';
 import { checkNullEnemyArt } from './check-null-enemy-art.mjs';
 import { captureNullContext } from './check-null-context.mjs';
+import { checkNullMotion } from './check-null-motion.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -186,9 +187,10 @@ try {
   const bossArt = await checkBossArt(send, output);
   const raceArt = await checkRaceArt(send, output);
   const nullEnemyArt = await checkNullEnemyArt(send, output);
+  const nullMotion = await checkNullMotion(send, output, process.argv.find(arg=>arg.startsWith('--null-motion='))?.split('=')[1] ?? 'after');
   const interactives = await checkStageInteractives(send, output);
   const bobWeaponArt = await checkBobWeaponArt(send, output);
-  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, nullContext, interactives, bobWeaponArt, errors, warnings, failedRequests };
+  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, nullMotion, nullContext, interactives, bobWeaponArt, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));

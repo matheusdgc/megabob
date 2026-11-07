@@ -42,7 +42,7 @@ export async function checkNullEnemyArt(send, output) {
       if(Number(s.eye.frame.name)===3)goneHarmless&&=!s.eye.body.enable;
     }
     const fired=s.shots.length;for(const shot of s.shots)shot.destroy();
-    s.eye.setPosition(190,212).setFrame(1);s.claw.setPosition(320,144).setFrame(1);
+    s.eye.setPosition(190,212).setFrame(1);s.claw.frames=0;s.claw.place();
     s.cursor=new EnemyShot(s,'cursor',245,212,-140,0);
     return {eyeFrames:[...eyeFrames].sort(),clawFrames:[...clawFrames].sort(),eyeBodies:[...eyeBodies],clawBodies:[...clawBodies],
       firedCursorShots:fired,goneHarmless,cursor:{texture:s.cursor.texture.key,body:[s.cursor.body.width,s.cursor.body.height]}};
@@ -55,6 +55,7 @@ export async function checkNullEnemyArt(send, output) {
     await evaluate(`(()=>{
       const s=window.__game.scene.getScene('ArtNullEnemyCheck'),prefix=${JSON.stringify(mode==='before'?'art-null-before-':'')};
       s.eye.setTexture(prefix+'enemy_void_eye',1);s.claw.setTexture(prefix+'enemy_dangling_ref',1);s.cursor.setTexture(prefix+'null_cursor',0);
+      s.claw.place();
     })()`);
     await new Promise(resolve=>setTimeout(resolve,100));
     const png=await send('Page.captureScreenshot',{format:'png',clip});
