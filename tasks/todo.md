@@ -204,10 +204,10 @@ Esteiras e plataformas rápidas, Thread Runner e Clock Spike, chefe com dashes, 
 **Verificar:** uma partida completa · **Dep.:** T13
 **Arquivos:** `src/stages/raceCondition.ts`, `src/entities/enemies/{ThreadRunner,ClockSpike}.ts`, `src/entities/bosses/RaceCondition.ts`, `src/entities/weapons/MutexLock.ts`
 
-### T15: Null Pointer (fase, inimigos, chefe, arma Null Pointer) [M]
+### ✅ T15: Null Pointer (fase, inimigos, chefe, arma Null Pointer) [M]
 Blocos que somem e reaparecem, Void Eye e Dangling Ref, chefe com teleporte, setas, chão que some e cópias falsas, e a arma Null Pointer (atravessa paredes finas).
-- [ ] Dá para terminar a fase, e o chefe recebe 3× de dano do Garbage Collector
-- [ ] O tiro Null Pointer atravessa tiles marcados como "finos"
+- [x] Dá para terminar a fase, e o chefe recebe 3× de dano do Garbage Collector (caminho crítico em `tests/reach.test.ts`; fraqueza em `tests/nullPointer.test.ts`)
+- [x] O tiro Null Pointer atravessa tiles marcados como "finos" (`|`; conferido no navegador)
 
 **Verificar:** uma partida completa · **Dep.:** T13
 **Arquivos:** `src/stages/nullPointer.ts`, `src/entities/enemies/{VoidEye,DanglingRef}.ts`, `src/entities/bosses/NullPointer.ts`, `src/entities/weapons/NullPointerShot.ts`

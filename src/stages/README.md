@@ -8,16 +8,20 @@ Memory Leak (`memoryLeak.ts`) is the reference to copy.
 
 - `<STAGE>_MAP`: ASCII rows, all the same width. Legend (`map.ts`):
   `#` solid, `=` one-way platform, `^` hazard (instant death, like spikes), `-` background
-  wall, `>` `<` conveyor belts (solid; they carry Bob while he stands on them), `.` empty,
+  wall, `>` `<` conveyor belts (solid; they carry Bob while he stands on them), `1` `2` `3`
+  vanishing blocks (three phase groups, `src/systems/vanish.ts`), `|` thin wall (solid; stops
+  every shot except the Null Pointer), `.` empty,
   `P` spawn, `C` checkpoint, `B` boss door (its bottom-left cell).
   Enemies: `m` Pixel Mite, `d` Spam Drone, `v` Drip (the cell right under a ceiling),
   `h` Heap Crab, `r` Thread Runner, `k` Clock Spike (the cell beside the wall it is mounted
-  on). A marker cell takes the tile to its left.
+  on), `o` Void Eye, `j` Dangling Ref (the cell right under a ceiling). A marker cell takes the
+  tile to its left, and a later `fill` over it erases it: place markers after the fills.
 - `<STAGE>_SECTIONS`: camera sections in tiles, each at least one screen (30x17). The camera
   never shows outside the current one. The **last** section is the boss room, `locked: true`,
   with its floor on its bottom two rows (the boss stands there).
 - Optional extras, as data: a rising goo (`GooDef`: section, rows, speed, delay) and moving
-  platforms (`MoverDef`: column, row, range, speed; `startAtEnd` to run two of them opposite).
+  platforms (`MoverDef`: column, row, range, speed, `dwell` at each end; `startAtEnd` to run
+  two of them opposite). Make each end of a mover touch solid ground, so Bob walks on and off.
 
 ## 2. The entry in `stages.ts`
 
@@ -50,6 +54,8 @@ freeze, the health bar, the despawn when Bob dies).
 - Size gaps and steps by Bob's jump: about 53 px (3.3 tiles) high and 63 px far. Mandatory
   jumps stay well inside that; edge-of-reach jumps are for optional paths.
 - Teach each hazard alone where failing is cheap (near a checkpoint), then combine it.
+- **At least 4 enemies in every section before the boss room** (the user's rule, enforced by
+  `tests/stages.test.ts`). Keep them over solid ground where a hit would knock Bob into a pit.
 - `tests/stages.test.ts` and `tests/reach.test.ts` run for every entry automatically. The reach
   test plays the real Bob controller from the spawn to the boss door with 75% air control and
   no dash; if it fails, fix the map, not the test. It counts moving platforms along their whole
