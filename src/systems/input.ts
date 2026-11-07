@@ -15,8 +15,16 @@ export class GameInput {
   readonly state = new ActionState();
   /** Device that last sent input, for on-screen button prompts. */
   lastDevice: Device = 'keys';
-  private readonly bindings: Bindings;
-  private readonly keys: [Action, Phaser.Input.Keyboard.Key][] = [];
+  readonly bindings: Bindings;
+  /** [action, key, side]: side 1 = left only, 2 = right only (modifier keys), 0 = either. */
+  private readonly keys: [Action, Phaser.Input.Keyboard.Key, number][] = [];
+  /** Menus: Enter (always confirms) and Backspace (always goes back), whatever the bindings. */
+  private readonly menuKeys?: { enter: Phaser.Input.Keyboard.Key; back: Phaser.Input.Keyboard.Key };
+  private enterWas = false;
+  private backWas = false;
+  /** This poll: a menu confirm / back press (edges, after the release arming). */
+  confirm = false;
+  back = false;
   private readonly held = new Set<Action>();
   /** Menus: false until every input has been seen released once (see the constructor). */
   private armed: boolean;
@@ -38,15 +46,22 @@ export class GameInput {
     const codes = Phaser.Input.Keyboard.KeyCodes as Record<string, number>;
     for (const [action, names] of Object.entries(this.bindings.keys) as [Action, string[]][]) {
       for (const name of names) {
-        const code = codes[name];
-        if (code !== undefined) this.keys.push([action, kb.addKey(code, true)]);
+        const side = /^(SHIFT|CTRL|ALT)_(LEFT|RIGHT)$/.exec(name);
+        const code = codes[side ? side[1]! : name];
+        if (code !== undefined) this.keys.push([action, kb.addKey(code, true), side ? (side[2] === 'LEFT' ? 1 : 2) : 0]);
       }
+    }
+    if (menu) {
+      const K = Phaser.Input.Keyboard.KeyCodes;
+      this.menuKeys = { enter: kb.addKey(K.ENTER, true), back: kb.addKey(K.BACKSPACE, true) };
     }
   }
 
   poll(): ActionState {
     this.held.clear();
-    for (const [action, key] of this.keys) if (key.isDown) this.held.add(action);
+    for (const [action, key, side] of this.keys) if (key.isDown && (side === 0 || key.location === side)) this.held.add(action);
+    const enter = !!this.menuKeys?.enter.isDown;
+    const backKey = !!this.menuKeys?.back.isDown;
     const fromKeys = this.held.size > 0;
 
     const pad = this.scene.input.gamepad?.pad1;
@@ -64,11 +79,18 @@ export class GameInput {
     }
     if (fromKeys) this.lastDevice = 'keys';
     if (!this.armed) {
-      if (this.held.size > 0) this.held.clear();
+      if (this.held.size > 0 || enter || backKey) this.held.clear();
       else this.armed = true;
     }
 
     this.state.update(this.held);
+    // menus: confirm = jump, shoot or Enter; back = pause, dash or Backspace
+    const s = this.state;
+    const armed = this.armed;
+    this.confirm = armed && (s.justPressed('jump') || s.justPressed('shoot') || (enter && !this.enterWas));
+    this.back = armed && (s.justPressed('pause') || s.justPressed('dash') || (backKey && !this.backWas));
+    this.enterWas = enter;
+    this.backWas = backKey;
     return this.state;
   }
 }

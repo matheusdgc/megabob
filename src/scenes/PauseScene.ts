@@ -28,7 +28,8 @@ const ARMOR: { key: string; bit: number; name: string; at: [number, number] }[] 
 
 /**
  * Pause menu, launched over the paused stage (the stage stays drawn underneath). Pick a weapon
- * to equip, see the armor parts found, or leave the stage. Pause, jump or shoot closes it.
+ * to equip, see the armor parts found, or leave the stage. Confirm equips the weapon under the
+ * cursor; pause or back resumes as is.
  */
 export class PauseScene extends Phaser.Scene {
   private opts!: PauseData;
@@ -97,10 +98,12 @@ export class PauseScene extends Phaser.Scene {
       this.cursor = (this.cursor + (s.justPressed('up') ? n - 1 : 1)) % n;
       GameAudio.of(this.game)?.sfx.play('weaponSwitch');
       this.place();
-    } else if (s.justPressed('pause') || s.justPressed('jump') || s.justPressed('shoot')) {
+    } else if (this.controls.confirm) {
       const row = this.rows[this.cursor]!;
       if (row !== 'exit') equip(this.opts.arsenal, row);
       this.close(row === 'exit');
+    } else if (this.controls.back) {
+      this.close(false); // pause again (or back): resume with the weapon already equipped
     }
     this.pointer.setVisible(Math.floor(this.time.now / 300) % 2 === 0);
   }

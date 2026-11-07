@@ -60,7 +60,7 @@ São 4 peças, cada uma liberada num **Update Terminal** escondido numa fase. S�
 - Cada fase: aproximadamente 3 a 4 telas de largura × algumas seções, 1 checkpoint no meio e porta de chefe
 - Vidas: 3. Game over volta para a seleção de fases e mantém as armas ganhas
 - Progresso salvo no `localStorage` (chefes derrotados e peças de armadura coletadas)
-- Controles: teclado (setas/WASD, Z = pular, X = atirar, C = dash, Q/E = trocar arma, Enter = pausar) e gamepad pela Gamepad API
+- Controles: teclado (setas/WASD = mover, Espaço = pular, Z/L = atirar, C/Shift esquerdo = dash, Q/E ou ,/. = trocar arma, Esc/P = pausa e menu, M = mudo; Enter confirma nos menus) e gamepad pela Gamepad API
 - Tela de configuração de controles (pelo título e pela pausa): troca a tecla e o botão do gamepad de cada ação, com "restaurar padrão". O mapeamento fica salvo junto com o progresso
 
 ## Tech Stack

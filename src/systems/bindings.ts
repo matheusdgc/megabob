@@ -3,7 +3,8 @@ import { ACTIONS, type Action } from './actions';
 /**
  * Which physical inputs fire each action. Gameplay only ever reads actions (`ActionState`);
  * this table is data, so the controls screen (T13b) rebinds by editing it and the save keeps it.
- * Keys are Phaser `KeyCodes` names; pad buttons are standard-mapping indices (Xbox layout).
+ * Keys are Phaser `KeyCodes` names, plus `<MODIFIER>_LEFT` / `_RIGHT` (SHIFT, CTRL, ALT) for one
+ * side only; pad buttons are standard-mapping indices (Xbox layout).
  */
 export interface Bindings {
   keys: Record<Action, string[]>;
@@ -16,12 +17,12 @@ export const DEFAULT_BINDINGS: Readonly<Bindings> = {
     right: ['RIGHT', 'D'],
     up: ['UP', 'W'],
     down: ['DOWN', 'S'],
-    jump: ['Z', 'SPACE'],
-    shoot: ['X'],
-    dash: ['C', 'SHIFT'],
-    prevWeapon: ['Q'],
-    nextWeapon: ['E'],
-    pause: ['ENTER', 'ESC'],
+    jump: ['SPACE'],
+    shoot: ['Z', 'L'],
+    dash: ['C', 'SHIFT_LEFT'],
+    prevWeapon: ['Q', 'COMMA'],
+    nextWeapon: ['E', 'PERIOD'],
+    pause: ['ESC', 'P'],
   },
   pad: {
     left: [14],
@@ -100,3 +101,30 @@ function pickList<T>(table: unknown, action: Action, ok: (v: unknown) => v is T)
   const list = (table as Record<string, unknown>)[action];
   return Array.isArray(list) ? [...new Set(list.filter(ok))].slice(0, 2) : [];
 }
+
+/** Keys that are never bindable: M mutes, Enter confirms menus, and the dev keys. */
+export const RESERVED_KEYS: readonly string[] = ['M', 'ENTER', 'R', 'F2', 'H', 'G', 'ONE', 'TWO', 'THREE', 'FOUR'];
+
+const KEY_LABELS: Record<string, string> = {
+  SPACE: 'SPACE',
+  COMMA: ',',
+  PERIOD: '.',
+  ESC: 'ESC',
+  LEFT: '\u2190',
+  RIGHT: '\u2192',
+  UP: '\u2191',
+  DOWN: '\u2193',
+  SHIFT_LEFT: 'L-SHIFT',
+  SHIFT_RIGHT: 'R-SHIFT',
+  CTRL_LEFT: 'L-CTRL',
+  CTRL_RIGHT: 'R-CTRL',
+  ALT_LEFT: 'L-ALT',
+  ALT_RIGHT: 'R-ALT',
+  BACKSPACE: 'BKSP',
+};
+
+/** How a key name reads on screen. */
+export const keyLabel = (name: string): string => KEY_LABELS[name] ?? name.replace(/_/g, ' ');
+
+/** The keys of an action as an on-screen hint, e.g. "Q / ,". */
+export const actionKeys = (b: Readonly<Bindings>, action: Action): string => b.keys[action].map(keyLabel).join(' / ');

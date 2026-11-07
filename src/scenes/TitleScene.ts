@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { GameAudio, loadMusic } from '../audio';
+import { actionKeys } from '../systems/bindings';
 import { GameInput } from '../systems/input';
 import { hasProgress, newSave } from '../systems/save';
 import { fadeIn, fadeTo, type Label, UI, uiText } from '../ui/text';
@@ -45,9 +46,10 @@ export class TitleScene extends Phaser.Scene {
     // dark bands so the menu reads over the busy skyline
     this.add.rectangle(240, MENU_Y + ROW / 2 - 2, 168, 44, 0x000000, 0.6);
     this.add.rectangle(240, 258, 480, 16, 0x000000, 0.6);
-    uiText(this, 240, 258, 'Z / ENTER  SELECT     ARROWS  MOVE     M  MUTE', { color: UI.dim, origin: 0.5 });
-    this.pointer = uiText(this, 0, 0, '>', { color: UI.warn });
     this.controls = new GameInput(this, true);
+    const keys = this.controls.bindings;
+    uiText(this, 240, 258, `${actionKeys(keys, 'jump')} / ENTER  SELECT     ARROWS  MOVE     M  MUTE`, { color: UI.dim, origin: 0.5 });
+    this.pointer = uiText(this, 0, 0, '>', { color: UI.warn });
     this.mainMenu();
     GameAudio.of(this.game)?.music.play('title', 400);
     fadeIn(this);
@@ -113,9 +115,9 @@ export class TitleScene extends Phaser.Scene {
       this.cursor = (this.cursor + (s.justPressed('up') ? n - 1 : 1)) % n;
       audio?.sfx.play('weaponSwitch');
       this.focus();
-    } else if (s.justPressed('jump') || s.justPressed('pause') || s.justPressed('shoot')) {
+    } else if (this.controls.confirm) {
       this.items[this.cursor]!.run();
-    } else if (this.confirming && s.justPressed('dash')) {
+    } else if (this.confirming && this.controls.back) {
       this.mainMenu();
     }
     // the cursor blinks

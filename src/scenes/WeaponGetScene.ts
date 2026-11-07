@@ -4,6 +4,7 @@ import { type BossId, WEAPONS, type WeaponId } from '../data/weapons';
 import { recordClear } from '../systems/save';
 import { commitSave, getSave } from './progress';
 import { GameAudio } from '../audio';
+import { actionKeys, keyLabel } from '../systems/bindings';
 import { GameInput } from '../systems/input';
 import { uiText } from '../ui/text';
 
@@ -62,11 +63,12 @@ export class WeaponGetScene extends Phaser.Scene {
     uiText(this, w / 2 - 40, h / 2 - 36, 'WEAPON GET', { size: 16, color: '#4589ff' }).setOrigin(0);
     this.add.image(w / 2 - 40, h / 2 - 4, def.icon).setOrigin(0, 0.5);
     uiText(this, w / 2 - 18, h / 2 - 4, def.name, { size: 12, color: Phaser.Display.Color.IntegerToColor(def.color).rgba });
-    uiText(this, w / 2 - 40, h / 2 + 18, 'Q / E  switch weapons', { color: '#a8a8a8' }).setOrigin(0);
-    const prompt = uiText(this, w / 2, h / 2 + 48, 'PRESS Z', { origin: 0.5 }).setVisible(false);
+    this.controls = new GameInput(this, true);
+    const keys = this.controls.bindings;
+    uiText(this, w / 2 - 40, h / 2 + 18, `${actionKeys(keys, 'prevWeapon')}  /  ${actionKeys(keys, 'nextWeapon')}   switch weapons`, { color: '#a8a8a8' }).setOrigin(0);
+    const prompt = uiText(this, w / 2, h / 2 + 48, `PRESS ${keyLabel(keys.keys.jump[0] ?? 'SPACE')}`, { origin: 0.5 }).setVisible(false);
 
     GameAudio.of(this.game)?.sfx.jingle('weaponGet');
-    this.controls = new GameInput(this, true);
     this.time.delayedCall(MIN_MS, () => {
       this.ready = true;
       prompt.setVisible(true);
@@ -75,8 +77,8 @@ export class WeaponGetScene extends Phaser.Scene {
   }
 
   update(): void {
-    const s = this.controls.poll();
-    if (this.ready && (s.justPressed('jump') || s.justPressed('pause') || s.justPressed('shoot'))) {
+    this.controls.poll();
+    if (this.ready && (this.controls.confirm || this.controls.back)) {
       this.leave();
     }
   }

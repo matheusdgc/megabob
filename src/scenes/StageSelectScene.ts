@@ -41,7 +41,7 @@ const built = (s: Slot) => STAGE_OF_BOSS[s] !== undefined;
 
 /**
  * Stage select: the three bug bosses around Bob, the fortress below (locked until all three are
- * beaten). Cleared stages stay playable; unbuilt ones say so. C goes back to the title.
+ * beaten). Cleared stages stay playable; unbuilt ones say so. Back (Esc, C) returns to the title.
  */
 export class StageSelectScene extends Phaser.Scene {
   private controls!: GameInput;
@@ -108,9 +108,9 @@ export class StageSelectScene extends Phaser.Scene {
         audio?.sfx.play('weaponSwitch');
         this.select(next);
       }
-    } else if (s.justPressed('jump') || s.justPressed('pause') || s.justPressed('shoot')) {
+    } else if (this.controls.confirm) {
       this.choose();
-    } else if (s.justPressed('dash')) {
+    } else if (this.controls.back) {
       this.leaving = true;
       fadeTo(this, 'Title');
     }
