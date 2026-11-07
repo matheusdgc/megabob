@@ -1,11 +1,29 @@
-"""Memory Leak color roles: quiet scenery, steel contact edges, teal hazards."""
+"""Texture-preserving local palettes: blue-grey depth, warm metal, original teal hazards."""
+from palette import PALETTE
 from sprites import pixels
 
-INK = (22, 22, 22)
-SHADE = (57, 57, 57)
-STEEL = (111, 111, 111)
-LIGHT = (168, 168, 168)
-EDGE = (224, 224, 224)
+
+def color_map(warm=False):
+    """Keep every source tone distinct; never merge texture classes by brightness."""
+    result, used = {}, set()
+    for r, g, b in PALETTE:
+        light = .2126 * r + .7152 * g + .0722 * b
+        if warm:
+            color = (round(34 + .73 * light + .04 * r), round(28 + .68 * light + .03 * g),
+                     round(23 + .56 * light + .025 * b))
+        else:
+            color = (round(12 + .22 * light + .025 * r), round(20 + .26 * light + .025 * g),
+                     round(28 + .28 * light + .025 * b))
+        while color in used:
+            color = (color[0], color[1], color[2] + 1)
+        result[(r, g, b)] = color
+        used.add(color)
+    return result
+
+
+BACKGROUND = color_map()
+METAL = color_map(warm=True)
+MEMORY_PALETTE = set(PALETTE) | set(BACKGROUND.values()) | set(METAL.values())
 
 
 def luminance(rgb):
@@ -13,36 +31,20 @@ def luminance(rgb):
     return sum(c * weight for c, weight in zip(values, (.2126, .7152, .0722)))
 
 
-def background_color(rgb):
-    light = luminance(rgb)
-    return INK if light < .09 else SHADE
-
-
-def quiet_memory_layer(image):
+def recolor(image, colors):
     result = image.convert('RGBA').copy()
-    result.putdata([(*background_color((r, g, b)), a) for r, g, b, a in pixels(result)])
+    result.putdata([(*colors[(r, g, b)], a) if a else (r, g, b, a) for r, g, b, a in pixels(result)])
     return result
 
 
+def quiet_memory_layer(image):
+    return recolor(image, BACKGROUND)
+
+
 def memory_tiles(image):
-    """Color-only changes: preserve every alpha pixel and all frame indices."""
+    """One-to-one recoloring of existing pixels; no fills, new stripes or smoothing."""
     result = image.convert('RGBA').copy()
     for index in list(range(16)) + [17]:
-        for y in range(16):
-            for x in range(16):
-                r, g, b, a = image.getpixel((index * 16 + x, y))
-                if not a:
-                    continue
-                if index == 17:
-                    color = INK  # Background-wall stamps must not compete with platforms.
-                elif index == 1:
-                    color = SHADE  # Collapse the high-contrast repeated fill pattern.
-                else:
-                    value = luminance((r, g, b))
-                    color = INK if value < .012 else SHADE if value < .09 else STEEL if value < .3 else LIGHT
-                    if index in (0, 2, 3, 4, 5, 12, 13, 14) and y < 2:
-                        color = EDGE
-                    elif index == 15 and x in (0, 15):
-                        color = STEEL
-                result.putpixel((index * 16 + x, y), (*color, a))
+        box = (index * 16, 0, (index + 1) * 16, 16)
+        result.paste(recolor(image.crop(box), BACKGROUND if index == 17 else METAL), box[:2])
     return result

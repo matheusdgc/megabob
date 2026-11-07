@@ -217,7 +217,7 @@ def backgrounds():
             key = source.stem[:-3].lower() + '_' + name
             entries.append(save_asset(layer, 'bg', key, (512, 224), source.relative_to(RAW).as_posix(),
                                       edgeMismatchBefore=before, edgeMismatchAfter=0,
-                                      **({'colorRoles': 'memory-steel-teal'} if stage == 'memory_leak' else {})))
+                                      **({'colorRoles': 'memory-cool-warm-textured'} if stage == 'memory_leak' else {})))
             layers.append(layer)
             wide = extend_view(layer, name)
             depth_adjusted = stage == 'tech_debt' and name != 'far'
@@ -228,7 +228,7 @@ def backgrounds():
             entries.append(save_asset(wide, 'bg', key + '_wide', (512, 270), source.relative_to(RAW).as_posix(),
                                       edgeMismatchBefore=0, edgeMismatchAfter=0, extendedFrom=key,
                                       anchor='top' if name == 'near' else 'bottom', depthAdjusted=depth_adjusted,
-                                      **({'colorRoles': 'memory-steel-teal'} if stage == 'memory_leak' else {})))
+                                      **({'colorRoles': 'memory-cool-warm-textured'} if stage == 'memory_leak' else {})))
             wide_layers.append(wide)
         repeat = Image.new('RGBA', (1024, 672), (25, 25, 34, 255))
         for i, layer in enumerate(layers):
@@ -364,7 +364,7 @@ def run(group='all'):
         if item.get('frame_fit'):
             entry['frameSizing'] = item['frame_fit']
         if item['key'] == 'tiles_memory_leak':
-            entry['colorRoles'] = 'memory-steel-teal'
+            entry['colorRoles'] = 'memory-cool-warm-textured'
         if item.get('top_frames'):
             entry['topAlignedFrames'] = item['top_frames']
         entries.append(entry)

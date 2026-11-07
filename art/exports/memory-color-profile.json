@@ -1,116 +1,119 @@
 {
   "stage": "memoryLeak",
-  "roles": {
-    "background": [
-      "#161616",
-      "#393939"
-    ],
-    "solidFill": "#393939",
-    "contactEdge": "#E0E0E0",
-    "hazard": "original teal pixels preserved"
-  },
-  "contactEdgeVsMaxBackgroundRatio": 8.75,
+  "textureBaselineCommit": "f4eb18a",
+  "texturePatternPreserved": true,
+  "checkedRegions": 30,
   "hazardPixelsUnchanged": true,
-  "tileAlphaUnchanged": true,
+  "roles": {
+    "background": "blue-grey",
+    "metal": "warm neutral",
+    "hazard": "original teal"
+  },
+  "palettePolicy": "Local T1 color maps; default palette and other stages unchanged.",
+  "backgroundMapping": {
+    "#161616": "#111A23",
+    "#393939": "#1A242D",
+    "#6F6F6F": "#27343E",
+    "#A8A8A8": "#35444F",
+    "#E0E0E0": "#435460",
+    "#FFFFFF": "#4A5D6A",
+    "#001D6C": "#121C27",
+    "#0043CE": "#1A2633",
+    "#0F62FE": "#212E3C",
+    "#4589FF": "#2B3A47",
+    "#A6C8FF": "#3B4C59",
+    "#004144": "#17232C",
+    "#007D79": "#22313B",
+    "#08BDBA": "#2D404B",
+    "#9EF0F0": "#415460",
+    "#750E13": "#171E27",
+    "#DA1E28": "#212731",
+    "#FF832B": "#343F47",
+    "#F1C21B": "#3C4B52",
+    "#31135E": "#141C27",
+    "#6929C4": "#1D2633",
+    "#A56EFF": "#2D3947",
+    "#E8DAFF": "#435461",
+    "#3E2B1F": "#18212A",
+    "#8D6E4F": "#29343E",
+    "#C9B48A": "#394852",
+    "#EFE3C2": "#445560",
+    "#198038": "#23313A",
+    "#42BE65": "#30424B"
+  },
+  "metalMapping": {
+    "#161616": "#332C24",
+    "#393939": "#4E4438",
+    "#6F6F6F": "#776B58",
+    "#A8A8A8": "#A39379",
+    "#E0E0E0": "#CEBB9A",
+    "#FFFFFF": "#E6D1AC",
+    "#001D6C": "#37302A",
+    "#0043CE": "#50493F",
+    "#0F62FE": "#655D51",
+    "#4589FF": "#847967",
+    "#A6C8FF": "#B8A88C",
+    "#004144": "#484135",
+    "#007D79": "#6A6251",
+    "#08BDBA": "#908870",
+    "#9EF0F0": "#CBBB9A",
+    "#750E13": "#41352C",
+    "#DA1E28": "#5E4D40",
+    "#FF832B": "#9A876D",
+    "#F1C21B": "#B8A483",
+    "#31135E": "#3A322B",
+    "#6929C4": "#564A41",
+    "#A56EFF": "#897967",
+    "#E8DAFF": "#CFBB9B",
+    "#3E2B1F": "#463D32",
+    "#8D6E4F": "#7B6D59",
+    "#C9B48A": "#AE9D80",
+    "#EFE3C2": "#D1BD9B",
+    "#198038": "#6D6451",
+    "#42BE65": "#978D72"
+  },
   "layers": [
     {
       "file": "public/assets/bg/t1_memory_leak_far.png",
-      "colors": [
-        [
-          22,
-          22,
-          22
-        ]
-      ],
-      "alphaUnchanged": true,
-      "periodicEdges": true
+      "colors": 2,
+      "texturePatternPreserved": true,
+      "alphaUnchanged": true
     },
     {
       "file": "public/assets/bg/t1_memory_leak_far_wide.png",
-      "colors": [
-        [
-          22,
-          22,
-          22
-        ]
-      ],
-      "alphaUnchanged": true,
-      "periodicEdges": true
+      "colors": 2,
+      "texturePatternPreserved": true,
+      "alphaUnchanged": true
     },
     {
       "file": "public/assets/bg/t1_memory_leak_mid.png",
-      "colors": [
-        [
-          22,
-          22,
-          22
-        ],
-        [
-          57,
-          57,
-          57
-        ]
-      ],
-      "alphaUnchanged": true,
-      "periodicEdges": true
+      "colors": 16,
+      "texturePatternPreserved": true,
+      "alphaUnchanged": true
     },
     {
       "file": "public/assets/bg/t1_memory_leak_mid_wide.png",
-      "colors": [
-        [
-          22,
-          22,
-          22
-        ],
-        [
-          57,
-          57,
-          57
-        ]
-      ],
-      "alphaUnchanged": true,
-      "periodicEdges": true
+      "colors": 16,
+      "texturePatternPreserved": true,
+      "alphaUnchanged": true
     },
     {
       "file": "public/assets/bg/t1_memory_leak_near.png",
-      "colors": [
-        [
-          22,
-          22,
-          22
-        ],
-        [
-          57,
-          57,
-          57
-        ]
-      ],
-      "alphaUnchanged": true,
-      "periodicEdges": true
+      "colors": 17,
+      "texturePatternPreserved": true,
+      "alphaUnchanged": true
     },
     {
       "file": "public/assets/bg/t1_memory_leak_near_wide.png",
-      "colors": [
-        [
-          22,
-          22,
-          22
-        ],
-        [
-          57,
-          57,
-          57
-        ]
-      ],
-      "alphaUnchanged": true,
-      "periodicEdges": true
+      "colors": 17,
+      "texturePatternPreserved": true,
+      "alphaUnchanged": true
+    },
+    {
+      "file": "public/assets/tiles/tiles_memory_leak.png",
+      "colors": 32,
+      "texturePatternPreserved": true,
+      "alphaUnchanged": true
     }
-  ],
-  "screenshots": [
-    "entrance",
-    "platforms",
-    "shaft",
-    "boss-room"
-  ],
-  "note": "Art contrast measurement, not a claim of WCAG conformance or a gameplay playthrough."
+  ]
 }

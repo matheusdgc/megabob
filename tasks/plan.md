@@ -89,9 +89,15 @@ Conferir os 145 strips do Bob sem alterar a jogabilidade. Ler sequências e fps 
 
 A pedido do usuário, separar as funções de cor da primeira fase: fundo escuro e dessaturado, piso metálico com interiores menos ruidosos e bordas claras, verde-água vivo reservado ao lodo/ataques. Aplicar remapeamentos determinísticos nas cópias processadas de T1, preservando alpha, dimensões, emendas, quadros, colisões e fontes. Conferir capturas antes/depois em seções reais, repetição dos tiles e contraste em escala de cinza. Registrar a transformação no pipeline e validar testes/build/navegador antes de commitar apenas a arte.
 
+Resultado de `7392411` rejeitado pelo usuário por eliminar textura. Substituído pela restauração e pelos mapas de cor bijetivos da etapa T21 abaixo; não reaplicar o achatamento.
+
 ### T4b — revisão dos chefes
 
 Pedido adicional do usuário: revisar sprites e animação dos quatro chefes. Conferir quadros, alpha, paleta, silhueta, ancoragem e transições; distinguir animações em uso de poses ainda sem integração. Corrigir problemas de arte no pipeline e ligar somente a seleção visual de quadros que estiver faltando no chefe já implementado, preservando IA, tempos, colisões e dano. Validar em uma cena de inspeção e registrar as limitações dos chefes que ainda não têm mecânica.
+
+### T21 — restaurar textura e recompor as cores de T1
+
+O usuário rejeitou a simplificação visual: restaurar a textura inteira a partir das fontes preservadas. Substituir o remapeamento que juntava tons e pintava faixas por paletas de cor bijetivas: fundo azul acinzentado, metal em tons quentes e perigos teal originais. Não alterar posições ou máscaras de pixels. Validar a assinatura espacial de cores de cada quadro e camada contra a versão anterior à simplificação, capturar os mesmos enquadramentos no Phaser e atualizar as comparações. Manter as correções dos chefes e o restante do jogo.
 
 ## Paralelização
 
