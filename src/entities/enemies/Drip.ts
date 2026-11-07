@@ -3,6 +3,9 @@ import { DRIP_HANG_TOP, DRIP_PUDDLE_BODY } from '../../data/enemies';
 import { GRAVITY, MAX_FALL_SPEED } from '../../data/tuning';
 import { type Drip as DripAI, newDrip, stepDrip } from '../../systems/enemyAI';
 import { Enemy, type EnemyWorld } from '../Enemy';
+import { syncBodyTransform } from '../bodyTransform';
+import { CombatCue } from '../CombatCue';
+import { COMBAT_ART } from '../../data/tuning';
 
 const TILE = 16;
 const FRAME_H = 40;
@@ -15,6 +18,7 @@ export class Drip extends Enemy {
   readonly solid = true;
   private readonly ai: DripAI = newDrip();
   private puddle = false;
+  private readonly cue: CombatCue;
 
   constructor(scene: Phaser.Scene, x: number, y: number, world: EnemyWorld) {
     // marker y is the bottom of its cell; the ceiling is the top of that cell
@@ -22,6 +26,7 @@ export class Drip extends Enemy {
     this.body.setGravityY(GRAVITY);
     this.body.setMaxVelocityY(MAX_FALL_SPEED);
     this.body.setAllowGravity(false);
+    this.cue = new CombatCue(this);
   }
 
   protected think(): void {
@@ -39,11 +44,14 @@ export class Drip extends Enemy {
       !!bob && bob.y > b.bottom,
       this.stats.speed,
     );
-    if (!this.puddle && this.ai.state === 'splat') this.becomePuddle();
+    const landed = !this.puddle && this.ai.state === 'splat';
+    if (landed) this.becomePuddle();
     b.setAllowGravity(out.gravity);
     b.setVelocityX(out.vx);
     this.setFrame(out.frame);
     this.setFlipX(this.ai.facing > 0);
+    this.cue.step({x:b.center.x,y:b.bottom-3,color:COMBAT_ART.teal,release:landed,
+      ...(this.ai.state==='fall' ? {trail:{x:0,y:1}} : {})});
   }
 
   /** Landed: a low, wide hitbox, still tall enough for a standing shot. */
@@ -52,5 +60,6 @@ export class Drip extends Enemy {
     const [w, h] = DRIP_PUDDLE_BODY;
     this.body.setSize(w, h, false);
     this.body.setOffset((this.width - w) / 2, this.height - h);
+    syncBodyTransform(this);
   }
 }

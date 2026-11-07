@@ -50,6 +50,8 @@ export class SpamDrone extends Enemy {
   constructor(scene: Phaser.Scene, x: number, y: number, world: EnemyWorld) {
     super(scene, x, y, 'spamDrone', world);
     this.body.setAllowGravity(false);
+    const [w, h] = this.stats.body;
+    this.body.setOffset((this.width - w) / 2, (this.height - h) / 2);
     this.ai = newDrone(y);
   }
 

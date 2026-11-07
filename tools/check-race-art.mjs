@@ -24,13 +24,14 @@ export async function checkRaceArt(send, output) {
       this.target={x:80,y:224};
       this.boss=new RaceCondition(this,390,240,()=>this.target);
       this.boss.setArena(0,480);this.scene.pause();this.physics.world.resume();
+      this.physics.world.on('worldstep',()=>this.boss.step());
     }},true);
     const s=game.scene.getScene('ArtRaceCheck'),b=s.boss;
     const normal={frames:new Set(),bodies:new Set(),facings:new Set(),bladeFrames:new Set(),cloneBlendModes:new Set(),clones:0,waiting:false,active:false};
     const run=(ticks,result)=>{
       for(let i=0;i<ticks;i++){
         s.target.x=b.x<240?400:80;
-        s.physics.world.singleStep();b.step();
+        s.physics.world.singleStep();
         result.frames.add(Number(b.frame.name));result.bodies.add(b.body.width+'x'+b.body.height);result.facings.add(b.flipX);
         for(const blade of b.blades.getChildren()) {blade.anims.update(0,1000/60);result.bladeFrames.add(Number(blade.frame.name));}
         result.clones=Math.max(result.clones,b.clones.length);

@@ -53,9 +53,15 @@ def run():
     frames[0].save(OUT / 'megabob-memory-leak-idle.gif', save_all=True, append_images=frames[1:], duration=250, loop=0)
     if any(hashlib.sha256(p.read_bytes()).hexdigest() != digest for p, digest in hashes.items()):
         raise RuntimeError('Boss review changed production PNGs')
+    reviewed=['memoryLeak','raceCondition']
+    combat=OUT/'combat-motion-review.json'
+    if combat.exists():
+        runtime=json.loads(combat.read_text(encoding='utf-8'))
+        reviewed=[row['kind'] for row in runtime['actors'] if row['defeat'] is not None
+                  and row['alignmentAfter']<=1e-6 and row['freezeStable'] and row['cueReleased']]
     report = dict(sheets=len(entries), frames=sum(e['frames'] for e in entries), binaryAlpha=True,
                   paletteColors=29, emptyFrames=0, productionPngsUnchanged=True,
-                  runtimeBossesReviewed=['memoryLeak', 'raceCondition'], pendingRuntimeReview=['nullPointer', 'techDebt'],
+                  runtimeBossesReviewed=reviewed, pendingRuntimeReview=[key for key in ['memoryLeak','raceCondition','nullPointer','techDebt'] if key not in reviewed],
                   note='Pose contacts alone are not evidence of implemented attacks.', entries=entries)
     (OUT / 'boss-art-review.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     print(f"{len(entries)} boss assets / {report['frames']} frames checked; 4 pose contacts and Memory Leak idle exported.")

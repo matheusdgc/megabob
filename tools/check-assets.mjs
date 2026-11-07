@@ -13,6 +13,7 @@ import { checkRaceArt } from './check-race-art.mjs';
 import { checkNullEnemyArt } from './check-null-enemy-art.mjs';
 import { captureNullContext } from './check-null-context.mjs';
 import { checkNullMotion } from './check-null-motion.mjs';
+import { checkCombatMotion } from './check-combat-motion.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -82,7 +83,7 @@ try {
   }
   const scenes = [];
   let nullContext;
-  for (const [query, scene, name] of [['?sprites', 'Debug', 'debug'], ['?stage=raceCondition', 'Stage', 'race-condition'], ['?stage=nullPointer', 'Stage', 'null-pointer'], ['?stage=memoryLeak', 'Stage', 'stage']]) {
+  for (const [query, scene, name] of [['?sprites', 'Debug', 'debug'], ['?stage=raceCondition', 'Stage', 'race-condition'], ['?stage=nullPointer', 'Stage', 'null-pointer'], ['?stage=techDebt', 'Stage', 'tech-debt'], ['?stage=memoryLeak', 'Stage', 'stage']]) {
     const expectedStage = new URLSearchParams(query).get('stage');
     await send('Page.navigate', { url: `${baseUrl}/${query}` });
     let state;
@@ -190,7 +191,9 @@ try {
   const nullMotion = await checkNullMotion(send, output, process.argv.find(arg=>arg.startsWith('--null-motion='))?.split('=')[1] ?? 'after');
   const interactives = await checkStageInteractives(send, output);
   const bobWeaponArt = await checkBobWeaponArt(send, output);
-  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, nullMotion, nullContext, interactives, bobWeaponArt, errors, warnings, failedRequests };
+  const combatMode=process.argv.find(arg=>arg.startsWith('--combat-review='))?.split('=')[1];
+  const combatMotion=combatMode?await checkCombatMotion(send,output,combatMode,process.argv.includes('--combat-clips')):undefined;
+  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, nullMotion, nullContext, interactives, bobWeaponArt, combatMotion, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));

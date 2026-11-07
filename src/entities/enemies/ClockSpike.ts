@@ -1,5 +1,8 @@
 import Phaser from 'phaser';
-import { SPIKE_SHOT_SPEED } from '../../data/enemies';
+import { SPIKE_CHARGE_FRAMES, SPIKE_SHOT_SPEED } from '../../data/enemies';
+import { COMBAT_ART } from '../../data/tuning';
+import { warningArtFrame } from '../../systems/enemyArt';
+import { CombatCue } from '../CombatCue';
 import { newSpike, type Spike, stepSpike } from '../../systems/enemyAI';
 import { Enemy, type EnemyWorld } from '../Enemy';
 
@@ -12,6 +15,7 @@ const TILE = 16;
 export class ClockSpike extends Enemy {
   readonly solid = false;
   private readonly ai: Spike;
+  private readonly cue: CombatCue;
 
   constructor(scene: Phaser.Scene, x: number, y: number, world: EnemyWorld) {
     // mounted on whichever side of its cell is solid
@@ -20,6 +24,9 @@ export class ClockSpike extends Enemy {
     this.ai = newSpike(facing);
     this.body.setAllowGravity(false);
     this.body.setImmovable(true);
+    const [w,h]=this.stats.body;
+    this.body.setOffset((this.width-w)/2,(this.height-h)/2);
+    this.cue=new CombatCue(this);
     this.setFlipX(facing < 0); // the sheet faces right
   }
 
@@ -27,7 +34,9 @@ export class ClockSpike extends Enemy {
     const bob = this.world.bob();
     const b = this.body;
     const out = stepSpike(this.ai, bob ? { dx: bob.x - b.center.x, dy: bob.y - b.center.y } : null);
-    this.setFrame(out.frame);
+    this.setFrame(warningArtFrame(this.ai.state,this.ai.frames,out.frame));
     if (out.fire) this.world.shoot('clockSpike', b.center.x + this.ai.facing * 14, b.center.y, this.ai.facing * SPIKE_SHOT_SPEED, 0);
+    this.cue.step({x:b.center.x+this.ai.facing*14,y:b.center.y,color:COMBAT_ART.amber,release:out.fire,
+      ...(this.ai.state==='charge'?{charge:this.ai.frames/SPIKE_CHARGE_FRAMES}:{})});
   }
 }

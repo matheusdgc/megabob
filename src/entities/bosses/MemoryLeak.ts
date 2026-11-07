@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 import { Boss, type BossHazards } from '../Boss';
 import { memoryLeakFrame, memoryGooFrame, type MemoryLeakArtState } from '../../systems/memoryLeakArt';
+import { syncBodyTransform } from '../bodyTransform';
+import { CombatCue } from '../CombatCue';
+import { COMBAT_ART } from '../../data/tuning';
 
 // ---------------------------------------------------------------------------
 // Tuning (all in pixels and 60-Hz frames)
@@ -83,9 +86,11 @@ class GooBlob extends Phaser.Physics.Arcade.Sprite {
     this.body.enable = true;
     this.body.setSize(10, 10);
     this.body.setAllowGravity(true);
+    this.body.moves = true;
     // set on every launch: the physics group's defaults reset gravityY to 0 when it creates a blob
     this.body.setGravityY(GOO_GRAVITY);
     this.body.setVelocity(vx, GOO_SPEED_Y);
+    syncBodyTransform(this, false);
   }
 
   /**
@@ -107,13 +112,17 @@ class GooBlob extends Phaser.Physics.Arcade.Sprite {
   }
 
   private splat(): void {
+    const floor = this.body.bottom;
     this.isPuddle = true;
     this.puddleTimer = PUDDLE_LIFETIME;
     this.visualTick = 0;
     this.setTexture('memory_puddle', 0).setOrigin(0.5, 1);
+    this.setY(floor);
     this.body.setAllowGravity(false);
     this.body.setVelocity(0, 0);
-    this.body.setSize(24, 8);
+    this.body.moves = false;
+    this.body.setSize(24, 8, false).setOffset((this.width - 24) / 2, this.height - 8);
+    syncBodyTransform(this, false);
   }
 
   deactivate(): void {
@@ -139,6 +148,8 @@ export class MemoryLeak extends Boss {
   private volleyCount = 0;
   private volleysDone = 0;
   private burstsDone = 0;
+  private readonly cue: CombatCue;
+  private fired = false;
 
   /** Pool of goo blobs (bubbles + puddles). */
   private goo!: Phaser.Physics.Arcade.Group;
@@ -163,7 +174,9 @@ export class MemoryLeak extends Boss {
     this.homeY = y;
     this.worldH = worldH;
     this.getBob = getBob;
+    this.body.moves = false; // the sink/rise pose owns the transform
     this.goo = scene.physics.add.group({ classType: GooBlob, maxSize: 12, runChildUpdate: false });
+    this.cue = new CombatCue(this);
   }
 
   /** Boss room x-range, so the boss never re-emerges outside it. */
@@ -200,6 +213,7 @@ export class MemoryLeak extends Boss {
   }
 
   protected think(): void {
+    this.fired = false;
     this.stateFrames++;
     const fury = this.hp <= Math.floor(this.maxHp * FURY_THRESHOLD);
     const bob = this.getBob();
@@ -287,6 +301,13 @@ export class MemoryLeak extends Boss {
         break;
       }
     }
+    // Disabled bodies do not auto-sync while lurking; re-enable at the new visual position.
+    this.body.updateFromGameObject();
+    const lurking = this.mlState === 'lurk';
+    const x = lurking ? Phaser.Math.Clamp(this.diveTargetX,this.arenaLeft+this.body.halfWidth+16,this.arenaRight-this.body.halfWidth-16) : this.body.center.x;
+    this.cue.step({x,y:lurking||this.mlState==='rise'?this.homeY-2:this.body.top+8,color:COMBAT_ART.teal,
+      release:this.fired||(this.mlState==='rise'&&this.stateFrames===1),
+      ...(lurking?{charge:this.stateFrames/LURK_FRAMES}:{})});
   }
 
   private goState(next: MLState): void {
@@ -304,16 +325,22 @@ export class MemoryLeak extends Boss {
     const vx = Phaser.Math.Clamp((dx / Math.max(1, Math.abs(dx))) * GOO_SPREAD_X, -GOO_SPREAD_X, GOO_SPREAD_X);
 
     const blob = this.goo.get() as GooBlob | null;
-    if (blob) blob.fire(bx, by, vx);
+    if (blob) { blob.fire(bx, by, vx); this.fired = true; }
   }
 
   /** The goo pool goes with the boss (Bob's death despawns the boss for a fresh fight). */
+  protected override onDefeated(): void {
+    this.cue.clear();
+    for (const g of this.goo.getChildren() as GooBlob[]) g.deactivate();
+  }
+
   override destroy(fromScene?: boolean): void {
     this.goo?.destroy(true);
     super.destroy(fromScene);
   }
 
   reset(): void {
+    this.cue.clear();
     for (const g of this.goo.getChildren() as GooBlob[]) g.deactivate();
     this.mlState = 'idle_enter';
     this.stateFrames = 0;

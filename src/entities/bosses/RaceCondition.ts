@@ -13,6 +13,7 @@ import {
 import { Boss, type BossHazards } from '../Boss';
 import { loopAnim } from '../effects';
 import type { BobLocator } from './index';
+import { syncBodyTransform } from '../bodyTransform';
 
 /** Standing and dashing hitboxes (w, h): the dash is low enough for Bob to jump over. */
 const STAND: [number, number] = [28, 48];
@@ -77,7 +78,9 @@ export class RaceCondition extends Boss {
     this.setFrame(out.frame);
     this.setFlipX(this.ai.facing > 0); // the sheet faces left
     // never leave the arena, whatever the speed
-    this.x = Phaser.Math.Clamp(this.x, this.arenaLeft + RACE_WALL_MARGIN, this.arenaRight - RACE_WALL_MARGIN);
+    const x = Phaser.Math.Clamp(this.body.center.x, this.arenaLeft + RACE_WALL_MARGIN, this.arenaRight - RACE_WALL_MARGIN);
+    this.body.position.x += x - this.body.center.x;
+    this.body.updateCenter();
     for (const v of out.blades ?? []) this.throwBlade(v.vx, v.vy);
     for (const c of out.clones ?? []) this.spawnClone(c.delay, c.dir);
     this.stepClones();
@@ -95,6 +98,7 @@ export class RaceCondition extends Boss {
     const [w, h] = low ? LOW : STAND;
     this.body.setSize(w, h, false);
     this.body.setOffset((this.width - w) / 2, this.height - h);
+    syncBodyTransform(this);
   }
 
   private throwBlade(vx: number, vy: number): void {

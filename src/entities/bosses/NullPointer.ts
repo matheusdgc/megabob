@@ -14,6 +14,8 @@ import {
 import { Boss, type BossHazards } from '../Boss';
 import { loopAnim } from '../effects';
 import type { BobLocator } from './index';
+import { CombatCue } from '../CombatCue';
+import { COMBAT_ART } from '../../data/tuning';
 
 const BODY: [number, number] = [26, 56];
 const HURT_FRAME = 6;
@@ -39,6 +41,7 @@ export class NullPointer extends Boss {
   private decoys: Phaser.GameObjects.Image[] = [];
   private readonly floorY: number;
   private tangible = true;
+  private readonly cue: CombatCue;
 
   constructor(
     scene: Phaser.Scene,
@@ -48,8 +51,10 @@ export class NullPointer extends Boss {
   ) {
     super(scene, x, y - NULL_HOVER, 'boss_null_pointer', NULL_HP, BODY[0], BODY[1]);
     this.floorY = y;
+    this.body.moves = false; // teleport poses must not be integrated a second time
     this.cursors = scene.physics.add.group({ allowGravity: false });
     this.voidGroup = scene.physics.add.group({ allowGravity: false });
+    this.cue = new CombatCue(this);
   }
 
   override get hazards(): BossHazards[] {
@@ -84,6 +89,7 @@ export class NullPointer extends Boss {
     this.tangible = out.tangible;
     this.body.enable = out.tangible;
     this.setFrame(out.frame);
+    this.body.updateFromGameObject();
     this.setFlipX(this.ai.facing > 0); // the sheet faces left
     if (out.frame === 2 && this.ai.frames === 1) this.scene.events.emit('bossSfx', 'glitch');
     if (out.clearDecoys) this.clearDecoys();
@@ -91,6 +97,10 @@ export class NullPointer extends Boss {
     for (const c of out.cursors ?? []) this.fireCursor(c.vx, c.vy);
     for (const v of out.voids ?? []) this.openVoid(v.x, v.w);
     this.stepVoids();
+    this.cue.step({x:this.body.center.x,y:this.body.center.y,color:COMBAT_ART.metal,
+      release:!!out.moveTo||!!out.cursors,
+      ...(this.ai.state==='in'?{charge:1}:{}),
+      ...(this.ai.state==='out'?{trail:{x:this.ai.facing,y:0}}:{})});
   }
 
   override step(): void {
@@ -135,6 +145,7 @@ export class NullPointer extends Boss {
   }
 
   protected override onDefeated(): void {
+    this.cue.clear();
     this.cursors.clear(true, true);
     this.voidGroup.clear(true, true);
     this.voids = [];

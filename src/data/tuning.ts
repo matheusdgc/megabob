@@ -118,3 +118,10 @@ export const NULL_ENEMY_ART = {
   amber: 0xf1c21b, cream: 0xefe3c2,
   cyan: 0x08bdba, chainShadow: 0x004144, chainLight: 0x9ef0f0,
 } as const;
+
+export const COMBAT_ART = {
+  releaseFrames: 10, chargeRadius: 10, chargeEndRadius: 5, releaseTravel: 10,
+  releaseStartRadius: 4, releasePoints: 6, trailStart: 8, trailSpacing: 4, trailPhases: 3, trailLength: 3,
+  warningFrameTicks: 8, recoverArmFrames: 6,
+  teal: 0x08bdba, amber: 0xf1c21b, metal: 0xa6c8ff,
+} as const;

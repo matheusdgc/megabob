@@ -7,6 +7,7 @@ import {
   DRAWER_HIGH,
   DRAWER_LOW,
   LASER_DAMAGE,
+  LASER_CHARGE,
   newCore,
   newWall,
   PATCH_DAMAGE,
@@ -20,6 +21,10 @@ import {
 import { Boss, type BossHazards } from '../Boss';
 import { loopAnim, playOnce } from '../effects';
 import type { BobLocator } from './index';
+import { syncBodyTransform } from '../bodyTransform';
+import { CombatCue } from '../CombatCue';
+import { COMBAT_ART } from '../../data/tuning';
+import { chargeVelocity } from '../../systems/combatArt';
 
 /** Where things sit on the 256x192 wall sprite (its content: x 8-248, y 32-160). */
 const WALL = { w: 256, h: 192, contentLeft: 8, contentTop: 32, bottomPad: 32, crt: { x: 134, y: 91 }, reels: [{ x: 137, y: 45 }, { x: 211, y: 87 }] };
@@ -53,6 +58,8 @@ export class TechDebt extends Boss {
   private faceLeft = 0;
   private wasCharging = false;
   private wasFiring = false;
+  private readonly cue: CombatCue;
+  private chargeTarget: {x:number;y:number} | undefined;
 
   constructor(
     scene: Phaser.Scene,
@@ -63,6 +70,7 @@ export class TechDebt extends Boss {
     super(scene, x, y, 'tech_crt', TECH_HP, CRT_BODY[0], CRT_BODY[1]);
     this.floorY = y;
     this.setScale(CRT_SCALE).setDepth(1);
+    this.cue = new CombatCue(this);
     this.wallImg = scene.add.image(0, 0, 'boss_tech_debt').setOrigin(1, 1).setDepth(-0.5);
     this.reels = WALL.reels.map(() => scene.add.sprite(0, 0, 'tech_reels', 0).setDepth(-0.4).play(loopAnim(scene, 'tech_reels', [0, 1], 6)));
     this.drawers = [0, 1].map(() => scene.add.sprite(0, 0, 'tech_drawer', 0).setOrigin(1, 0.5).setDepth(-0.3));
@@ -73,6 +81,7 @@ export class TechDebt extends Boss {
     this.beam = scene.add.tileSprite(0, 0, 32, 8, 'tech_laser').setOrigin(0, 0.5).setDepth(2).setVisible(false);
     this.beamGroup.add(this.beam);
     (this.beam.body as Phaser.Physics.Arcade.Body).enable = false;
+    (this.beam.body as Phaser.Physics.Arcade.Body).moves = false;
   }
 
   /** Lays the wall out against the arena's right side (the arena is only known now). */
@@ -128,6 +137,7 @@ export class TechDebt extends Boss {
       this.scene.events.emit('bossSfx', 'cardShot');
     }
     if (out.summon) this.scene.events.emit('bossSummon', 'deprecatedBot', this.faceLeft - 24, this.floorY);
+    this.cue.step({x:this.faceLeft-28,y:this.floorY-DRAWER_LOW,color:COMBAT_ART.metal,release:!!out.cards?.length});
   }
 
   /** Out of health in phase 1: the wall breaks and the core flies (instead of dying). */
@@ -148,8 +158,9 @@ export class TechDebt extends Boss {
     const cy = this.y - (48 * CRT_SCALE) / 2;
     this.setScale(1).setTexture('boss_tech_core', 0);
     this.body.setSize(CORE_BODY, CORE_BODY, false);
-    this.body.setOffset((64 - CORE_BODY) / 2, 64 - CORE_BODY - 10);
+    this.body.setOffset((64 - CORE_BODY) / 2, (64 - CORE_BODY) / 2);
     this.setPosition(cx, cy + CORE_HALF);
+    syncBodyTransform(this);
     this.scene.events.emit('bossPhase', 2);
     return true;
   }
@@ -157,7 +168,7 @@ export class TechDebt extends Boss {
   // ---------------------------------------------------------------- phase 2
 
   private thinkCore(): void {
-    const centre = { x: this.x, y: this.y - CORE_HALF };
+    const centre = { x: this.body.center.x, y: this.body.center.y };
     const out = stepCore(this.core, {
       x: centre.x,
       bob: this.getBob(),
@@ -166,23 +177,31 @@ export class TechDebt extends Boss {
       floorY: this.floorY,
       hp: this.hpFraction,
     });
-    const dx = out.target.x - centre.x;
-    const dy = out.target.y - centre.y;
+    const charging = this.core.state === 'charge';
+    if (charging && !this.wasCharging) this.chargeTarget = out.target;
+    const target = charging ? (this.chargeTarget ?? out.target) : out.target;
+    const dx = target.x - centre.x;
+    const dy = target.y - centre.y;
     const d = Math.hypot(dx, dy);
-    const speed = this.core.state === 'charge' ? CORE_SPEED * 2 : CORE_SPEED;
-    if (d < 2 || this.core.state === 'fire') this.body.setVelocity(0, 0);
-    else this.body.setVelocity((dx / d) * Math.min(speed, d * 60), (dy / d) * Math.min(speed, d * 60));
+    const duration = LASER_CHARGE[this.core.fury ? 1 : 0];
+    if (charging) {
+      const velocity = chargeVelocity(centre,target,duration-this.core.frames);
+      this.body.setVelocity(velocity.x,velocity.y);
+    } else if (d < 2 || this.core.state === 'fire') this.body.setVelocity(0, 0);
+    else this.body.setVelocity((dx / d) * Math.min(CORE_SPEED, d * 60), (dy / d) * Math.min(CORE_SPEED, d * 60));
     if (!this.isFlashing) this.setFrame(out.frame);
     this.setFlipX(this.core.facing > 0); // the sheet faces left
 
-    const charging = this.core.state === 'charge';
     if (charging && !this.wasCharging) this.scene.events.emit('bossSfx', 'laserCharge');
     this.wasCharging = charging;
     const firing = out.beam !== undefined;
     if (firing && !this.wasFiring) this.scene.events.emit('bossSfx', 'laser');
+    const released = firing && !this.wasFiring;
     this.wasFiring = firing;
     this.setBeam(out.beam);
     if (out.patch) this.firePatch(out.patch, centre);
+    this.cue.step({x:this.body.center.x,y:this.body.center.y,color:COMBAT_ART.metal,
+      release:released||!!out.patch,...(charging?{charge:this.core.frames/duration}:{})});
   }
 
   /** The laser: from the core's front across the room to the far wall, at height `y`. */
@@ -194,15 +213,15 @@ export class TechDebt extends Boss {
       return;
     }
     const dir = this.core.facing;
-    const from = this.x + dir * 24;
-    const to = dir > 0 ? this.arenaRight - 16 : this.arenaLeft + 16;
+    const from = Math.round(this.body.center.x + dir * 24);
+    const to = Math.round(dir > 0 ? this.arenaRight - 16 : this.arenaLeft + 16);
     const left = Math.min(from, to);
     const w = Math.abs(to - from);
     this.beam.setPosition(left, y).setSize(w, 8).setVisible(true);
     this.beam.tilePositionX += 4 * dir;
     body.enable = true;
-    body.setSize(w, 6);
-    body.reset(left, y - 3);
+    body.setSize(w, 6, false).setOffset(0, 1);
+    body.updateFromGameObject();
   }
 
   private firePatch(patch: Patch, at: { x: number; y: number }): void {
@@ -240,6 +259,7 @@ export class TechDebt extends Boss {
     const s = this.shots.create(x, y, key, 0) as Phaser.Physics.Arcade.Sprite;
     s.setDepth(2).setData('damage', damage).setFlipX(vx < 0 && key === 'tech_card');
     (s.body as Phaser.Physics.Arcade.Body).setSize(Math.min(12, s.width), Math.min(10, s.height)).setAllowGravity(false).setVelocity(vx, vy);
+    if (key === 'memory_goo' || key === 'null_cursor') s.play(loopAnim(this.scene, key, [0, 1], 10));
     return s;
   }
 
@@ -257,6 +277,7 @@ export class TechDebt extends Boss {
   }
 
   protected override onDefeated(): void {
+    this.cue.clear();
     this.shots.clear(true, true);
     this.setBeam(undefined);
   }
