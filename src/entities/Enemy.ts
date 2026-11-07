@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { ENEMIES, type EnemyStats, HIT_FLASH_FRAMES } from '../data/enemies';
 import type { EnemyKind } from '../stages/map';
 import { playOnce } from './effects';
+import type { ShotKind } from './EnemyShot';
 
 /** What enemies may ask the stage about the world around them. */
 export interface EnemyWorld {
@@ -9,8 +10,8 @@ export interface EnemyWorld {
   floorAt(x: number, y: number): boolean;
   /** Bob's hitbox center, or null while he is dead. */
   bob(): { x: number; y: number } | null;
-  /** Launch a memory block (Heap Crab) from (x, y). */
-  throwBlock(x: number, y: number, vx: number, vy: number): void;
+  /** Launch an enemy projectile from (x, y). */
+  shoot(kind: ShotKind, x: number, y: number, vx: number, vy: number): void;
 }
 
 /**

@@ -21,6 +21,10 @@ export const ENEMIES: Record<EnemyKind, EnemyStats> = {
   drip: { sheet: 'enemy_drip', hp: 2, contact: 3, body: [14, 18], speed: 24 },
   // E4 (Memory Leak): walks sideways, stops to lob a memory block at Bob. Frames: walk A, walk B, throw.
   heapCrab: { sheet: 'enemy_heap_crab', hp: 4, contact: 3, body: [28, 20], speed: 20 },
+  // E5 (Race Condition): revs up and rushes along the floor. Frames: roll A, roll B, brake.
+  threadRunner: { sheet: 'enemy_thread_runner', hp: 3, contact: 3, body: [24, 18], speed: 210 },
+  // E6 (Race Condition): wall turret that fires clock-hand spikes. Frames: idle, charging, fire.
+  clockSpike: { sheet: 'enemy_clock_spike', hp: 4, contact: 2, body: [22, 22], speed: 0 },
 };
 
 // --- Spam Drone behaviour ---
@@ -63,3 +67,24 @@ export const BLOCK_GRAVITY = 600;
 export const BLOCK_MAX_VX = 140;
 export const BLOCK_MAX_VY = 320;
 export const BLOCK_DAMAGE = 2;
+
+// --- Thread Runner behaviour ---
+/** Bob within this horizontal distance, and about level with it, sets it off. */
+export const RUNNER_SIGHT_X = 170;
+export const RUNNER_SIGHT_Y = 28;
+/** Revving in place before the rush (the warning), braking after it, and rest before the next. */
+export const RUNNER_REV_FRAMES = 16;
+export const RUNNER_BRAKE_FRAMES = 14;
+export const RUNNER_REST_FRAMES = 30;
+/** Rush speed, px/s. */
+export const RUNNER_RUSH_SPEED = 210;
+
+// --- Clock Spike behaviour ---
+/** Bob within this horizontal distance, in front of it and about level, is shot at. */
+export const SPIKE_SIGHT_X = 220;
+export const SPIKE_SIGHT_Y = 40;
+export const SPIKE_CHARGE_FRAMES = 30;
+export const SPIKE_FIRE_FRAMES = 10;
+export const SPIKE_COOLDOWN_FRAMES = 80;
+export const SPIKE_SHOT_SPEED = 150;
+export const SPIKE_SHOT_DAMAGE = 3;

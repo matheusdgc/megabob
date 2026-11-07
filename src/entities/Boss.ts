@@ -178,10 +178,14 @@ export abstract class Boss extends Phaser.Physics.Arcade.Sprite {
   private onDie(): void {
     const { x, y } = this.body.center;
     playOnce(this.scene, 'fx_boss_explosion', x, y, 12);
+    this.onDefeated();
     this.setVisible(false);
     this.body.enable = false;
     this.scene.events.emit('bossDefeated');
   }
+
+  /** Subclasses clear their projectiles here. */
+  protected onDefeated(): void {}
 
   /** Restart the encounter (Bob died). Subclasses clean up their state then call super. */
   reset(): void {

@@ -37,6 +37,6 @@ export class HeapCrab extends Enemy {
     this.setFrame(out.frame);
     // the sheet faces right
     this.setFlipX(this.ai.facing < 0);
-    if (out.throw) this.world.throwBlock(this.x + this.ai.facing * HAND_X, hand.y, out.throw.vx, out.throw.vy);
+    if (out.throw) this.world.shoot('block', this.x + this.ai.facing * HAND_X, hand.y, out.throw.vx, out.throw.vy);
   }
 }

@@ -6,6 +6,8 @@ import { loopAnim } from '../effects';
 import { Enemy, type EnemyWorld } from '../Enemy';
 import { Drip } from './Drip';
 import { HeapCrab } from './HeapCrab';
+import { ClockSpike } from './ClockSpike';
+import { ThreadRunner } from './ThreadRunner';
 
 /** E1 Pixel Mite: crawls along floors, turning at walls and ledges. */
 export class PixelMite extends Enemy {
@@ -67,5 +69,9 @@ export function createEnemy(kind: EnemyKind, scene: Phaser.Scene, x: number, y: 
       return new Drip(scene, x, y, world);
     case 'heapCrab':
       return new HeapCrab(scene, x, y, world);
+    case 'threadRunner':
+      return new ThreadRunner(scene, x, y, world);
+    case 'clockSpike':
+      return new ClockSpike(scene, x, y, world);
   }
 }

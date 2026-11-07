@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseMap } from '../src/stages/map';
 import { STAGES } from '../src/stages/stages';
+import { withMovers } from '../src/systems/movers';
 import { jumpMetrics, reachable, ReachSim } from '../src/systems/reach';
 
 /** A 30-wide strip: floor on the bottom two rows, `gap` empty columns from column 10. */
@@ -86,6 +87,7 @@ describe('conveyors', () => {
 describe.each(Object.values(STAGES))('critical path of stage $id', (def) => {
   // a full search of a stage takes seconds
   it('goes from the spawn to the boss door by plain play, with slack and no dash', { timeout: 30000 }, () => {
-    expect(reachable(parseMap(def.map), { airControl: 0.75 }).door).toBe(true);
+    // moving platforms count along their whole path (Bob can wait for them; timing is a playtest)
+    expect(reachable(withMovers(parseMap(def.map), def.movers ?? []), { airControl: 0.75 }).door).toBe(true);
   });
 });

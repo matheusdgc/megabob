@@ -2,11 +2,13 @@ import type { MusicId } from '../data/music';
 import type { BossId } from '../data/weapons';
 import type { Section } from '../systems/camera';
 import type { GooDef } from '../systems/goo';
+import type { MoverDef } from '../systems/movers';
 import { PLAIN_SKIN, STAGE_SKIN, type TileSkin } from './autotile';
 import { MEMORY_LEAK_GOO, MEMORY_LEAK_MAP, MEMORY_LEAK_SECTIONS } from './memoryLeak';
+import { RACE_CONDITION_MAP, RACE_CONDITION_MOVERS, RACE_CONDITION_SECTIONS } from './raceCondition';
 import { TEST_MAP, TEST_SECTIONS } from './test';
 
-export type StageId = 'test' | 'memoryLeak';
+export type StageId = 'test' | 'memoryLeak' | 'raceCondition';
 
 /**
  * Everything a stage is, as data: the StageScene only builds what this describes, so a new
@@ -32,6 +34,8 @@ export interface StageDef {
   readonly bossMusic: MusicId;
   /** Rising goo in one section (Memory Leak). */
   readonly goo?: GooDef;
+  /** Moving platforms (Race Condition). */
+  readonly movers?: readonly MoverDef[];
 }
 
 export const STAGES: Record<StageId, StageDef> = {
@@ -59,6 +63,20 @@ export const STAGES: Record<StageId, StageDef> = {
     music: 'memoryLeak',
     bossMusic: 'boss',
     goo: MEMORY_LEAK_GOO,
+  },
+  raceCondition: {
+    id: 'raceCondition',
+    name: 'RACE CONDITION',
+    map: RACE_CONDITION_MAP,
+    sections: RACE_CONDITION_SECTIONS,
+    boss: 'raceCondition',
+    tileset: 'tiles_race_condition',
+    skin: STAGE_SKIN,
+    parallax: ['t2_race_condition_far_wide', 't2_race_condition_mid_wide', 't2_race_condition_near_wide'],
+    background: '#1a0b08',
+    music: 'raceCondition',
+    bossMusic: 'boss',
+    movers: RACE_CONDITION_MOVERS,
   },
 };
 

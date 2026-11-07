@@ -8,6 +8,7 @@ import { createBoss } from '../entities/bosses';
 import { Checkpoint } from '../entities/Checkpoint';
 import { Enemy, type EnemyWorld } from '../entities/Enemy';
 import { EnemyShot } from '../entities/EnemyShot';
+import { MovingPlatform } from '../entities/MovingPlatform';
 import { loopAnim, playOnce } from '../entities/effects';
 import { Feedback } from '../entities/feedback';
 import { GameAudio, loadMusic } from '../audio';
@@ -55,7 +56,7 @@ interface RespawnPoint {
 }
 
 /** Scene events that must not outlive one run of the stage (Phaser keeps them across restarts). */
-const RUN_EVENTS = ['bossIntro', 'bossHurt', 'bossDefeated', 'bossRoomUnlocked', 'gameOver'] as const;
+const RUN_EVENTS = ['bossIntro', 'bossHurt', 'bossSfx', 'bossDefeated', 'bossRoomUnlocked', 'gameOver'] as const;
 
 /**
  * A playable stage, built from its `StageDef` (map, camera sections, boss, tileset).
@@ -78,6 +79,7 @@ export class StageScene extends Phaser.Scene {
   private grid!: number[][];
   /** Conveyor tiles, animated on the logic tick. */
   private conveyors!: Phaser.Tilemaps.Tile[];
+  private movers!: MovingPlatform[];
   private ticks!: number;
   private hud!: Hud;
   private fx!: Feedback;
@@ -131,6 +133,7 @@ export class StageScene extends Phaser.Scene {
     this.pauseLock = 0;
     this.over = false;
     this.conveyors = [];
+    this.movers = [];
     this.ticks = 0;
   }
 
@@ -185,6 +188,8 @@ export class StageScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, parsed.cols * TILE, this.worldHeight);
     this.player = new Player(this, this.respawnAt.x, this.respawnAt.y);
     this.physics.add.collider(this.player, layer);
+    this.movers = (this.def.movers ?? []).map((m) => new MovingPlatform(this, m));
+    if (this.movers.length) this.physics.add.collider(this.player, this.movers);
     if (this.door) this.physics.add.collider(this.player, this.door);
     this.player.solidAt = (x, y) => isSolid(this.cellAt(x, y));
     this.player.on('deathDone', () => this.afterDeath());
@@ -247,6 +252,7 @@ export class StageScene extends Phaser.Scene {
 
     // A fresh boss spawns each time the door shuts behind Bob (Bob's death removes the old one)
     this.events.on('bossIntro', () => this.spawnBoss());
+    this.events.on('bossSfx', (id: SfxId) => this.sfx(id));
     this.events.on('bossHurt', () => {
       this.fx.play('bossHit');
       this.sfx('bossHit');
@@ -292,6 +298,7 @@ export class StageScene extends Phaser.Scene {
     // a conveyor under Bob's feet carries him (only while he stands on it)
     const b0 = p.body;
     p.step(input, b0.blocked.down ? conveyorUnder((x, y) => this.cellAt(x, y), b0.left, b0.right, b0.bottom) * CONVEYOR_SPEED : 0);
+    for (const m of this.movers) m.step();
     if (++this.ticks % CONVEYOR_ANIM_FRAMES === 0 && this.conveyors.length) {
       const [a, b] = this.def.skin.conveyor;
       for (const t of this.conveyors) t.index = t.index === a ? b : a;
@@ -421,9 +428,9 @@ export class StageScene extends Phaser.Scene {
         return isFloor(this.cellAt(x, y));
       },
       bob: () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
-      throwBlock: (x, y, vx, vy) => {
-        this.enemyShots.add(new EnemyShot(this, x, y, vx, vy));
-        this.sfx('throw');
+      shoot: (kind, x, y, vx, vy) => {
+        this.enemyShots.add(new EnemyShot(this, kind, x, y, vx, vy));
+        this.sfx(kind === 'block' ? 'throw' : 'clockShot');
       },
     };
     for (const m of this.mapEnemies) {
@@ -527,7 +534,8 @@ export class StageScene extends Phaser.Scene {
     for (const h of boss.hazards) {
       track(this.physics.add.overlap(this.player, h.group, (a, b) => {
         const child = pick(a, b, isBob)[1] as Phaser.Physics.Arcade.Sprite;
-        if (!this.player.isDead && child.active) this.player.takeHit(h.damage(child), child.x);
+        const damage = child.active ? h.damage(child) : 0; // 0: harmless right now (a clone still waiting)
+        if (!this.player.isDead && damage > 0) this.player.takeHit(damage, child.x);
       }));
       track(this.physics.add.overlap(this.player.specials, h.group, (a, b) => {
         const [orb, child] = pick(a, b, isOrb);

@@ -91,6 +91,13 @@ export const SFX = {
     ],
   },
   throw: { voices: [{ wave: 'triangle', from: 300, to: 520, dur: 0.1, vol: 0.12 }], vary: 0.05 },
+  clockShot: { voices: [{ wave: 'square', from: 1800, to: 1100, dur: 0.06, vol: 0.12 }], vary: 0.05 },
+  bossDash: {
+    voices: [
+      { wave: 'noise', from: 5000, to: 800, dur: 0.3, vol: 0.18 },
+      { wave: 'sawtooth', from: 220, to: 440, dur: 0.2, vol: 0.1 },
+    ],
+  },
   blockBreak: { voices: [{ wave: 'noise', from: 1600, to: 400, dur: 0.08, vol: 0.14 }], vary: 0.08 },
   pickup: {
     voices: [

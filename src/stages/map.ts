@@ -40,7 +40,7 @@ const LEGEND: Record<string, number> = {
 };
 
 /** Enemy markers. The cell keeps the tile to its left, so markers don't punch holes. */
-export const ENEMY_MARKERS = { m: 'pixelMite', d: 'spamDrone', v: 'drip', h: 'heapCrab' } as const;
+export const ENEMY_MARKERS = { m: 'pixelMite', d: 'spamDrone', v: 'drip', h: 'heapCrab', r: 'threadRunner', k: 'clockSpike' } as const;
 export type EnemyKind = (typeof ENEMY_MARKERS)[keyof typeof ENEMY_MARKERS];
 
 /** Stage object markers (same tile rule as enemies). `B` is the bottom-left cell of the door. */

@@ -1,4 +1,15 @@
 import {
+  RUNNER_BRAKE_FRAMES,
+  RUNNER_REST_FRAMES,
+  RUNNER_REV_FRAMES,
+  RUNNER_RUSH_SPEED,
+  RUNNER_SIGHT_X,
+  RUNNER_SIGHT_Y,
+  SPIKE_CHARGE_FRAMES,
+  SPIKE_COOLDOWN_FRAMES,
+  SPIKE_FIRE_FRAMES,
+  SPIKE_SIGHT_X,
+  SPIKE_SIGHT_Y,
   BLOCK_FLIGHT_S,
   BLOCK_GRAVITY,
   BLOCK_MAX_VX,
@@ -223,5 +234,119 @@ export function stepCrab(c: Crab, s: WalkerSense, bob: { dx: number; dy: number 
     case 'recover':
       if (c.frames >= CRAB_RECOVER_FRAMES) go('walk');
       return { vx: 0, frame: 2 };
+  }
+}
+
+// ------------------------------------------------------------------ Thread Runner
+
+export type RunnerState = 'idle' | 'rev' | 'rush' | 'brake';
+
+export interface Runner {
+  state: RunnerState;
+  frames: number;
+  facing: 1 | -1;
+  rest: number;
+}
+
+export const newRunner = (): Runner => ({ state: 'idle', frames: 0, facing: -1, rest: 0 });
+
+export interface RunnerOut {
+  vx: number;
+  /** Sheet frame: 0-1 rolling, 2 braking / revving. */
+  frame: 0 | 1 | 2;
+}
+
+/**
+ * Thread Runner, one frame. Waits until Bob is in sight and about level, revs in place facing
+ * him (the warning), rushes straight at full speed until a wall or a ledge, brakes and rests.
+ * `bob` is Bob's offset from it (null while he is dead).
+ */
+export function stepRunner(r: Runner, s: WalkerSense, bob: { dx: number; dy: number } | null): RunnerOut {
+  r.frames++;
+  const go = (state: RunnerState) => {
+    r.state = state;
+    r.frames = 0;
+  };
+  switch (r.state) {
+    case 'idle':
+      if (r.rest > 0) r.rest--;
+      if (r.rest === 0 && bob && s.onGround && Math.abs(bob.dx) <= RUNNER_SIGHT_X && Math.abs(bob.dy) <= RUNNER_SIGHT_Y) {
+        if (bob.dx !== 0) r.facing = bob.dx < 0 ? -1 : 1;
+        go('rev');
+        return { vx: 0, frame: 2 };
+      }
+      return { vx: 0, frame: 0 };
+    case 'rev':
+      if (r.frames >= RUNNER_REV_FRAMES) {
+        go('rush');
+        return { vx: r.facing * RUNNER_RUSH_SPEED, frame: 0 };
+      }
+      return { vx: 0, frame: Math.floor(r.frames / 3) % 2 === 0 ? 2 : 1 };
+    case 'rush':
+      if (s.wallAhead || !s.floorAhead) {
+        go('brake');
+        return { vx: 0, frame: 2 };
+      }
+      return { vx: r.facing * RUNNER_RUSH_SPEED, frame: Math.floor(r.frames / 3) % 2 === 0 ? 0 : 1 };
+    case 'brake':
+      if (r.frames >= RUNNER_BRAKE_FRAMES) {
+        r.facing = r.facing === 1 ? -1 : 1;
+        r.rest = RUNNER_REST_FRAMES;
+        go('idle');
+      }
+      return { vx: 0, frame: 2 };
+  }
+}
+
+// ------------------------------------------------------------------ Clock Spike
+
+export type SpikeState = 'idle' | 'charge' | 'fire';
+
+export interface Spike {
+  state: SpikeState;
+  frames: number;
+  cooldown: number;
+  /** The open side it faces (it is mounted on the other). */
+  facing: 1 | -1;
+}
+
+export const newSpike = (facing: 1 | -1): Spike => ({ state: 'idle', frames: 0, cooldown: 30, facing });
+
+export interface SpikeOut {
+  /** Sheet frame: 0 idle, 1 charging, 2 fire. */
+  frame: 0 | 1 | 2;
+  /** True on the frame it fires (straight along `facing`). */
+  fire: boolean;
+}
+
+/**
+ * Clock Spike, one frame. When Bob is in front of it, about level and within range, it charges
+ * (the hand spins and the face flashes), fires one spike straight ahead, then cools down.
+ */
+export function stepSpike(k: Spike, bob: { dx: number; dy: number } | null): SpikeOut {
+  k.frames++;
+  if (k.cooldown > 0) k.cooldown--;
+  const go = (state: SpikeState) => {
+    k.state = state;
+    k.frames = 0;
+  };
+  switch (k.state) {
+    case 'idle': {
+      const inFront = bob && bob.dx * k.facing > 0 && Math.abs(bob.dx) <= SPIKE_SIGHT_X && Math.abs(bob.dy) <= SPIKE_SIGHT_Y;
+      if (k.cooldown === 0 && inFront) go('charge');
+      return { frame: 0, fire: false };
+    }
+    case 'charge':
+      if (k.frames >= SPIKE_CHARGE_FRAMES) {
+        go('fire');
+        return { frame: 2, fire: true };
+      }
+      return { frame: Math.floor(k.frames / 4) % 2 === 0 ? 1 : 0, fire: false };
+    case 'fire':
+      if (k.frames >= SPIKE_FIRE_FRAMES) {
+        k.cooldown = SPIKE_COOLDOWN_FRAMES;
+        go('idle');
+      }
+      return { frame: 2, fire: false };
   }
 }
