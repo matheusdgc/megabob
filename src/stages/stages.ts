@@ -1,3 +1,4 @@
+import type { MusicId } from '../data/music';
 import type { BossId } from '../data/weapons';
 import type { Section } from '../systems/camera';
 import type { GooDef } from '../systems/goo';
@@ -26,6 +27,9 @@ export interface StageDef {
   readonly parallax?: readonly string[];
   /** Camera background color behind everything. */
   readonly background?: string;
+  /** Stage music, and the boss fight's (hard cut when the door shuts). */
+  readonly music: MusicId;
+  readonly bossMusic: MusicId;
   /** Rising goo in one section (Memory Leak). */
   readonly goo?: GooDef;
 }
@@ -39,6 +43,8 @@ export const STAGES: Record<StageId, StageDef> = {
     boss: 'memoryLeak',
     tileset: 'tiles_test',
     skin: PLAIN_SKIN,
+    music: 'memoryLeak',
+    bossMusic: 'boss',
   },
   memoryLeak: {
     id: 'memoryLeak',
@@ -50,6 +56,8 @@ export const STAGES: Record<StageId, StageDef> = {
     skin: STAGE_SKIN,
     parallax: ['t1_memory_leak_far_wide', 't1_memory_leak_mid_wide', 't1_memory_leak_near_wide'],
     background: '#0a1a1d',
+    music: 'memoryLeak',
+    bossMusic: 'boss',
     goo: MEMORY_LEAK_GOO,
   },
 };

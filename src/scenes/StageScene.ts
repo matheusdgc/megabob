@@ -9,6 +9,8 @@ import { Enemy, type EnemyWorld } from '../entities/Enemy';
 import { EnemyShot } from '../entities/EnemyShot';
 import { playOnce } from '../entities/effects';
 import { Feedback } from '../entities/feedback';
+import { GameAudio, loadMusic } from '../audio';
+import type { SfxId } from '../data/sfx';
 import { createEnemy } from '../entities/enemies';
 import { Pickup } from '../entities/Pickup';
 import type { Projectile } from '../entities/Projectile';
@@ -73,6 +75,7 @@ export class StageScene extends Phaser.Scene {
   private grid!: number[][];
   private hud!: Hud;
   private fx!: Feedback;
+  private audio!: GameAudio | null;
   private parallax!: Phaser.GameObjects.TileSprite[];
   /** Rising goo: its sprite, and frames since Bob entered its section. */
   private goo?: Phaser.GameObjects.TileSprite;
@@ -117,8 +120,14 @@ export class StageScene extends Phaser.Scene {
     this.gooFrames = 0;
   }
 
+  preload(): void {
+    loadMusic(this, [this.def.music, this.def.bossMusic]);
+  }
+
   create(): void {
     this.fx = new Feedback(this);
+    this.audio = GameAudio.of(this.game);
+    this.audio?.music.play(this.def.music, 400);
     const parsed = parseMap(this.def.map);
     this.sections = sectionsFromTiles(this.def.sections, TILE);
     this.worldHeight = parsed.rows * TILE;
@@ -161,11 +170,20 @@ export class StageScene extends Phaser.Scene {
     if (this.door) this.physics.add.collider(this.player, this.door);
     this.player.solidAt = (x, y) => this.cellAt(x, y) === T.solid;
     this.player.on('deathDone', () => this.afterDeath());
-    this.player.on('hurt', () => this.fx.play('bobHurt'));
-    this.player.on('died', () => this.fx.play('bobDeath'));
+    this.player.on('sfx', (id: SfxId) => this.sfx(id));
+    this.player.on('hurt', () => {
+      this.fx.play('bobHurt');
+      this.sfx('hurt');
+    });
+    this.player.on('died', () => {
+      this.fx.play('bobDeath');
+      this.audio?.music.stop();
+      this.sfx('death');
+    });
     this.player.on('landed', (x: number, y: number) => {
       playOnce(this, 'fx_land_dust', x, y - 8, 20);
       this.fx.play('land');
+      this.sfx('land');
     });
     this.player.arsenal = newArsenal(this.registry.get(OWNED_WEAPONS) ?? []);
     this.player.applyWeaponTint();
@@ -178,6 +196,7 @@ export class StageScene extends Phaser.Scene {
     const isShot = (o: unknown): o is EnemyShot => o instanceof EnemyShot;
     const breakShot = (shot: EnemyShot) => {
       playOnce(this, 'fx_hit', shot.x, shot.y, 20);
+      this.sfx('blockBreak');
       shot.destroy();
     };
     this.physics.add.collider(this.enemyShots, layer, (a, b) => breakShot(pick(a, b, isShot)[0]));
@@ -209,9 +228,15 @@ export class StageScene extends Phaser.Scene {
 
     // A fresh boss spawns each time the door shuts behind Bob (Bob's death removes the old one)
     this.events.on('bossIntro', () => this.spawnBoss());
-    this.events.on('bossHurt', () => this.fx.play('bossHit'));
+    this.events.on('bossHurt', () => {
+      this.fx.play('bossHit');
+      this.sfx('bossHit');
+    });
     this.events.once('bossDefeated', () => {
       this.fx.play('bossDefeated');
+      this.audio?.music.stop();
+      this.sfx('bossExplosion');
+      this.time.delayedCall(1200, () => this.audio?.sfx.jingle('bossDefeated'));
       this.onBossDefeated();
     });
 
@@ -256,9 +281,14 @@ export class StageScene extends Phaser.Scene {
         p.touchSpikes();
       }
       for (const c of this.checkpoints) {
-        if (c.check(box)) this.respawnAt = { ...c.spot, section: this.section };
+        if (c.check(box)) {
+          this.respawnAt = { ...c.spot, section: this.section };
+          this.sfx('checkpoint');
+        }
       }
+      const doorWas = this.door?.state;
       if (this.door?.step(box) === 'shut') this.events.emit('bossIntro');
+      if (doorWas !== this.door?.state && (this.door?.state === 'opening' || this.door?.state === 'closing')) this.sfx('door');
       const next = sectionAt(this.sections, b.center.x, b.center.y, this.section);
       if (next !== this.section) this.enterSection(next, false);
     }
@@ -328,7 +358,10 @@ export class StageScene extends Phaser.Scene {
         return t === T.solid || t === T.platform;
       },
       bob: () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
-      throwBlock: (x, y, vx, vy) => this.enemyShots.add(new EnemyShot(this, x, y, vx, vy)),
+      throwBlock: (x, y, vx, vy) => {
+        this.enemyShots.add(new EnemyShot(this, x, y, vx, vy));
+        this.sfx('throw');
+      },
     };
     for (const m of this.mapEnemies) {
       if (m.section !== section) continue;
@@ -342,6 +375,7 @@ export class StageScene extends Phaser.Scene {
     if (!shot.active || !enemy.active) return;
     const killed = enemy.hurt(shot.damage);
     if (killed) this.fx.play('enemyKilled');
+    this.sfx(killed ? 'explosion' : 'enemyHit');
     playOnce(this, shot.level === 3 ? 'fx_compiler_hit' : 'fx_hit', shot.x, shot.y, 20);
     // charged shots (level 2+) pass through enemies they destroy
     if (!(killed && shot.level >= 2)) shot.disableBody(true, true);
@@ -371,6 +405,7 @@ export class StageScene extends Phaser.Scene {
         refill(this.player.arsenal, item.amount);
     }
     item.destroy();
+    this.sfx('pickup');
   }
 
   /** Bob back at the last checkpoint (or the stage start), boss door closed again. */
@@ -380,7 +415,12 @@ export class StageScene extends Phaser.Scene {
     if (this.door && this.door.state !== 'closed') this.door.reset();
     // like the genre: the fight starts over from scratch next time the door shuts
     if (this.boss && this.boss.phase !== 'dead') this.despawnBoss();
+    this.audio?.music.play(this.def.music); // restarts from the top, like the genre
     this.enterSection(r.section, true);
+  }
+
+  private sfx(id: SfxId): void {
+    this.audio?.sfx.play(id);
   }
 
   /** Remove the boss, its goo, its health bar and every overlap tied to it. */
@@ -395,6 +435,12 @@ export class StageScene extends Phaser.Scene {
 
   private spawnBoss(): void {
     if (this.boss) return; // already spawned (shouldn't happen, but be safe)
+    // a hard cut: the alarm, then the boss theme
+    this.audio?.music.stop();
+    const alarm = this.audio?.sfx.jingle('warning') ?? 0;
+    this.time.delayedCall(alarm * 1000, () => {
+      if (this.boss?.phase !== 'dead' && !this.player.isDead) this.audio?.music.play(this.def.bossMusic);
+    });
     // centre of the boss room, feet on its floor (the bottom two rows are ground)
     const room = this.sections[this.bossRoom]!;
     const boss = new MemoryLeak(

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { bobKey } from '../data/assets';
 import { WEAPONS, type WeaponId } from '../data/weapons';
+import { GameAudio } from '../audio';
 import { GameInput } from '../systems/input';
 
 /** Registry key holding the weapons Bob has won (until the save system, T13). */
@@ -62,6 +63,7 @@ export class WeaponGetScene extends Phaser.Scene {
     this.add.text(w / 2 - 40, h / 2 + 18, 'Q / E  switch weapons', { ...font, fontSize: '8px', color: '#a8a8a8' });
     const prompt = this.add.text(w / 2, h / 2 + 48, 'PRESS Z', { ...font, fontSize: '8px' }).setOrigin(0.5).setVisible(false);
 
+    GameAudio.of(this.game)?.sfx.jingle('weaponGet');
     this.controls = new GameInput(this);
     this.time.delayedCall(MIN_MS, () => {
       this.ready = true;

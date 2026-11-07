@@ -66,6 +66,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private deathFrames = 0;
   /** Frames since Bob last stood on the ground (for the landing puff). */
   private airFrames = 0;
+  /** Charge level shown last frame (a rise plays the charge sound). */
+  private shownCharge = 0;
   private readonly decompile: Phaser.GameObjects.Sprite;
   /** Bob's live shots (pooled); enemies overlap against this group. */
   readonly shots: Phaser.Physics.Arcade.Group;
@@ -171,6 +173,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       if (this.airFrames >= LAND_DUST_FRAMES) this.emit('landed', this.x, this.y);
       this.airFrames = 0;
     } else this.airFrames += 1;
+    const before = this.motion.state;
     const out = stepMotion(this.motion, input, {
       onGround: body.blocked.down,
       vy: body.velocity.y,
@@ -180,6 +183,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     body.setVelocityX(out.vx);
     if (out.vy !== undefined) body.setVelocityY(out.vy);
     body.setAllowGravity(out.gravity);
+    const now = this.motion.state;
+    if (now !== before || (now === 'jump' && this.motion.stateFrames === 0)) {
+      if (now === 'jump') this.emit('sfx', 'jump');
+      else if (now === 'dash' || now === 'airdash') this.emit('sfx', 'dash');
+    }
     // a jump clipping a ceiling corner by a few px slides past it instead of stopping dead
     if (this.solidAt && body.velocity.y < 0) {
       const dy = (body.velocity.y + (out.gravity ? GRAVITY / 60 : 0)) / 60;
@@ -207,7 +215,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       if (this.buster.pose > 0) this.buster.pose--;
       if (!hurt && input.justPressed('shoot')) this.fireSpecial();
     }
-    this.showEffects(chargeLevel(this.buster.charge, maxLevel));
+    const charge = chargeLevel(this.buster.charge, maxLevel);
+    if (charge > this.shownCharge) this.emit('sfx', charge === 1 ? 'chargeReady' : 'chargeFull');
+    this.shownCharge = charge;
+    this.showEffects(charge);
     this.show(bobPose(this.motion, body.velocity.y, this.buster.pose > 0));
     // blink while invulnerable
     const inv = this.health.invuln;
@@ -234,6 +245,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.buster.charge = 0;
     this.applyWeaponTint();
     this.emit('weaponChanged', this.arsenal.current);
+    this.emit('sfx', 'weaponSwitch');
   }
 
   /** Tints Bob with the equipped weapon's colors (the buster shows his own). */
@@ -250,6 +262,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const orb = this.specials.get() as GcOrb | null;
     orb?.fire(this.body.center.x + o.dx, this.body.bottom + o.dy, o.dir);
     this.buster.pose = SHOOT_POSE_FRAMES;
+    this.emit('sfx', 'garbageCollector');
   }
 
   private fire(level: ShotLevel): void {
@@ -257,6 +270,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const o = shotOrigin(this.motion);
     const shot = this.shots.get() as Projectile | null;
     shot?.fire(this.body.center.x + o.dx, this.body.bottom + o.dy, o.dir, level);
+    this.emit('sfx', level === 0 ? 'shoot' : level === 3 ? 'shootFull' : 'shootCharged');
     this.muzzleFrames = MUZZLE_FRAMES;
     this.muzzle.setFlipX(o.dir < 0).play(fxAnim(this.scene, 'fx_muzzle', 30, 0));
   }
