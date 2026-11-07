@@ -1,6 +1,6 @@
 # Handoff: estado do projeto
 
-> Atualizado em 07/11/2026, no fim da T18/T19 e da revisão de level design das fases 1–3 (editor). Branch `dev`.
+> Atualizado em 07/11/2026, no fim da T20 (editor). Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)
@@ -30,6 +30,7 @@
 | T16/T17 | Armadura: 4 Update Terminals nas fases, tela de upgrade, efeitos em `partEffects`, passagens falsas (`?`) que o Debug Visor mostra, itens fixos (`*` vida, `+` saúde). Compiler Cannon só com as Turbo Boots (teste) |
 | T18/T19 | Fortaleza Tech Debt (`src/stages/techDebt.ts`, 200×17, ≥4 inimigos por seção) com Legacy Turret (mira e atira cartão) e Deprecated Bot (escudo frontal que rebate tiro básico; carregado, armas especiais e tiro por trás passam). Chefe final em 2 fases (`src/systems/techDebtBoss.ts`, `src/entities/bosses/TechDebt.ts`): parede-mainframe que bloqueia o Bob, CRT como ponto fraco, gavetas com cartões baixos/altos, invoca bots; ao zerar a vida a parede desaba, a barra recarrega, a música muda (`bossMusic2`) e o núcleo voa com laser baixo/alto e "patches" dos 3 chefes. `Boss.nextPhase()` e `Boss.walls` para chefes com fases e paredes. Vencer grava o jogo como zerado e abre `CreditsScene` (fundo de encerramento, créditos rolando, música dos créditos, volta ao título) |
 | Revisão de level design | Fases 1–3 revistas com `level-design`/`game-ai`: descanso com saúde antes de toda porta de chefe (teste), rota alta na Race Condition A, Null Pointer com uma garra só sob o teto baixo (garras a ≥5 tiles, teste), plataforma de blocos que somem no fosso de B e pedras que somem sobre o poço em C; Void Eye nunca reaparece a menos de 48 px do Bob (teste). A cortina de lodo do nicho do Compiler Cannon ficou: lê como lodo escorrendo pela moldura da porta |
+| T20 | Música e licenças: cada cena toca sua faixa (título, seleção, fase, alarme + chefe, `bossMusic2` na fase 2 do Tech Debt, créditos), e nenhuma transição sobrepõe duas músicas (`MusicPlayer` para a anterior antes de tocar). A fortaleza já carrega a faixa dos créditos. Licenças conferidas nas páginas originais: 6 faixas CC0 do OpenGameArt (arquivos idênticos byte a byte), 3 do Pixabay e a CYBER_CELESTE em **CC-BY 4.0** (crédito obrigatório, com fonte, link da licença e aviso de alteração). Tabela como dado em `src/data/credits.ts` (`MUSIC_CREDITS`); os créditos (`CREDITS`, saiu da cena) são gerados dela, e `tests/credits.test.ts` exige crédito para toda faixa do manifesto e linhas que caibam na janela |
 
 Validação da revisão visual atual: testes TypeScript e 24 testes Python passando; typecheck e build também passam. O smoke test confere 269 texturas, ciclos do Bob, apresentação do Memory Leak e estados dos checkpoints/porta no Phaser, sem erros ou avisos. O checker do título também confere a variante refinada do Bob e os retornos por teclado.
 
@@ -41,13 +42,12 @@ Validação da revisão visual atual: testes TypeScript e 24 testes Python passa
 - **Pedido novo:** uma tela de configuração para remapear teclas e botões. Virou a T13b em `tasks/todo.md`, depois da T13 (título, save e pausa), porque depende do save e dos menus.
 - **Arte bruta fora do git:** `art/raw/enemies/`, `fx/`, `bosses/`, `bg/`, `tiles/` e `ui/`. A geração do lote terminou; fontes preservadas durante a importação. Confirme com o usuário antes de commitar essas pastas. Os arquivos processados ficam em `public/assets/`.
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
-- **Licenças da trilha:** o usuário pediu para ignorar por enquanto. Faltam as faixas 05, 07, 08 e 09 em `docs/soundtrack.md`.
 
-## Próximo passo: T20 (música em todas as cenas e licenças nos créditos), depois Checkpoint 5 (partida completa)
+## Próximo passo: Checkpoint 5 (partida completa, do título aos créditos, jogada pelo usuário), depois T21–T23
 
 - **Checkpoint 3:** o usuário joga a Memory Leak de ponta a ponta e ganha o Garbage Collector. O caminho crítico foi provado por `tests/reach.test.ts`, e cada seção, os inimigos, o lodo e a luta foram conferidos no Edge, mas ninguém jogou a fase inteira com as mãos. Ajustes prováveis depois de jogar: velocidade do lodo (`MEMORY_LEAK_GOO.speed`, 24 px/s desde 07/11, a pedido do usuário) e o ritmo dos inimigos (`src/data/enemies.ts`).
 - **Checkpoint 4:** os 3 chefes vencíveis em qualquer ordem, o ciclo de fraquezas (ML ← Mutex, RC ← Null Pointer, NP ← Garbage Collector) e a fortaleza liberando com 3/3 na seleção. Falta o usuário jogar as 3 fases.
-- **T20:** a música já toca em todas as cenas; falta revisar transições e completar a tabela de licenças em `docs/soundtrack.md` (faixas 05, 07, 08, 09 sem autor) e levá-la para `CREDITS` em `src/scenes/CreditsScene.ts`.
+- **Música nova:** registre autor, fonte e licença em `MUSIC_CREDITS` (`src/data/credits.ts`) e em `docs/soundtrack.md`; o teste falha sem isso. Faixa CC-BY precisa da URL da fonte.
 - **Falta jogar a fortaleza:** as 2 fases do Tech Debt e os créditos foram conferidos por script no Edge, não à mão.
 - **Falta jogar:** Race Condition (ritmo do chefe) e Null Pointer (tempo dos blocos, chefe) só foram conferidas por script.
 - **Ao criar telas:** use `uiText` (nunca `this.add.text`), `fadeIn`/`fadeTo` de `src/ui/text.ts` e `new GameInput(this, true)` em menus.

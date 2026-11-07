@@ -255,10 +255,10 @@ O núcleo voador com laser de CRT e os "patches" (ataques rápidos dos 3 chefes)
 **Verificar:** uma partida completa · **Dep.:** T18
 **Arquivos:** `src/entities/bosses/TechDebtCore.ts`, `src/scenes/CreditsScene.ts`
 
-### T20: Música em todas as cenas e créditos de áudio [S]
+### ✅ T20: Música em todas as cenas e créditos de áudio [S]
 Ligar cada cena à sua faixa do manifesto, incluindo a troca de música entre as fases 1 e 2 do Tech Debt, e listar autor, fonte e licença de cada faixa na tela de créditos.
-- [ ] Toda cena tem a música certa, e as transições não sobrepõem duas músicas
-- [ ] A tabela de licenças em `docs/soundtrack.md` está completa e aparece nos créditos
+- [x] Toda cena tem a música certa, e as transições não sobrepõem duas músicas
+- [x] A tabela de licenças em `docs/soundtrack.md` está completa e aparece nos créditos
 
 **Verificar:** percorrer todas as cenas · **Dep.:** T11, T19
 **Arquivos:** `src/data/music.ts`, `src/scenes/*.ts`, `src/scenes/CreditsScene.ts`

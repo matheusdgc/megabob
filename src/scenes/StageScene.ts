@@ -16,6 +16,7 @@ import { loopAnim, playOnce } from '../entities/effects';
 import { Feedback } from '../entities/feedback';
 import { GameAudio, loadMusic } from '../audio';
 import type { SfxId } from '../data/sfx';
+import type { MusicId } from '../data/music';
 import { createEnemy } from '../entities/enemies';
 import { Pickup } from '../entities/Pickup';
 import type { Projectile } from '../entities/Projectile';
@@ -158,7 +159,9 @@ export class StageScene extends Phaser.Scene {
   }
 
   preload(): void {
-    loadMusic(this, [this.def.music, this.def.bossMusic, ...(this.def.bossMusic2 ? [this.def.bossMusic2] : [])]);
+    // the final boss leads straight into the credits: load their track now, so it starts on cue
+    const after: MusicId[] = this.def.boss === 'techDebt' ? ['credits'] : [];
+    loadMusic(this, [this.def.music, this.def.bossMusic, ...(this.def.bossMusic2 ? [this.def.bossMusic2] : []), ...after]);
   }
 
   create(): void {

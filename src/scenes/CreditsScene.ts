@@ -1,19 +1,8 @@
 import Phaser from 'phaser';
 import { GameAudio, loadMusic } from '../audio';
+import { CREDITS } from '../data/credits';
 import { GameInput } from '../systems/input';
 import { fadeIn, fadeTo, FONT_FAMILY, UI, uiText } from '../ui/text';
-
-/** The credits, top to bottom (headings in caps, then their lines). */
-export const CREDITS: readonly (readonly [string, ...string[]])[] = [
-  ['MEGABOB', 'A 16-bit platformer', 'starring IBM Bob'],
-  ['GAME DESIGN & CODE', 'Matheus D. Gomes'],
-  ['ART', 'Sprites, tiles and scenery', 'generated with ChatGPT', 'and processed for the game'],
-  ['MUSIC', 'JPool', 'MintoDog', 'Section 31 - Tech', 'phantasticbeats', 'Kim Lightyear (lightyeartraxx)', 'retro-bgm-chan', '(full track list and licenses', 'in docs/soundtrack.md)'],
-  ['SOUND EFFECTS', 'Synthesized in code'],
-  ['ENGINE', 'Phaser 3'],
-  ['THE BUGS', 'Memory Leak', 'Race Condition', 'Null Pointer', 'Tech Debt'],
-  ['THANK YOU', 'for playing'],
-];
 
 /** Credit scroll: window (from art/exports/end-screen-layout.json) and speed. */
 const CLIP = { x: 248, y: 132, w: 216, h: 90 };

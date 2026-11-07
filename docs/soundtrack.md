@@ -10,11 +10,11 @@ Fonte: `art/raw/soundtrack/` (14 faixas). Análise feita por script (duração, 
 | 2 | Seleção de fases | `02_selecao_de_fases__Select_Mountain_120BPM.ogg` (MintoDog) | 32 s | Sol menor · 120 | Tempo médio, emenda bem no loop | loop inteiro |
 | 3 | Fase Memory Leak | `03_fase_memory_leak__Sewer_Nightclub.ogg` (Section 31 - Tech) | 140 s | Dó maior · ~112 | A mais pesada nos graves (81% da energia abaixo de 200 Hz), com groove, e vai crescendo | começa em 0 s, loop a partir de ~4 s (pula o fade-in). Pico passa de 0 dB: reduzir o ganho |
 | 4 | Fase Race Condition | `04_fase_race_condition__Castle_Stage_180BPM.ogg` (MintoDog) | 72 s | Dó# menor · 180 | A mais rápida, com intensidade constante, e emenda bem no loop | loop inteiro |
-| 5 | Fase Null Pointer | `05_fase_null_pointer__CYBER_CELESTE.mp3` | 45 s | Dó menor · ~129 | Quase sem grave (6%), etérea, em tom menor: o "vazio" combina | **muito baixa** (RMS −28 dB): subir uns 15 dB |
+| 5 | Fase Null Pointer | `05_fase_null_pointer__CYBER_CELESTE.mp3` (GloryToTheMachine, CC-BY) | 45 s | Dó menor · ~129 | Quase sem grave (6%), etérea, em tom menor: o "vazio" combina | **muito baixa** (RMS −28 dB): subir uns 15 dB |
 | 6 | Chefes (os 3) | `06_chefes__8bit_Action_Boss_Battle_145BPM.ogg` (MintoDog) | 63 s | Dó maior · 145 | Tensa e constante, emenda bem no loop | loop inteiro |
-| 7 | Fortaleza | `07_fortaleza__Last_Mission_FULL.mp3` | 124 s | Ré menor · 140 | Sombria, em tom menor e longa, para uma fase longa | reconverter (está em 320 kbps, 4,7 MB) |
+| 7 | Fortaleza | `07_fortaleza__Last_Mission_FULL.mp3` (HydroGene) | 124 s | Ré menor · 140 | Sombria, em tom menor e longa, para uma fase longa | reconverter (está em 320 kbps, 4,7 MB) |
 | 8a | **Tech Debt, fase 1** ⭐ | `08a_tech_debt_fase1__phantasticbeats-boss-fight-301722.mp3` | 121 s | Dó maior · ~96/190 | **Faixa extra aproveitada.** É o loop mais limpo do lote e tem muita energia. Dá à luta final uma música própria, diferente da dos chefes comuns | loop inteiro. Pico passa de 0 dB: reduzir o ganho |
-| 8b | Tech Debt, fase 2 | `08b_tech_debt_fase2__Final_Stand_Phase4_FinalMax.ogg` | 64 s | Ré menor · ~117 | O nome diz "fase final" e a intensidade cresce até o fim: serve para a escalada da fase 2 | subir uns 7 dB (RMS −20 dB) |
+| 8b | Tech Debt, fase 2 | `08b_tech_debt_fase2__Final_Stand_Phase4_FinalMax.ogg` (Centurion_of_war) | 64 s | Ré menor · ~117 | O nome diz "fase final" e a intensidade cresce até o fim: serve para a escalada da fase 2 | subir uns 7 dB (RMS −20 dB) |
 | 9 | Créditos | `09_creditos__lightyeartraxx-kim-lightyear-legends-109307.mp3` ⭐ | 195 s | **Dó maior** · ~129 | **Troca.** Créditos tocam uma vez e acabam, então uma faixa com fim natural (fade-out em ~185 s) é melhor que um loop. É em tom maior (a detecção de tom teve a maior confiança do lote) e o nome combina | toca uma vez, sem loop |
 
 ⭐ = sugestão minha, diferente da sua organização inicial.
@@ -35,19 +35,23 @@ Fonte: `art/raw/soundtrack/` (14 faixas). Análise feita por script (duração, 
 - **Loop:** `loopStart` em `src/data/music.ts` (a Memory Leak pula o fade-in de 4 s). O player ajusta os pontos para a emenda não estalar (`snapLoop`): o início num cruzamento por zero, o fim até 30 ms antes, onde as próximas amostras repetem as do início. Os créditos tocam uma vez.
 - **Transições:** crossfade curto ao entrar numa fase; corte seco com alarme na entrada do chefe; a morte para a música e o respawn recomeça do início.
 
-## Licenças: preencha antes de publicar
+## Licenças (T20, conferidas em 07/11/2026)
 
-Os arquivos `lightyeartraxx-*`, `phantasticbeats-*`, `retro-bgm-chan-*` e `white_records-*` seguem o padrão de nome do **Pixabay**: licença Pixabay, uso livre em projetos, sem crédito obrigatório (mas vamos creditar). As faixas 05, 07, 08 e 09 **não têm autor nos metadados**.
+Fontes conferidas nas páginas originais; as do OpenGameArt também pelo tamanho do arquivo, idêntico byte a byte ao de `art/raw/soundtrack/`. O Pixabay bloqueia acesso automático, então essas três ficam pelo ID que está no nome do arquivo. A mesma tabela, como dado, está em `src/data/credits.ts` (`MUSIC_CREDITS`), e é dela que sai a lista de músicas dos créditos; `tests/credits.test.ts` exige crédito para toda faixa do manifesto.
 
-| Faixa usada | Autor | Fonte (URL) | Licença |
-|---|---|---|---|
-| (Game-1) Theme | JPool | | |
-| Select Mountain | MintoDog | | |
-| Sewer Nightclub | Section 31 - Tech | | |
-| Castle Stage | MintoDog | | |
-| CYBER CELESTE | ? | | |
-| 8bit Action Boss Battle | MintoDog | | |
-| Last Mission | ? | | |
-| Boss Fight | phantasticbeats | Pixabay | Pixabay Content License |
-| Final Stand | ? | | |
-| Legends | Kim Lightyear (lightyeartraxx) | Pixabay | Pixabay Content License |
+| Uso | Faixa | Autor | Fonte | Licença |
+|---|---|---|---|---|
+| Título | Factory at Night | Retro-BGM-Chan | Pixabay, faixa 516327 | Pixabay Content License |
+| Seleção | Select Mountain (pacote "8bit Action Stage Select") | MintoDog | opengameart.org/content/8bit-action-stage-select | CC0 |
+| Memory Leak | Sewer Nightclub | Section 31 - Tech (s31tech.org) | opengameart.org/content/sewer-nightclub | CC0 (o autor pede crédito, opcional) |
+| Race Condition | Castle Stage | MintoDog | opengameart.org/content/castle-stage | CC0 |
+| Null Pointer | CYBER_CELESTE | GloryToTheMachine | opengameart.org/content/cyberceleste-gl0ryt0th3m4ch1n3 | **CC-BY 4.0: crédito obrigatório** |
+| Chefes | 8bit Action Boss Battle | MintoDog | opengameart.org/content/8bit-action-boss-battle | CC0 |
+| Fortaleza | 8-bit - Last Mission | HydroGene | opengameart.org/content/8-bit-last-mission | CC0 |
+| Tech Debt, fase 1 | Boss Fight | phantasticbeats | Pixabay, faixa 301722 | Pixabay Content License |
+| Tech Debt, fase 2 | Final Stand (Phase 4 FinalMax) | Centurion_of_war | opengameart.org/content/final-stand-0 | CC0 |
+| Créditos | Legends | Kim Lightyear (lightyeartraxx) | Pixabay, faixa 109307 | Pixabay Content License |
+
+- **CC-BY 4.0** (só a CYBER_CELESTE) exige autor, título, link da fonte, link da licença e aviso de alteração. Os créditos mostram tudo isso, e a linha "All tracks re-encoded, loudness-matched and looped" é o aviso de alteração. Se a faixa for trocada por outra CC-BY, o teste cobra o mesmo.
+- **CC0** e **Pixabay Content License** não exigem crédito; creditamos todas mesmo assim. A licença do Pixabay proíbe redistribuir a faixa isolada (como arquivo de música): no jogo publicado ela vai dentro do build, o que é permitido.
+- **Reservas** não estão no jogo e não precisam de crédito. Se uma voltar, entra em `MUSIC_CREDITS` (o teste falha até isso).
