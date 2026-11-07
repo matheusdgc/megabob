@@ -1,0 +1,81 @@
+{
+  "method": "SHA-256 of decoded RGBA pixels: loaded texture versus expected PNG decoded by the same browser",
+  "scenes": [
+    {
+      "scene": "Debug",
+      "verifiedTextures": 268,
+      "verifiedPngSources": 268,
+      "activeBindingsVerified": 0,
+      "placeholderControlDetected": true,
+      "alteredImageControlDetected": true
+    },
+    {
+      "scene": "Stage",
+      "verifiedTextures": 268,
+      "verifiedPngSources": 268,
+      "activeBindingsVerified": 13,
+      "placeholderControlDetected": true,
+      "alteredImageControlDetected": true
+    }
+  ],
+  "activeStageBindings": [
+    {
+      "role": "player",
+      "texture": "bob_idle"
+    },
+    {
+      "role": "enemy:drip",
+      "texture": "enemy_drip"
+    },
+    {
+      "role": "enemy:drip",
+      "texture": "enemy_drip"
+    },
+    {
+      "role": "enemy:heapCrab",
+      "texture": "enemy_heap_crab"
+    },
+    {
+      "role": "enemy:heapCrab",
+      "texture": "enemy_heap_crab"
+    },
+    {
+      "role": "checkpoint",
+      "texture": "checkpoint"
+    },
+    {
+      "role": "checkpoint",
+      "texture": "checkpoint"
+    },
+    {
+      "role": "bossDoor",
+      "texture": "boss_door"
+    },
+    {
+      "role": "parallax:0",
+      "texture": "t1_memory_leak_far_wide"
+    },
+    {
+      "role": "parallax:1",
+      "texture": "t1_memory_leak_mid_wide"
+    },
+    {
+      "role": "parallax:2",
+      "texture": "t1_memory_leak_near_wide"
+    },
+    {
+      "role": "terrain",
+      "texture": "tiles_memory_leak"
+    },
+    {
+      "role": "risingGoo",
+      "texture": "tiles_memory_leak"
+    }
+  ],
+  "controls": {
+    "generatedPlaceholderRejected": true,
+    "sameSizeAlteredImageRejected": true
+  },
+  "scope": "Registered raster assets in Debug and Memory Leak; not a complete gameplay playthrough",
+  "productionAssetsChanged": false
+}

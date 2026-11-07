@@ -7,6 +7,7 @@ import { checkAnimationLoops } from './check-animation-loops.mjs';
 import { captureStageColors } from './check-stage-colors.mjs';
 import { checkBossArt } from './check-boss-art.mjs';
 import { checkStageInteractives } from './check-stage-interactives.mjs';
+import { checkTextureSources } from './check-texture-sources.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -71,10 +72,11 @@ try {
     const png = await readFile(join(root, 'public/assets/bob', name));
     const width = png.readUInt32BE(16), height = png.readUInt32BE(20);
     if (height !== 48 || width % 48 !== 0) throw new Error(`Invalid Bob strip: ${name}`);
-    manifest.push({ key: name.slice(0, -4), frames: width / 48 });
+    manifest.push({ key: name.slice(0, -4), file: 'assets/bob/' + name,
+      frameWidth: 48, frameHeight: height, frames: width / 48 });
   }
   const scenes = [];
-  for (const [query, scene] of [['?sprites', 'Debug'], ['', 'Stage']]) {
+  for (const [query, scene] of [['?sprites', 'Debug'], ['?stage=memoryLeak', 'Stage']]) {
     await send('Page.navigate', { url: `${baseUrl}/${query}` });
     let state;
     for (let i = 0; i < 120; i++) {
@@ -89,10 +91,11 @@ try {
     if (!state?.scenes.includes(scene)) throw new Error(`${scene} did not become active`);
     const mismatches = manifest.filter((entry) => state.textures[entry.key] !== entry.frames);
     if (mismatches.length) throw new Error(`Texture layout mismatches: ${mismatches.map((e) => e.key).join(', ')}`);
+    const sourceAudit = await checkTextureSources(send, manifest, baseUrl, output, scene);
     await sleep(300);
     const screenshot = await send('Page.captureScreenshot', { format: 'png' });
     await writeFile(join(output, `browser-assets-${scene.toLowerCase()}.png`), Buffer.from(screenshot.data, 'base64'));
-    scenes.push({ scene, verifiedTextures: manifest.length });
+    scenes.push({ scene, verifiedTextures: manifest.length, ...sourceAudit });
   }
   const colorArg = process.argv.find(arg => arg.startsWith('--stage-colors='));
   const stageColors = colorArg ? await captureStageColors(send, output, colorArg.split('=')[1]) : undefined;

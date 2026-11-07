@@ -107,6 +107,10 @@ Preservar a nova composição e todas as texturas. Conferir área de checkpoint 
 
 Conferir os estados reais dos checkpoints e da porta do chefe sobre a composição atual. Usar as classes existentes em uma cena descartável do Phaser para verificar off/on, fechado/meio/aberto, fechamento e reset, incluindo permanência das dimensões e do ponto de respawn. Exportar uma prancha com os estados nativos e registrar o resultado. Preservar os sprites, texturas, paleta e regras do jogo quando a inspeção não apontar um defeito.
 
+### T21 — identidade das texturas carregadas
+
+Fortalecer a revisão de assets sem alterar a arte: conferir que as 268 texturas carregadas no Phaser vêm de imagens reais e que seus pixels decodificados correspondem ao PNG esperado, além de quadros e dimensões. Usar o decodificador do navegador para comparar igualmente as fontes de textura e os arquivos, pois o loader do Phaser usa URLs de blob. Incluir controles negativos para placeholder gerado e imagem de mesmo tamanho com um pixel alterado. Registrar a auditoria nas cenas Debug/Stage e preservar sprites, paleta, texturas e regras.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

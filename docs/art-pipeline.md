@@ -126,6 +126,14 @@ Testes do enquadramento: `py -3 -m unittest discover -s tools -p test_bob_fit.py
 
 ## Validação no jogo
 
+### Identidade dos PNGs carregados
+
+`tools/check-texture-sources.mjs` complementa a conferência de quadros com a origem e o conteúdo das 268 texturas registradas. As fontes precisam ser imagens carregadas; os pixels RGBA decodificados são comparados por SHA-256 com o arquivo PNG esperado, usando o mesmo decodificador do navegador. Isso evita depender da URL temporária de blob usada pelo loader do Phaser. Os bitmaps esperados são fechados após a leitura e a decodificação roda com concorrência limitada.
+
+O mesmo verificador precisa rejeitar dois controles negativos: um placeholder criado pelo gerador real do Boot e um PNG de tamanho idêntico com um pixel alterado. Ambos existem só na sessão isolada e são descartados. A auditoria também confere os vínculos ativos do jogador, inimigos, checkpoints, porta, cenário e lodo com suas texturas esperadas. Nos `TileSprite`, usa o padrão `displayTexture`; o canvas interno gerado pelo Phaser não é um placeholder de arte.
+
+Relatórios detalhados em `art/preview/texture-sources-{debug,stage}.json`; resumo desta revisão em `art/exports/texture-source-audit.json`. A checagem abre `?stage=memoryLeak` explicitamente, mantendo a inspeção da primeira fase independente da tela inicial. Ela verifica as fontes e os vínculos atuais, sem aprovar uma partida completa ou as cenas ainda em implementação. Nenhuma imagem de produção é alterada.
+
 ### Revisão dos ciclos do Bob
 
 `py -3 tools/review_animations.py` lê os 145 strips do Bob, verifica seus 594 quadros (tamanho, conteúdo, alpha e paleta) e garante que nenhum PNG bruto ou de produção mudou. A sequência e o fps vêm diretamente de `BOB_LOOPS` em `src/systems/bobPose.ts`. Não define tempos novos para as poses ligadas ao estado do personagem.
