@@ -94,6 +94,8 @@ export class StageScene extends Phaser.Scene {
 
   private boss?: Boss;
   private bossHealthBar?: BossHealthBar;
+  /** Overlaps and colliders tied to the current boss, removed with it. */
+  private bossColliders!: Phaser.Physics.Arcade.Collider[];
 
   constructor() {
     super('Stage');
@@ -109,6 +111,7 @@ export class StageScene extends Phaser.Scene {
     this.door = undefined;
     this.boss = undefined;
     this.bossHealthBar = undefined;
+    this.bossColliders = [];
     this.goo = undefined;
     this.gooBody = undefined;
     this.gooFrames = 0;
@@ -204,8 +207,8 @@ export class StageScene extends Phaser.Scene {
 
     this.enterSection(this.respawnAt.section, true);
 
-    // Boss spawns when the door shuts behind Bob
-    this.events.once('bossIntro', () => this.spawnBoss());
+    // A fresh boss spawns each time the door shuts behind Bob (Bob's death removes the old one)
+    this.events.on('bossIntro', () => this.spawnBoss());
     this.events.on('bossHurt', () => this.fx.play('bossHit'));
     this.events.once('bossDefeated', () => {
       this.fx.play('bossDefeated');
@@ -375,13 +378,19 @@ export class StageScene extends Phaser.Scene {
     const r = this.respawnAt;
     this.player.respawn(r.x, r.y);
     if (this.door && this.door.state !== 'closed') this.door.reset();
-    // Restart the boss encounter if Bob died in the boss room
-    if (this.boss && !this.boss.active) {
-      // boss was already defeated — nothing to reset
-    } else if (this.boss && this.boss.phase !== 'dead') {
-      this.boss.reset();
-    }
+    // like the genre: the fight starts over from scratch next time the door shuts
+    if (this.boss && this.boss.phase !== 'dead') this.despawnBoss();
     this.enterSection(r.section, true);
+  }
+
+  /** Remove the boss, its goo, its health bar and every overlap tied to it. */
+  private despawnBoss(): void {
+    for (const c of this.bossColliders) c.destroy();
+    this.bossColliders = [];
+    this.bossHealthBar?.destroy();
+    this.bossHealthBar = undefined;
+    this.boss?.destroy();
+    this.boss = undefined;
   }
 
   private spawnBoss(): void {
@@ -396,40 +405,41 @@ export class StageScene extends Phaser.Scene {
       () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
     );
     this.boss = boss;
+    const track = (c: Phaser.Physics.Arcade.Collider) => this.bossColliders.push(c);
     // Bob's shots hit the boss (pairs sorted by type: the old version disabled the boss itself)
     const isBoss = (o: unknown): o is MemoryLeak => o === boss;
-    this.physics.add.overlap(this.player.shots, boss, (a, b) => {
+    track(this.physics.add.overlap(this.player.shots, boss, (a, b) => {
       const shot = pick(a, b, isBoss)[1] as Projectile;
       if (!shot.active || !boss.active) return;
       const killed = boss.hurt(damageFor(this.def.boss, shot.weapon, shot.damage));
       playOnce(this, shot.level === 3 ? 'fx_compiler_hit' : 'fx_hit', shot.x, shot.y, 20);
       if (!(killed && shot.level >= 2)) shot.disableBody(true, true);
-    });
+    }));
     // Garbage Collector orbs: hit the boss once each, swallow goo
     const isOrb = (o: unknown): o is GcOrb => o instanceof GcOrb;
-    this.physics.add.overlap(this.player.specials, boss, (a, b) => {
+    track(this.physics.add.overlap(this.player.specials, boss, (a, b) => {
       const orb = pick(a, b, isOrb)[0];
       if (orb.active && boss.active && orb.firstHit(boss)) boss.hurt(damageFor(this.def.boss, orb.weapon, orb.damage));
-    });
-    this.physics.add.overlap(this.player.specials, boss.gooGroup, (a, b) => {
+    }));
+    track(this.physics.add.overlap(this.player.specials, boss.gooGroup, (a, b) => {
       const goo = pick(a, b, isOrb)[1] as { active: boolean; deactivate(): void };
       if (goo.active) goo.deactivate();
-    });
+    }));
     // Goo blobs and puddles hurt Bob
     const isBob = (o: unknown): o is Player => o === this.player;
-    this.physics.add.overlap(this.player, boss.gooGroup, (a, b) => {
+    track(this.physics.add.overlap(this.player, boss.gooGroup, (a, b) => {
       if (this.player.isDead) return;
       const goo = pick(a, b, isBob)[1] as Parameters<typeof MemoryLeak.gooDamage>[0];
       this.player.takeHit(MemoryLeak.gooDamage(goo), goo.body.center.x);
-    });
+    }));
     // Boss body hurts Bob on contact
-    this.physics.add.overlap(this.player, boss, () => {
+    track(this.physics.add.overlap(this.player, boss, () => {
       if (!this.player.isDead && boss.phase === 'fight') {
         this.player.takeHit(MEMORY_LEAK_CONTACT, boss.body.center.x);
       }
-    });
+    }));
     // Goo collides with the tile layer so it lands on the floor
-    this.physics.add.collider(boss.gooGroup, this.layer, undefined, (g) => !(g as unknown as { isPuddle: boolean }).isPuddle, this);
+    track(this.physics.add.collider(boss.gooGroup, this.layer, undefined, (g) => !(g as unknown as { isPuddle: boolean }).isPuddle, this));
     boss.setArena(room.x, room.x + room.w);
     this.bossHealthBar = new BossHealthBar(this, 'MEMORY LEAK');
     boss.startIntro();

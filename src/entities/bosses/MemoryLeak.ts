@@ -295,6 +295,12 @@ export class MemoryLeak extends Boss {
     if (blob) blob.fire(bx, by, vx);
   }
 
+  /** The goo pool goes with the boss (Bob's death despawns the boss for a fresh fight). */
+  override destroy(fromScene?: boolean): void {
+    this.goo?.destroy(true);
+    super.destroy(fromScene);
+  }
+
   reset(): void {
     for (const g of this.goo.getChildren() as GooBlob[]) g.deactivate();
     this.mlState = 'idle_enter';
