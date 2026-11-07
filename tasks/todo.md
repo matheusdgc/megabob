@@ -170,10 +170,10 @@ Mapa ASCII completo (cerca de 4 seções, 1 checkpoint), inimigos Drip e Heap Cr
 
 ## Fase 4: Fluxo do jogo
 
-### T13: Título, seleção, save e pausa [M]
+### ✅ T13: Título, seleção, save e pausa [M]
 Tela de título, seleção de fases com retratos (fortaleza travada até 3/3), save versionado e testado, game over voltando para a seleção e menu de pausa (troca de arma e peças coletadas).
-- [ ] Testes do save: round-trip, versão inválida volta ao padrão, liberação da fortaleza
-- [ ] O fluxo título → seleção → fase → seleção funciona, e o progresso persiste ao recarregar
+- [x] Testes do save: round-trip, versão inválida volta ao padrão, liberação da fortaleza
+- [x] O fluxo título → seleção → fase → seleção funciona, e o progresso persiste ao recarregar
 
 **Verificar:** `npm test` e recarregar o navegador no meio do jogo · **Dep.:** T12
 **Arquivos:** `src/systems/save.ts`, `src/scenes/TitleScene.ts`, `src/scenes/StageSelectScene.ts`, `src/scenes/PauseScene.ts`, `tests/save.test.ts`
