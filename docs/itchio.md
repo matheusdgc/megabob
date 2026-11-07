@@ -14,7 +14,7 @@ npm run check:release
 
 O comando gera `release/megabob-html5.zip`, o SHA-256 e um relatório de tamanho e quantidade de arquivos. O ZIP contém apenas o build de `dist/`, com `index.html` na raiz, scripts, arte e música locais. A pasta `release/` não entra no Git.
 
-O verificador `check:release` usa um Microsoft Edge instalado no caminho padrão do Windows, com perfil temporário. Ele serve o build em uma subpasta dentro de um iframe, percorre título → seleção → gameplay por teclado, confere recursos e erros do navegador. Não depende dos atalhos de desenvolvimento do jogo.
+O verificador `check:release` primeiro compara todos os arquivos do ZIP com `dist/`. Usa um Microsoft Edge instalado no caminho padrão do Windows, com perfil temporário. Ele serve o build em uma subpasta dentro de um iframe, percorre título → seleção → gameplay por teclado, confere recursos e erros do navegador. Não depende dos atalhos de desenvolvimento do jogo.
 
 ## Configurar a página
 
@@ -22,7 +22,7 @@ O verificador `check:release` usa um Microsoft Edge instalado no caminho padrão
 2. Em **Uploads**, envie `release/megabob-html5.zip` e marque **This file will be played in the browser**.
 3. Use embed **960 × 540** (2× a resolução interna de 480 × 270), habilite o botão de tela cheia e use **Click to Play**. O clique também permite liberar o áudio no navegador.
 4. Não habilite **Mobile friendly**: a jogabilidade usa teclado ou gamepad e não oferece controles de toque. Preencha os campos de conteúdo gerado por IA de acordo com as ferramentas efetivamente utilizadas.
-5. Adicione a descrição, controles e imagens de `docs/screenshots/`. Preserve os créditos de música e personagem presentes no jogo e na documentação.
+5. Use `art/marketing/megabob-itch-cover.png` no campo **Cover image**. Adicione a descrição, controles e os três prints de `docs/screenshots/`. Preserve os créditos de música e personagem presentes no jogo e na documentação.
 6. Salve e teste a página de rascunho: clique no jogo para focar, inicie uma fase, mova/pule/atire, pause, confira som, tela cheia e retorno ao título. Recarregue para conferir a persistência das opções e do progresso. Verifique em outro navegador antes de tornar a página pública.
 7. Mude a visibilidade para **Public** quando a página e a partida estiverem aprovadas. Copie o endereço público para o README.
 

@@ -11,7 +11,7 @@ if (process.platform === 'win32' && process.env.LOCALAPPDATA) {
 for (const [command, args] of candidates) {
   const probe = spawnSync(command, [...args, '--version'], { encoding: 'utf8', windowsHide: true });
   if (probe.error || probe.status !== 0 || !/Python 3\./.test(probe.stdout + probe.stderr)) continue;
-  const result = spawnSync(command, [...args, script], { stdio: 'inherit', windowsHide: true });
+  const result = spawnSync(command, [...args, script, ...process.argv.slice(2)], { stdio: 'inherit', windowsHide: true });
   if (result.error) throw result.error;
   process.exit(result.status ?? 1);
 }

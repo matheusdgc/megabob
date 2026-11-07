@@ -1,11 +1,12 @@
 /** Smoke-test dist in a nested iframe with an isolated Edge profile and native CDP. */
-import { spawn } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { createServer } from 'node:http';
 import { mkdtemp, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { extname, join, resolve, sep } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
+execFileSync(process.execPath, [join(root, 'tools/package-itch.mjs'), '--verify'], { stdio: 'inherit', windowsHide: true });
 const build = join(root, 'dist');
 await readFile(join(build, 'index.html')); // Fail before starting any processes if not built.
 const prefix = '/uploads/megabob/';
