@@ -186,6 +186,9 @@ export class MemoryLeak extends Boss {
 
   override step(): void {
     super.step();
+    const bob = this.getBob();
+    // The source sheet faces left. Keep the last direction when Bob is directly aligned.
+    if (bob && bob.x !== this.x) this.setFlipX(bob.x > this.x);
     this.setFrame(this.phase === 'dead' ? 7 : memoryLeakFrame(this.mlState, this.stateFrames, ART_TIMING, this.isFlashing));
   }
 

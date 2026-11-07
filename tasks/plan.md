@@ -99,6 +99,10 @@ Pedido adicional do usuário: revisar sprites e animação dos quatro chefes. Co
 
 O usuário rejeitou a simplificação visual: restaurar a textura inteira a partir das fontes preservadas. Substituir o remapeamento que juntava tons e pintava faixas por paletas de cor bijetivas: fundo azul acinzentado, metal em tons quentes e perigos teal originais. Não alterar posições ou máscaras de pixels. Validar a assinatura espacial de cores de cada quadro e camada contra a versão anterior à simplificação, capturar os mesmos enquadramentos no Phaser e atualizar as comparações. Manter as correções dos chefes e o restante do jogo.
 
+### T21 — composição em contexto e orientação do chefe
+
+Preservar a nova composição e todas as texturas. Conferir área de checkpoint e lodo subindo, além dos enquadramentos já revisados. Reproduzir no Phaser a orientação incorreta do Memory Leak quando Bob está à sua direita e corrigir apenas o espelhamento visual, mantendo hitbox, posições, tiros, dano e tempos. Exportar uma galeria de contexto e a comparação dos dois sentidos; executar as verificações do projeto e atualizar o handoff.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

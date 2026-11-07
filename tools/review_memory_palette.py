@@ -68,6 +68,23 @@ def run():
                 image.save(export / 'megabob-memory-palette.png')
     comparison.save(export / 'megabob-memory-contrast.png')
     ImageOps.grayscale(comparison.convert('RGB')).save(export / 'megabob-memory-contrast-gray.png')
+    preview = ROOT / 'art/preview'
+    gallery = Image.new('RGBA', (960, 580), INK)
+    samples = [('ENTRADA', preview / 'memory-contrast-after/entrance.png'),
+               ('CHECKPOINT', preview / 'memory-contrast-after/checkpoint.png'),
+               ('LODO: AMOSTRA DE ALTURA', preview / 'memory-contrast-after/rising-goo.png'),
+               ('CHEFE: POSE DE INSPEÇÃO', preview / 'browser-boss-memory-leak-right.png')]
+    for i, (label, path) in enumerate(samples):
+        x, y = i % 2 * 480, i // 2 * 290
+        ui_text(gallery, (x + 8, y + 4), label, 10)
+        gallery.alpha_composite(Image.open(path).convert('RGBA').resize((480, 270), Image.Resampling.NEAREST), (x, y + 20))
+    gallery.save(export / 'megabob-memory-context.png')
+    facing = Image.new('RGBA', (960, 290), INK)
+    for i, (key, label) in enumerate([('left', 'CHEFE VOLTADO À ESQUERDA'), ('right', 'CHEFE VOLTADO À DIREITA')]):
+        ui_text(facing, (i * 480 + 8, 4), label, 10)
+        image = Image.open(preview / ('browser-boss-memory-leak-' + key + '.png')).convert('RGBA')
+        facing.alpha_composite(image.resize((480, 270), Image.Resampling.NEAREST), (i * 480, 20))
+    facing.save(export / 'megabob-memory-leak-facing.png')
     print('7 textures / 30 regions preserve the original texture pattern and alpha; comparisons exported.')
 
 
