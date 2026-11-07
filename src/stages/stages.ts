@@ -65,6 +65,13 @@ export const STAGES: Record<StageId, StageDef> = {
 /** Until the stage select (T13), the game starts here. */
 export const DEFAULT_STAGE: StageId = 'memoryLeak';
 
+/** The playable stage of each boss portrait on the stage select (the test map has none). */
+export const STAGE_OF_BOSS: Partial<Record<BossId, StageId>> = Object.fromEntries(
+  Object.values(STAGES)
+    .filter((d) => d.id !== 'test')
+    .map((d) => [d.boss, d.id]),
+);
+
 /** Index of the boss room: the stage's locked section. */
 export function bossRoomIndex(def: StageDef): number {
   const i = def.sections.findIndex((s) => s.locked);

@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import { drawMeter, METER_W, meterHeight } from './meter';
+import { type Label, uiText } from './text';
 
 const X = 10;
 const TOP = 14;
-const FONT = { fontFamily: 'monospace', fontSize: '8px', color: '#e0e0e0' };
 
 export interface WeaponGauge {
   energy: number;
@@ -17,12 +17,12 @@ export interface WeaponGauge {
  */
 export class Hud {
   private readonly g: Phaser.GameObjects.Graphics;
-  private readonly lives: Phaser.GameObjects.Text;
+  private readonly lives: Label;
   private shown = '';
 
   constructor(scene: Phaser.Scene) {
     this.g = scene.add.graphics().setScrollFactor(0).setDepth(90);
-    this.lives = scene.add.text(X - 2, 0, '', { ...FONT, backgroundColor: '#161616' }).setScrollFactor(0).setDepth(90);
+    this.lives = uiText(scene, X - 2, 0, '', { bg: '#161616' }).setOrigin(0).setScrollFactor(0).setDepth(90);
   }
 
   update(hp: number, max: number, lives: number, weapon: WeaponGauge | null = null): void {

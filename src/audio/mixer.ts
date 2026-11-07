@@ -1,12 +1,9 @@
 import { dbToGain, sliderToGain } from '../systems/audioMath';
+import type { Volumes } from '../systems/save';
+
+export type { Volumes };
 
 /** Settings sliders, 0..1 (the options screen, T13b, edits them; registry `volume`). */
-export interface Volumes {
-  master: number;
-  music: number;
-  sfx: number;
-}
-
 export const DEFAULT_VOLUMES: Volumes = { master: 0.8, music: 0.7, sfx: 0.8 };
 export const VOLUME = 'volume';
 

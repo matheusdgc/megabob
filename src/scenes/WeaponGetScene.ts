@@ -1,11 +1,12 @@
 import Phaser from 'phaser';
 import { bobKey } from '../data/assets';
-import { WEAPONS, type WeaponId } from '../data/weapons';
+import { type BossId, WEAPONS, type WeaponId } from '../data/weapons';
+import { recordClear } from '../systems/save';
+import { commitSave, getSave } from './progress';
 import { GameAudio } from '../audio';
 import { GameInput } from '../systems/input';
+import { uiText } from '../ui/text';
 
-/** Registry key holding the weapons Bob has won (until the save system, T13). */
-export const OWNED_WEAPONS = 'ownedWeapons';
 
 /** Earliest a key press may skip the screen, and when it moves on by itself. */
 const MIN_MS = 1500;
@@ -13,10 +14,11 @@ const AUTO_MS = 6000;
 
 /**
  * "Weapon get" screen after a boss: Bob absorbs the weapon, its name and how to use it.
- * Records the weapon in the registry, then starts `next` with `nextData` (the stage, until T13's select).
+ * Records the clear and the weapon in the save, then starts `next` with `nextData` (the stage select).
  */
 export class WeaponGetScene extends Phaser.Scene {
   private weapon: WeaponId = 'garbageCollector';
+  private boss?: BossId;
   private next = 'Stage';
   private nextData?: object;
   /** Set once MIN_MS has passed. (Not `time.now`: on a scene's first run it is stale until the first update.) */
@@ -27,17 +29,18 @@ export class WeaponGetScene extends Phaser.Scene {
     super('WeaponGet');
   }
 
-  init(data: { weapon?: WeaponId; next?: string; nextData?: object }): void {
+  init(data: { weapon?: WeaponId; boss?: BossId; next?: string; nextData?: object }): void {
     this.weapon = data.weapon ?? 'garbageCollector';
+    this.boss = data.boss;
     this.next = data.next ?? 'Stage';
     this.nextData = data.nextData;
     this.ready = false;
   }
 
   create(): void {
-    const owned = new Set<WeaponId>(this.registry.get(OWNED_WEAPONS) ?? []);
-    owned.add(this.weapon);
-    this.registry.set(OWNED_WEAPONS, [...owned]);
+    // autosave on a safe boundary: the boss is beaten, nothing is in motion
+    const save = getSave(this.registry);
+    commitSave(this.registry, this.boss ? recordClear(save, this.boss) : { ...save, weapons: [...new Set([...save.weapons, this.weapon])] });
 
     const { width: w, height: h } = this.cameras.main;
     const def = WEAPONS[this.weapon];
@@ -56,15 +59,14 @@ export class WeaponGetScene extends Phaser.Scene {
       onComplete: () => (def.tint === 0xffffff ? bob.clearTint() : bob.setTint(def.tint)),
     });
 
-    const font = { fontFamily: 'monospace', color: '#e0e0e0' };
-    this.add.text(w / 2 - 40, h / 2 - 36, 'WEAPON GET', { ...font, fontSize: '16px', color: '#4589ff' });
+    uiText(this, w / 2 - 40, h / 2 - 36, 'WEAPON GET', { size: 16, color: '#4589ff' }).setOrigin(0);
     this.add.image(w / 2 - 40, h / 2 - 4, def.icon).setOrigin(0, 0.5);
-    this.add.text(w / 2 - 18, h / 2 - 4, def.name, { ...font, fontSize: '12px', color: Phaser.Display.Color.IntegerToColor(def.color).rgba }).setOrigin(0, 0.5);
-    this.add.text(w / 2 - 40, h / 2 + 18, 'Q / E  switch weapons', { ...font, fontSize: '8px', color: '#a8a8a8' });
-    const prompt = this.add.text(w / 2, h / 2 + 48, 'PRESS Z', { ...font, fontSize: '8px' }).setOrigin(0.5).setVisible(false);
+    uiText(this, w / 2 - 18, h / 2 - 4, def.name, { size: 12, color: Phaser.Display.Color.IntegerToColor(def.color).rgba });
+    uiText(this, w / 2 - 40, h / 2 + 18, 'Q / E  switch weapons', { color: '#a8a8a8' }).setOrigin(0);
+    const prompt = uiText(this, w / 2, h / 2 + 48, 'PRESS Z', { origin: 0.5 }).setVisible(false);
 
     GameAudio.of(this.game)?.sfx.jingle('weaponGet');
-    this.controls = new GameInput(this);
+    this.controls = new GameInput(this, true);
     this.time.delayedCall(MIN_MS, () => {
       this.ready = true;
       prompt.setVisible(true);

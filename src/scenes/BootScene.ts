@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { SHEETS } from '../data/assets';
 import { generatePlaceholder } from '../systems/placeholders';
 import { STAGES } from '../stages/stages';
+import { bootSave } from './progress';
 
 /**
  * Loads every sheet that has a real file; anything missing or failing gets a placeholder
@@ -32,12 +33,12 @@ export class BootScene extends Phaser.Scene {
         generatePlaceholder(this, s);
       }
     }
-    // dev: ?sprites opens the sprite/input debug screen, ?stage=<id> starts another stage
+    bootSave(this.registry);
+    // dev: ?sprites opens the sprite/input debug screen, ?stage=<id> jumps straight into a stage
     const params = new URLSearchParams(location.search);
+    const stage = import.meta.env.DEV ? params.get('stage') : null;
     if (params.has('sprites')) this.scene.start('Debug');
-    else {
-      const stage = import.meta.env.DEV ? params.get('stage') : null;
-      this.scene.start('Stage', stage && stage in STAGES ? { stage } : {});
-    }
+    else if (stage && stage in STAGES) this.scene.start('Stage', { stage });
+    else this.scene.start('Title');
   }
 }

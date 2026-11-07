@@ -137,6 +137,22 @@ export const JINGLES = {
     vol: 0.2,
     notes: [[76, 0.5], [72, 0.5], [69, 0.5], [65, 0.5], [64, 1.5]],
   },
+  // stage start ("READY"): a short call to action
+  stageStart: {
+    bpm: 170,
+    wave: 'square',
+    vol: 0.14,
+    notes: [[67, 0.5], [71, 0.5], [74, 0.5], [79, 1]],
+    bass: [[43, 1], [50, 1.5]],
+  },
+  // last life lost
+  gameOver: {
+    bpm: 120,
+    wave: 'square',
+    vol: 0.14,
+    notes: [[72, 0.5], [71, 0.5], [69, 0.5], [67, 0.5], [65, 1], [64, 2]],
+    bass: [[48, 2], [41, 1], [36, 2]],
+  },
   // the boss door shuts: a two-tone alarm
   warning: {
     bpm: 200,

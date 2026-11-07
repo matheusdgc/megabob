@@ -18,8 +18,19 @@ export class GameInput {
   private readonly bindings: Bindings;
   private readonly keys: [Action, Phaser.Input.Keyboard.Key][] = [];
   private readonly held = new Set<Action>();
+  /** Menus: false until every input has been seen released once (see the constructor). */
+  private armed: boolean;
 
-  constructor(private readonly scene: Phaser.Scene) {
+  /**
+   * `menu`: ignore everything until all keys and buttons are up. A key still held from the
+   * previous screen would otherwise read as a fresh press through keyboard auto-repeat, and
+   * skip this screen or pick its first item.
+   */
+  constructor(
+    private readonly scene: Phaser.Scene,
+    menu = false,
+  ) {
+    this.armed = !menu;
     const kb = scene.input.keyboard;
     if (!kb) throw new Error('Keyboard plugin disabled');
     const saved: unknown = scene.registry.get(BINDINGS);
@@ -52,6 +63,10 @@ export class GameInput {
       if (!fromKeys && this.held.size > 0) this.lastDevice = 'pad';
     }
     if (fromKeys) this.lastDevice = 'keys';
+    if (!this.armed) {
+      if (this.held.size > 0) this.held.clear();
+      else this.armed = true;
+    }
 
     this.state.update(this.held);
     return this.state;

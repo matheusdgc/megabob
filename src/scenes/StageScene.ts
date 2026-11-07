@@ -26,7 +26,9 @@ import { GameInput } from '../systems/input';
 import { grant, newArsenal, refill } from '../systems/weapons';
 import { BOSS_WEAPON, damageFor, WEAPON_MAX_ENERGY, WEAPONS } from '../data/weapons';
 import { GcOrb } from '../entities/weapons/GarbageCollector';
-import { OWNED_WEAPONS } from './WeaponGetScene';
+import type { PauseData } from './PauseScene';
+import { getSave } from './progress';
+import { fadeTo, UI, uiText } from '../ui/text';
 import { BossHealthBar } from '../ui/BossHealthBar';
 import { Hud } from '../ui/Hud';
 
@@ -75,6 +77,10 @@ export class StageScene extends Phaser.Scene {
   private grid!: number[][];
   private hud!: Hud;
   private fx!: Feedback;
+  /** Ticks during which the pause button is ignored (right after the menu closes). */
+  private pauseLock!: number;
+  /** The stage is ending (game over, exit, boss beaten): no more pausing. */
+  private over!: boolean;
   private audio!: GameAudio | null;
   private parallax!: Phaser.GameObjects.TileSprite[];
   /** Rising goo: its sprite, and frames since Bob entered its section. */
@@ -118,6 +124,8 @@ export class StageScene extends Phaser.Scene {
     this.goo = undefined;
     this.gooBody = undefined;
     this.gooFrames = 0;
+    this.pauseLock = 0;
+    this.over = false;
   }
 
   preload(): void {
@@ -127,7 +135,6 @@ export class StageScene extends Phaser.Scene {
   create(): void {
     this.fx = new Feedback(this);
     this.audio = GameAudio.of(this.game);
-    this.audio?.music.play(this.def.music, 400);
     const parsed = parseMap(this.def.map);
     this.sections = sectionsFromTiles(this.def.sections, TILE);
     this.worldHeight = parsed.rows * TILE;
@@ -185,7 +192,9 @@ export class StageScene extends Phaser.Scene {
       this.fx.play('land');
       this.sfx('land');
     });
-    this.player.arsenal = newArsenal(this.registry.get(OWNED_WEAPONS) ?? []);
+    const save = getSave(this.registry);
+    this.player.arsenal = newArsenal(save.weapons);
+    this.player.armor = save.armor;
     this.player.applyWeaponTint();
     this.hud = new Hud(this);
 
@@ -252,6 +261,7 @@ export class StageScene extends Phaser.Scene {
       for (const e of RUN_EVENTS) this.events.off(e);
       this.fx.shutdown();
     });
+    this.ready(true);
   }
 
   /** One fixed logic step, right after each physics step. */
@@ -263,6 +273,11 @@ export class StageScene extends Phaser.Scene {
       this.scripted.update(new Set<Action>(this.door.walkThrough ? ['right'] : []));
       input = this.scripted;
       p.buster.charge = 0;
+    }
+    if (this.pauseLock > 0) this.pauseLock--;
+    else if (input.justPressed('pause') && !p.isDead && !this.door?.busy && !this.over) {
+      this.openPause();
+      return;
     }
     p.step(input);
     for (const e of this.enemies.getChildren() as Enemy[]) e.step();
@@ -415,7 +430,7 @@ export class StageScene extends Phaser.Scene {
     if (this.door && this.door.state !== 'closed') this.door.reset();
     // like the genre: the fight starts over from scratch next time the door shuts
     if (this.boss && this.boss.phase !== 'dead') this.despawnBoss();
-    this.audio?.music.play(this.def.music); // restarts from the top, like the genre
+    this.ready(false);
     this.enterSection(r.section, true);
   }
 
@@ -495,29 +510,72 @@ export class StageScene extends Phaser.Scene {
     this.bossHealthBar?.destroy();
     this.bossHealthBar = undefined;
     this.events.emit('bossRoomUnlocked');
-    // after the explosion: the weapon-get screen, which then returns to the stage (T13: select)
+    // after the explosion: the weapon-get screen (it records the clear), then the stage select
+    this.over = true;
     const weapon = BOSS_WEAPON[this.def.boss];
-    const stage = { stage: this.def.id };
-    this.time.delayedCall(2500, () =>
-      weapon ? this.scene.start('WeaponGet', { weapon, next: 'Stage', nextData: stage }) : this.scene.restart(stage),
+    const boss = this.def.boss;
+    this.time.delayedCall(3500, () =>
+      weapon ? this.scene.start('WeaponGet', { weapon, boss, next: 'StageSelect' }) : fadeTo(this, 'StageSelect'),
     );
   }
 
   /** Death animation over: spend a life and respawn. */
   private afterDeath(): void {
-    const result = loseLife(this.player.health);
-    this.respawnBob();
-    if (result === 'gameOver') {
-      this.events.emit('gameOver');
-      const cam = this.cameras.main;
-      const text = this.add
-        .text(cam.width / 2, cam.height / 2, 'GAME OVER', { fontFamily: 'monospace', fontSize: '16px', color: '#da1e28' })
-        .setOrigin(0.5)
-        .setScrollFactor(0)
-        .setDepth(100);
-      this.time.delayedCall(2000, () => text.destroy());
+    if (loseLife(this.player.health) === 'respawn') {
+      this.respawnBob();
+      return;
     }
+    // last life: GAME OVER, then back to the stage select (weapons won are kept in the save)
+    this.over = true;
+    this.events.emit('gameOver');
+    this.fx.hold('gameOver');
+    const cam = this.cameras.main;
+    uiText(this, cam.width / 2, cam.height / 2, 'GAME OVER', { size: 16, color: UI.danger, origin: 0.5 }).setScrollFactor(0).setDepth(100);
+    const len = this.audio?.sfx.jingle('gameOver') ?? 2;
+    this.time.delayedCall(Math.max(2500, len * 1000 + 500), () => fadeTo(this, 'StageSelect'));
   }
+
+  /**
+   * "READY": the stage holds still for a moment, blinking the word, before play (and the music)
+   * starts. On the stage's first start it also plays the stage jingle.
+   */
+  private ready(first: boolean): void {
+    this.fx.hold('ready');
+    this.audio?.music.stop();
+    const cam = this.cameras.main;
+    const word = uiText(this, cam.width / 2, cam.height / 2 - 16, 'READY', { size: 12, origin: 0.5 }).setScrollFactor(0).setDepth(100);
+    const ms = first ? Math.max(1400, (this.audio?.sfx.jingle('stageStart') ?? 0) * 1000) : 1000;
+    this.tweens.add({ targets: word, alpha: 0, duration: 120, yoyo: true, repeat: Math.floor(ms / 240) - 1 });
+    this.time.delayedCall(ms, () => {
+      word.destroy();
+      this.fx.release('ready');
+      this.audio?.music.play(this.def.music, first ? 0 : 200);
+    });
+  }
+
+  /** Freeze the stage and open the pause menu over it. */
+  private openPause(): void {
+    this.audio?.mixer.duck(-10);
+    this.sfx('weaponSwitch');
+    const data: PauseData = {
+      arsenal: this.player.arsenal,
+      armor: this.player.armor,
+      onClose: (exit) => {
+        this.audio?.mixer.unduck();
+        this.scene.resume();
+        this.pauseLock = 10; // a held or repeating pause key must not reopen it at once
+        this.player.applyWeaponTint();
+        if (exit) {
+          this.over = true;
+          this.audio?.music.stop(300);
+          fadeTo(this, 'StageSelect');
+        }
+      },
+    };
+    this.scene.pause();
+    this.scene.launch('Pause', data);
+  }
+
 
   /** The goo rises while Bob is in its section, and swallows him if it catches up. */
   private stepGoo(): void {
@@ -575,7 +633,7 @@ export class StageScene extends Phaser.Scene {
     if (!world.debugGraphic) world.createDebugGraphic();
     world.drawDebug = true;
     this.readout = this.add
-      .text(28, 4, '', { fontFamily: 'monospace', fontSize: '8px', color: '#f1c21b' })
+      .text(28, 4, '', { fontFamily: 'monospace', fontSize: '8px', color: '#f1c21b', resolution: 4 })
       .setScrollFactor(0)
       .setDepth(100);
   }
