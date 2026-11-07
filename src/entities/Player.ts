@@ -23,7 +23,7 @@ import { partEffects } from '../systems/upgrades';
 import { type Arsenal, cycleWeapon, newArsenal, spend } from '../systems/weapons';
 import { SPECIALS_ON_SCREEN, WEAPONS } from '../data/weapons';
 import { GcOrb } from './weapons/GarbageCollector';
-import { MutexBolt } from './weapons/MutexLock';
+import { type LockTargets, MutexBolt } from './weapons/MutexLock';
 import { NullPointerShot } from './weapons/NullPointerShot';
 
 /** A special-weapon shot (each class keeps its own behaviour; the stage reads these fields). */
@@ -66,6 +66,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   arsenal: Arsenal = newArsenal();
   /** Live special-weapon projectiles (Garbage Collector orbs). */
   readonly specials: Phaser.Physics.Arcade.Group;
+  /** What a Mutex Lock can lock onto (the stage sets it: live enemies and a tangible boss). */
+  lockTargets: LockTargets = () => [];
   /** Frames left of the death animation; the scene respawns Bob when it reaches 0. */
   /** Solid-tile query from the stage, for corner correction on jumps. */
   solidAt?: SolidAt;
@@ -172,6 +174,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
    * own horizontal speed under Bob (a conveyor belt), added to his.
    */
   step(input: ActionState, carry = 0): void {
+    for (const s of this.specials.getChildren() as Special[]) if (s.active) s.step();
     if (this.health.dead) {
       if (this.deathFrames > 0 && --this.deathFrames === 0) this.emit('deathDone');
       return;
@@ -277,7 +280,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.specials.add(shot, true);
     }
     const o = shotOrigin(this.motion);
-    shot.fire(this.body.center.x + o.dx, this.body.bottom + o.dy, o.dir);
+    const x = this.body.center.x + o.dx;
+    const y = this.body.bottom + o.dy;
+    if (shot instanceof MutexBolt) shot.fire(x, y, o.dir, this.lockTargets);
+    else shot.fire(x, y, o.dir);
     this.buster.pose = SHOOT_POSE_FRAMES;
     this.emit('sfx', weapon);
   }

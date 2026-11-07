@@ -128,3 +128,14 @@ export const COMBAT_ART = {
   warningFrameTicks: 8, recoverArmFrames: 6,
   teal: 0x08bdba, amber: 0xf1c21b, metal: 0xa6c8ff,
 } as const;
+
+// --- Special weapons: how each shot leaves the cannon and travels (src/systems/specialShots.ts) ---
+export const SPECIAL_SHOTS = {
+  /** Garbage Collector: the vortex grows out of the cannon while it gathers speed, then sweeps
+   * forward in a slow wave. */
+  gc: { speed: 150, launchSpeed: 30, growFrames: 14, startScale: 0.3, wave: 6, wavePeriod: 48 },
+  /** Mutex Lock: the padlock locks onto the nearest target ahead and turns toward it. */
+  mutex: { speed: 230, range: 200, turn: 0.07 },
+  /** Null Pointer: never travels; it appears ahead of the cannon and jumps in teleports. */
+  nullPointer: { spawnAhead: 22, hopFrames: 6, hopPx: 24 },
+} as const;

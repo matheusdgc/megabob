@@ -220,6 +220,13 @@ export class StageScene extends Phaser.Scene {
 
     this.physics.world.setBounds(0, 0, parsed.cols * TILE, this.worldHeight);
     this.player = new Player(this, this.respawnAt.x, this.respawnAt.y);
+    // a Mutex Lock steers toward live enemies and a boss that can be hit
+    this.player.lockTargets = () => {
+      const out = (this.enemies.getChildren() as Enemy[]).filter((e) => e.active && e.body.enable).map((e) => e.body.center);
+      const b = this.boss;
+      if (b?.active && b.body.enable && b.phase === 'fight' && b.isTangible) out.push(b.body.center);
+      return out;
+    };
     this.physics.add.collider(this.player, layer);
     this.movers = (this.def.movers ?? []).map((m) => new MovingPlatform(this, m));
     if (this.movers.length) this.physics.add.collider(this.player, this.movers);
