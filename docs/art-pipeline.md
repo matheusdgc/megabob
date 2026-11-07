@@ -22,16 +22,23 @@ Categorias disponíveis: `fx`, `enemies`, `bosses`, `icons`, `tiles`, `bg` e `ui
 
 ## Composição do título em 480×270
 
-A fonte adicional `art/raw/ui/U2_title_bg_wide.png` foi gerada com `imagegen`, usando U2 como referência, e recomposta em 16:9. Bob permanece inteiro no canto inferior esquerdo, com céu livre para a logo. O fundo original 256×224 continua disponível.
+A fonte atual `art/raw/ui/U2_title_cyberpunk.png` foi gerada com a ferramenta integrada `imagegen`, usando o título panorâmico anterior como referência. Traz cidade de servidores mais detalhada, tubos, antenas e luzes ciano/magenta. Não contém Bob: ele agora é um sprite separado. As fontes anteriores `U2_title_bg_wide.png` e U2 original continuam intactas. Prompt integral ao lado da fonte e em `art/exports/megabob-title-wide.prompt.txt`.
+
+**Direção permanente pedida pelo usuário:** cenário, personagens e efeitos continuam em pixel art de 16 bits. O fundo do título usa nearest-neighbor, 480×270, alpha opaco e 32 cores locais, preservando os tons azul-escuros e o detalhe das sombras. Sem suavização, dithering ou efeitos fotográficos. A logo mais suave aprovada acima é uma exceção específica; não expandir essa exceção ao restante da arte.
 
 | Elemento | Textura | Posição e escala sugeridas |
 |---|---|---|
 | Fundo panorâmico | `title_background_wide`, 480×270 | `(0, 0)`, origem superior esquerda, escala 1 |
 | Logo sobre o céu | `title_logo_night`, 224×48 | `(16, 8)`, origem superior esquerda, escala 2 |
+| Bob separado | `bob_idle`, quadros 48×48 | pés em `(80,214)`, origem `(0.5,1)`, escala 2 |
 
 `title_logo_night` deriva da mesma fonte suave da logo, com contorno claro já desenhado para separar as letras do céu. O encaixe 220×44 dentro do quadro 224×48 preserva as margens. O antigo contorno pixelado e a quantização não são aplicados à nova logo.
 
-`py -3 tools/art.py ui` também monta `art/exports/megabob-title-preview.png` (480×270) e a ampliação nearest-neighbor `art/preview/title_wide_2x.png`. O prompt do fundo está em `art/exports/megabob-title-wide.prompt.txt`. A prévia é uma composição de arte; a cena, os textos e a navegação do menu ficam para T13.
+`py -3 tools/art.py ui` também monta `art/exports/megabob-title-preview.png` (480×270) e a ampliação nearest-neighbor `art/preview/title_wide_2x.png`. A prévia estática não grava opções no fundo. O GIF `megabob-title-menu.gif` captura a cena real do navegador, incluindo seus textos HTML.
+
+`src/scenes/titleMotion.ts` acrescenta só decoração à cena existente: entrada da logo em 420 ms com desaceleração cúbica e posições inteiras; idle real do Bob (`BOB_LOOPS`, 3 fps); 28 traços discretos de chuva; brilho limitado ao recorte das letras, durante 1 segundo a cada 7,2 segundos. Valores em `src/data/titleArt.ts`. O menu aceita input desde a criação. `prefers-reduced-motion` elimina esses movimentos, inclusive quando muda com a tela aberta. Listeners e máscara são liberados no shutdown, sem acumular a cada retorno. Save, navegação, opções e áudio continuam sob seus componentes existentes.
+
+`node tools/check-title-menu.mjs` verifica os quadros reais do Bob, posição final da logo, alteração de pixels pelo brilho, composição estática com movimento reduzido e contagens estáveis após dois reinícios. Capturas e sequência para GIF ficam em `art/preview/`; resumo publicado em `art/exports/title-menu-review.json`.
 
 ## Seleção de fases em 480×270
 

@@ -289,10 +289,12 @@ def title_preview():
     exports.mkdir(parents=True, exist_ok=True)
     image = Image.open(OUT / 'ui/title_background_wide.png').convert('RGBA')
     logo = Image.open(OUT / 'ui/title_logo_night.png').convert('RGBA')
+    bob = Image.open(OUT / 'bob/bob_idle.png').convert('RGBA').crop((0, 0, 48, 48))
+    image.alpha_composite(bob.resize((96, 96), Image.Resampling.NEAREST), (32, 118))
     image.alpha_composite(logo.resize((448, 96), Image.Resampling.NEAREST), (16, 8))
     image.save(exports / 'megabob-title-preview.png')
     image.resize((960, 540), Image.Resampling.NEAREST).save(PREVIEW / 'title_wide_2x.png')
-    prompt = RAW / 'ui/U2_title_bg_wide.prompt.txt'
+    prompt = RAW / 'ui/U2_title_cyberpunk.prompt.txt'
     if prompt.exists():
         (exports / 'megabob-title-wide.prompt.txt').write_text(prompt.read_text(encoding='utf-8'), encoding='utf-8')
 
@@ -349,6 +351,11 @@ def run(group='all'):
             regions = [grids[grid_key][position] for position in item['selection']]
         if item['key'].startswith('title_logo'):
             result = readable_logo(image, item['size'], item['fit'])
+        elif item['key'] == 'title_background_wide':
+            # The night city needs a local dark-blue ramp: 32 flat colors, no dither
+            # or smoothing. The sprite palette otherwise crushes its shadow detail.
+            result = image.resize(item['size'], Image.Resampling.NEAREST).convert('RGB')
+            result = result.quantize(colors=32, dither=Image.Dither.NONE).convert('RGBA')
         else:
             result = pack(regions, item['size'], item['fit'], item.get('empty', ()),
                           item.get('anchor', 'center'), item.get('stretch', False), item.get('frame_fit'))

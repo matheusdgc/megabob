@@ -77,8 +77,9 @@ A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar 
 - [x] Conferir no Phaser a leitura e as transições dos checkpoints e da porta do chefe na nova composição, preservando sprites e regras existentes.
 - [x] Conferir a identidade dos PNGs carregados em Debug/Stage e os vínculos ativos da primeira fase, com controles negativos para placeholder e imagem alterada.
 - [x] Recriar a logo com contornos suaves e letras mais legíveis, preservar a versão pixelada e integrar as duas variantes 224×48 sem quantização.
+- [x] Detalhar o cenário cyberpunk do título em 16 bits e combinar entrada/brilho da logo, Bob animado e chuva discreta; conferir movimento reduzido, reinícios e console.
 
-As fontes em `art/raw/` permanecem intactas durante a importação. A logo anterior foi preservada e foram acrescentados fundos panorâmicos de título e encerramento; total atual de 68 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 123 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
+As fontes em `art/raw/` permanecem intactas durante a importação. A logo anterior foi preservada e foram acrescentados fundos panorâmicos de título e encerramento; total atual de 70 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 123 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
 
 ## ✅ Checkpoint 1: sensação de jogo
 - [x] Testes, typecheck e build passam
@@ -179,11 +180,11 @@ Tela de título, seleção de fases com retratos (fortaleza travada até 3/3), s
 **Verificar:** `npm test` e recarregar o navegador no meio do jogo · **Dep.:** T12
 **Arquivos:** `src/systems/save.ts`, `src/scenes/TitleScene.ts`, `src/scenes/StageSelectScene.ts`, `src/scenes/PauseScene.ts`, `tests/save.test.ts`
 
-### T13b: Configuração de controles [M]
+### ✅ T13b: Configuração de controles [M]
 Tela de opções (pelo título e pelo menu de pausa) que lista as ações (`ACTIONS` em `src/systems/actions.ts`) e deixa trocar a tecla e o botão do gamepad de cada uma: seleciona a ação, aperta a nova tecla ou botão. Os mapeamentos hoje fixos em `KEYS` e `PAD_BUTTONS` (`src/systems/input.ts`) passam a vir de um módulo puro de bindings, salvo no save.
-- [ ] Testes do módulo de bindings: trocar uma tecla já usada por outra ação troca as duas (sem ação sem tecla), "restaurar padrão" volta ao mapeamento de hoje, e um save inválido ou antigo cai no padrão
-- [ ] Teclas de sistema ficam reservadas (Esc sempre volta ou pausa, e F2/R/1-4 de debug não podem ser atribuídas)
-- [ ] Os mapeamentos persistem ao recarregar e valem na hora, sem reiniciar a fase
+- [x] Testes do módulo de bindings: trocar uma tecla já usada por outra ação troca as duas (sem ação sem tecla), "restaurar padrão" volta ao mapeamento de hoje, e um save inválido ou antigo cai no padrão
+- [x] Teclas de sistema ficam reservadas (Esc sempre volta ou pausa, e F2/R/1-4 de debug não podem ser atribuídas)
+- [x] Os mapeamentos persistem ao recarregar e valem na hora, sem reiniciar a fase
 
 **Verificar:** `npm test` e trocar o pulo para outra tecla, recarregar e jogar · **Dep.:** T13
 **Arquivos:** `src/systems/bindings.ts`, `src/systems/input.ts`, `src/scenes/OptionsScene.ts`, `src/systems/save.ts`, `tests/bindings.test.ts`

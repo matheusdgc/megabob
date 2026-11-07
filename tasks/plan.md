@@ -138,11 +138,15 @@ Fortalecer a revisão de assets sem alterar a arte: conferir que as 268 texturas
 6. Remapear o gamepad na tela de controles (T13b) → só teclado remapeável
 7. Suporte a gamepad
 
-## Perguntas em aberto
-
 ### T21 — logo mais legível
 
 Recriar apenas o wordmark MEGABOB com a ferramenta integrada imagegen, mantendo azul e faixas IBM e abrindo as formas das letras. Preservar as fontes anteriores. Integrar a nova fonte nas duas chaves existentes de 224×48 com Lanczos e alpha suave, sem alterar cenas ou o processamento dos outros sprites. Conferir transparência, leitura reduzida, composição do título, testes, typecheck, build e console no navegador.
+
+### T21 — título cyberpunk em 16 bits e animações
+
+A pedido do usuário, combinar as três direções de movimento: entrada suave/brilho da logo, Bob animado e ambiente discreto. Criar fonte cyberpunk mais detalhada sem Bob embutido, preservando o estilo 16 bits: 480×270, nearest-neighbor e 32 cores locais. Reutilizar o idle real e acrescentar chuva em pixels, com movimento reduzido e descarte no shutdown. Manter a integração na TitleScene limitada ao helper visual; não editar o fluxo de opções/save da outra sessão. Validar no navegador a composição, brilho nos pixels, quadros, preferência de movimento e dois reinícios; exportar GIF real e executar os checks do projeto.
+
+## Perguntas em aberto
 
 - **Onde publicar** (GitHub Pages ou itch.io): só preciso saber na T23.
 - **Seu agente de sprites:** ele está seguindo a ordem de prioridade do `art-prompts.md` (B1-B8 → FX1/FX3/FX5 → E1/E2 → …)? Se estiver, o pipeline já consome os lotes nessa ordem.

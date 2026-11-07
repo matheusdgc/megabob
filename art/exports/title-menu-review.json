@@ -1,0 +1,71 @@
+{
+  "initial": {
+    "menu": [
+      "START",
+      "OPTIONS"
+    ],
+    "children": 12,
+    "listeners": 6
+  },
+  "normal": {
+    "frames": [
+      0,
+      1,
+      2
+    ],
+    "bobY": 214,
+    "logo": {
+      "alpha": 1,
+      "y": 8
+    },
+    "shine": 0,
+    "children": 12,
+    "listeners": 6
+  },
+  "shineSeen": true,
+  "shineAffectsPixels": true,
+  "preferenceState": {
+    "reduced": true,
+    "active": [
+      "Title"
+    ]
+  },
+  "reduced": {
+    "frames": [
+      0
+    ],
+    "bobY": 214,
+    "logo": {
+      "alpha": 1,
+      "y": 8
+    },
+    "shine": 0,
+    "children": 12,
+    "listeners": 6
+  },
+  "reducedPixelsStable": true,
+  "restarts": [
+    {
+      "children": 12,
+      "listeners": 6
+    },
+    {
+      "children": 12,
+      "listeners": 6
+    }
+  ],
+  "errors": [],
+  "warnings": [],
+  "failedRequests": [],
+  "background": {
+    "size": [
+      480,
+      270
+    ],
+    "visibleColors": 32,
+    "opaque": true,
+    "sampling": "nearest-neighbor",
+    "sha256": "7acd328ee76da8938979f7083678c70a0d932b2f109fce154ca2fa5eb1de082e"
+  },
+  "scope": "Main-menu visual animation, reduced-motion preference and repeated scene shutdown; not a gameplay playthrough."
+}
