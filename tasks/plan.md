@@ -156,6 +156,10 @@ Pedido explícito para menu e gameplay. Reutilizar as fontes aprovadas com rampa
 
 Conferir o Player real com quatro armas, 16 armaduras e sete poses, verificando textura, direção, tint e restauração do Buster sem cor especial, com colisão estável. Montar composições de leitura sobre os quatro temas em cena descartável, reaproveitando os assets intactos. Manter a revisão de Memory Leak e deixar a integração ainda em andamento de Race Condition com a outra sessão. Exportar galeria/relatório, executar os checks e registrar a fatia.
 
+### T21 — contraste dos inimigos da terceira fase
+
+Prioridade explícita do usuário: separar Void Eye, Dangling Ref e seu cursor do cenário roxo. Aplicar mapas de cor bijetivos em tons da paleta existente (âmbar e ciano/metal), sem fundir detalhes nem alterar alpha, quadros, colisões ou AI. Conferir nove quadros contra `1df2de2`, garantir sete PNGs de cenário intactos e verificar as entidades reais no Phaser e o carregamento da fase. Exportar antes/depois, rodar os checks e registrar a fatia.
+
 ## Perguntas em aberto
 
 - **Onde publicar** (GitHub Pages ou itch.io): só preciso saber na T23.

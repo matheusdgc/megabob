@@ -119,6 +119,14 @@ Comparações da versão rejeitada com a restauração: `art/exports/megabob-mem
 
 Depois do smoke test, `py -3 tools/review_memory_palette.py` exporta `megabob-memory-interactives.png`, o detalhe 2× `megabob-memory-interactives-detail.png` e `stage-interactives-review.json` em `art/exports/`. Os estados já têm leitura distinta na composição atual; sprites, paleta, texturas e regras foram mantidos. A prancha é uma inspeção dos componentes, sem substituir uma partida completa.
 
+### Contraste dos inimigos de Null Pointer
+
+Pedido específico do usuário: destacar as ameaças da terceira fase sem perder textura ou o estilo de 16 bits. `tools/null_enemy_colors.py` aplica mapas de cor bijetivos somente a `enemy_void_eye`, `enemy_dangling_ref` e `null_cursor`: olho em âmbar/creme, corrente e garra em ciano/metal azul claro, cursor com bordas quentes. Todos os tons continuam distintos (12, 11 e 8), dentro da paleta global já existente. O cursor é compartilhado com o chefe Null Pointer. Não altera as cores do Bob, o corpo do chefe, os mapas ou os cenários.
+
+Reproduzir com `py -3 tools/art.py enemies` e `py -3 tools/art.py bosses` (ou `all`). `py -3 tools/review_null_enemies.py` compara os nove quadros com `1df2de2`: dimensões, alpha e padrão espacial dos tons devem ser idênticos; a aplicação das novas cores deve coincidir exatamente com o mapa. Também exige que os seis fundos T3 e o tileset continuem idênticos ao baseline. Relatório `art/exports/null-enemy-contrast-review.json` e antes/depois `megabob-null-enemy-contrast.png`.
+
+`tools/check-null-enemy-art.mjs` usa VoidEye, DanglingRef e EnemyShot reais: verifica os quatro quadros do olho, as três poses da garra, o estado desaparecido sem colisão e o cursor disparado, mantendo corpos 18×18, 18×16 e 10×10. O smoke test abre também `?stage=nullPointer`; capturas e fontes verificadas ficam em `art/preview/`. A composição de comparação é estática, sem simular uma partida completa.
+
 ### Sprites e apresentação dos chefes
 
 Race Condition agora é conferido por `tools/check-race-art.mjs`: 1.800 passos fixos normais e 1.800 em fúria, quadros 0–5, dano 6, derrota 7, quatro rotações das lâminas, um/dois clones e colisões de 28×48 / 44×22. `race_afterimage` passou a ter ancoragem inferior: o desenho estava 15 px acima dos pés. O importador acrescenta contorno claro de um pixel, mantendo os 2.158 pixels internos originais, sem reamostragem, no mesmo quadro 96×80. Opacidades 0,35/0,75, dano e tempos permanecem iguais. `tools/review_race_art.py` confere os pixels contra `12f4020` e exporta `megabob-race-clones.png` / `race-art-review.json`. As capturas são inspeções estáticas, não uma partida completa.

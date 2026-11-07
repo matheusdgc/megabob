@@ -4,6 +4,8 @@ O lote atual de 124 strips/imagens passou nas verificações de recorte, dimens�
 
 Correção de enquadramento concluída:
 
+Contraste de Null Pointer: Void Eye, Dangling Ref e o cursor usam mapas bijetivos em `tools/null_enemy_colors.py` (âmbar/creme e ciano/metal claro). Os nove quadros mantêm todos os tons distintos, padrões e alpha originais; os sete PNGs de cenário T3 não mudaram. Reproduzir com `py -3 tools/art.py enemies` e `py -3 tools/art.py bosses`; conferir por `py -3 tools/review_null_enemies.py` após o smoke test. Relatório e comparação `art/exports/null-enemy-contrast-review.json` / `megabob-null-enemy-contrast.png`.
+
 Refinamento visual solicitado para menu e gameplay: `tools/bob_colors.py` usa rampas locais de 41 cores, conservando o alpha exato dos 594 quadros anteriores. A cor interna é amostrada com mais gradações; a exibição continua em pixels, sem blur e sem alterar poses, colisões ou fps. `title_bob_idle` amostra a fonte B2 em 96×96 para ocupar o mesmo tamanho de menu com mais detalhe. Comparação `art/exports/megabob-bob-refinement.png`; checker e hashes em `tools/review_bob_refinement.py` / `bob-refinement-review.json`. As fontes aprovadas foram reaproveitadas, sem geração de novas poses.
 
 - O encaixe agora compara a armadura inteira e só aceita posições dentro do quadro. Idle, salto e dash foram reprocessados; as duas poses de air dash usam uma escala compartilhada que conserva o desenho inteiro. Os seis avisos de recorte foram eliminados, mantendo os quadros 48×48 e as fontes intactas. Comparação em `art/preview/bob_bounds_comparison.png`.

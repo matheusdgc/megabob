@@ -10,6 +10,7 @@ import { checkStageInteractives } from './check-stage-interactives.mjs';
 import { checkTextureSources } from './check-texture-sources.mjs';
 import { checkBobWeaponArt } from './check-bob-weapon-art.mjs';
 import { checkRaceArt } from './check-race-art.mjs';
+import { checkNullEnemyArt } from './check-null-enemy-art.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -78,7 +79,7 @@ try {
       frameWidth: 48, frameHeight: height, frames: width / 48 });
   }
   const scenes = [];
-  for (const [query, scene, name] of [['?sprites', 'Debug', 'debug'], ['?stage=raceCondition', 'Stage', 'race-condition'], ['?stage=memoryLeak', 'Stage', 'stage']]) {
+  for (const [query, scene, name] of [['?sprites', 'Debug', 'debug'], ['?stage=raceCondition', 'Stage', 'race-condition'], ['?stage=nullPointer', 'Stage', 'null-pointer'], ['?stage=memoryLeak', 'Stage', 'stage']]) {
     const expectedStage = new URLSearchParams(query).get('stage');
     await send('Page.navigate', { url: `${baseUrl}/${query}` });
     let state;
@@ -181,9 +182,10 @@ try {
   const animationLoops = await checkAnimationLoops(send, root, output);
   const bossArt = await checkBossArt(send, output);
   const raceArt = await checkRaceArt(send, output);
+  const nullEnemyArt = await checkNullEnemyArt(send, output);
   const interactives = await checkStageInteractives(send, output);
   const bobWeaponArt = await checkBobWeaponArt(send, output);
-  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, interactives, bobWeaponArt, errors, warnings, failedRequests };
+  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, interactives, bobWeaponArt, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));

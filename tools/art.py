@@ -21,6 +21,7 @@ from ui_art import (
 )
 from stage_art import extend_view, environment_preview, tile_repeat_preview, environment_gallery, quiet_legacy_layer, THEMES
 from memory_colors import quiet_memory_layer, memory_tiles
+from null_enemy_colors import REMAPS as NULL_ENEMY_REMAPS, recolor_null_enemy
 from presentation_art import (
     presentation_assets, previews as presentation_previews, gallery as presentation_gallery,
     end_screen_previews,
@@ -390,6 +391,8 @@ def run(group='all'):
             result = memory_tiles(result)
         if item['key'] == 'race_afterimage':
             result = race_clone_outline(result)
+        if item['key'] in NULL_ENEMY_REMAPS:
+            result = recolor_null_enemy(result, item['key'])
         if item['key'] == 'tech_laser':
             result = periodic(result, 2)
         entry = save_asset(result, item['group'], item['key'], item['size'], source,

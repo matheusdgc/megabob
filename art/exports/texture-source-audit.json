@@ -20,6 +20,15 @@
     },
     {
       "scene": "Stage",
+      "stage": "nullPointer",
+      "verifiedTextures": 269,
+      "verifiedPngSources": 269,
+      "activeBindingsVerified": 12,
+      "placeholderControlDetected": true,
+      "alteredImageControlDetected": true
+    },
+    {
+      "scene": "Stage",
       "stage": "memoryLeak",
       "verifiedTextures": 269,
       "verifiedPngSources": 269,
@@ -86,7 +95,7 @@
     "generatedPlaceholderRejected": true,
     "sameSizeAlteredImageRejected": true
   },
-  "scope": "Registered raster assets in Debug, Memory Leak and Race Condition; not a complete gameplay playthrough",
+  "scope": "Registered raster assets in Debug, Memory Leak, Race Condition and Null Pointer; not a complete gameplay playthrough",
   "productionAssetsChanged": false,
   "activeRaceBindings": [
     {
@@ -144,6 +153,56 @@
     {
       "role": "movingPlatform",
       "texture": "moving_platform"
+    }
+  ],
+  "activeNullBindings": [
+    {
+      "role": "player",
+      "texture": "bob_idle"
+    },
+    {
+      "role": "enemy:voidEye",
+      "texture": "enemy_void_eye"
+    },
+    {
+      "role": "enemy:voidEye",
+      "texture": "enemy_void_eye"
+    },
+    {
+      "role": "enemy:danglingRef",
+      "texture": "enemy_dangling_ref"
+    },
+    {
+      "role": "enemy:danglingRef",
+      "texture": "enemy_dangling_ref"
+    },
+    {
+      "role": "enemy:pixelMite",
+      "texture": "enemy_pixel_mite"
+    },
+    {
+      "role": "checkpoint",
+      "texture": "checkpoint"
+    },
+    {
+      "role": "bossDoor",
+      "texture": "boss_door"
+    },
+    {
+      "role": "parallax:0",
+      "texture": "t3_null_pointer_far_wide"
+    },
+    {
+      "role": "parallax:1",
+      "texture": "t3_null_pointer_mid_wide"
+    },
+    {
+      "role": "parallax:2",
+      "texture": "t3_null_pointer_near_wide"
+    },
+    {
+      "role": "terrain",
+      "texture": "tiles_null_pointer"
     }
   ]
 }
