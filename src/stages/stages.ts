@@ -6,10 +6,11 @@ import type { MoverDef } from '../systems/movers';
 import { PLAIN_SKIN, STAGE_SKIN, type TileSkin } from './autotile';
 import { MEMORY_LEAK_GOO, MEMORY_LEAK_MAP, MEMORY_LEAK_SECTIONS } from './memoryLeak';
 import { NULL_POINTER_MAP, NULL_POINTER_SECTIONS } from './nullPointer';
+import { TECH_DEBT_MAP, TECH_DEBT_SECTIONS } from './techDebt';
 import { RACE_CONDITION_MAP, RACE_CONDITION_MOVERS, RACE_CONDITION_SECTIONS } from './raceCondition';
 import { TEST_MAP, TEST_SECTIONS } from './test';
 
-export type StageId = 'test' | 'memoryLeak' | 'raceCondition' | 'nullPointer';
+export type StageId = 'test' | 'memoryLeak' | 'raceCondition' | 'nullPointer' | 'techDebt';
 
 /**
  * Everything a stage is, as data: the StageScene only builds what this describes, so a new
@@ -33,6 +34,8 @@ export interface StageDef {
   /** Stage music, and the boss fight's (hard cut when the door shuts). */
   readonly music: MusicId;
   readonly bossMusic: MusicId;
+  /** Music of a boss's second phase, if it has one. */
+  readonly bossMusic2?: MusicId;
   /** Rising goo in one section (Memory Leak). */
   readonly goo?: GooDef;
   /** Moving platforms (Race Condition). */
@@ -91,6 +94,20 @@ export const STAGES: Record<StageId, StageDef> = {
     background: '#0b0716',
     music: 'nullPointer',
     bossMusic: 'boss',
+  },
+  techDebt: {
+    id: 'techDebt',
+    name: 'TECH DEBT',
+    map: TECH_DEBT_MAP,
+    sections: TECH_DEBT_SECTIONS,
+    boss: 'techDebt',
+    tileset: 'tiles_tech_debt',
+    skin: STAGE_SKIN,
+    parallax: ['t4_tech_debt_far_wide', 't4_tech_debt_mid_wide', 't4_tech_debt_near_wide'],
+    background: '#120d07',
+    music: 'fortress',
+    bossMusic: 'techDebt1',
+    bossMusic2: 'techDebt2',
   },
 };
 

@@ -10,6 +10,8 @@ import { ClockSpike } from './ClockSpike';
 import { ThreadRunner } from './ThreadRunner';
 import { DanglingRef } from './DanglingRef';
 import { VoidEye } from './VoidEye';
+import { DeprecatedBot } from './DeprecatedBot';
+import { LegacyTurret } from './LegacyTurret';
 
 /** E1 Pixel Mite: crawls along floors, turning at walls and ledges. */
 export class PixelMite extends Enemy {
@@ -79,5 +81,9 @@ export function createEnemy(kind: EnemyKind, scene: Phaser.Scene, x: number, y: 
       return new VoidEye(scene, x, y, world);
     case 'danglingRef':
       return new DanglingRef(scene, x, y, world);
+    case 'legacyTurret':
+      return new LegacyTurret(scene, x, y, world);
+    case 'deprecatedBot':
+      return new DeprecatedBot(scene, x, y, world);
   }
 }

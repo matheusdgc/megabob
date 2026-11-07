@@ -42,7 +42,9 @@ describe.each(Object.values(STAGES))('stage $id', (def) => {
     counts.forEach((n, i) => i !== room && expect(n, `section ${i}`).toBeGreaterThanOrEqual(4));
   });
 
-  it('has a boss that gives a weapon', () => {
-    expect(BOSS_WEAPON[def.boss]).toBeDefined();
+  // the final boss gives no weapon: beating it rolls the credits
+  it('has a boss that gives a weapon (except the final one)', () => {
+    if (def.boss === 'techDebt') expect(BOSS_WEAPON[def.boss]).toBeUndefined();
+    else expect(BOSS_WEAPON[def.boss]).toBeDefined();
   });
 });

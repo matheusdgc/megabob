@@ -176,8 +176,24 @@ export abstract class Boss extends Phaser.Physics.Arcade.Sprite {
       this.setTintFill(0xffffff);
       this.scene.events.emit('bossHurt');
     }
-    if (result === 'dead') this.onDie();
+    if (result === 'dead') {
+      if (this.nextPhase()) return false;
+      this.onDie();
+    }
     return result === 'dead';
+  }
+
+  /**
+   * A boss with more than one phase starts the next one here instead of dying (it calls
+   * startIntro() to refill its health) and returns true. One-phase bosses return false.
+   */
+  protected nextPhase(): boolean {
+    return false;
+  }
+
+  /** Solid parts that block Bob and enemies (a wall boss). */
+  get walls(): Phaser.GameObjects.GameObject[] {
+    return [];
   }
 
   private onDie(): void {

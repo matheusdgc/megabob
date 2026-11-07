@@ -11,6 +11,7 @@ import { EnemyShot } from '../entities/EnemyShot';
 import { MovingPlatform } from '../entities/MovingPlatform';
 import { UpdateTerminal } from '../entities/UpdateTerminal';
 import { hasPart, installPart, partEffects } from '../systems/upgrades';
+import { recordClear } from '../systems/save';
 import { loopAnim, playOnce } from '../entities/effects';
 import { Feedback } from '../entities/feedback';
 import { GameAudio, loadMusic } from '../audio';
@@ -20,7 +21,7 @@ import { Pickup } from '../entities/Pickup';
 import type { Projectile } from '../entities/Projectile';
 import { Player, type Special } from '../entities/Player';
 import { skinTiles, solidFrames } from '../stages/autotile';
-import { conveyorDir, conveyorUnder, isSolid, type MapEnemy, parseMap, T, terminalPart, vanishGroup } from '../stages/map';
+import { conveyorDir, conveyorUnder, isSolid, type EnemyKind, type MapEnemy, parseMap, T, terminalPart, vanishGroup } from '../stages/map';
 import { vanishSolid, vanishState } from '../systems/vanish';
 import { bossRoomIndex, DEFAULT_STAGE, type StageDef, type StageId, STAGES } from '../stages/stages';
 import { type Action, ActionState } from '../systems/actions';
@@ -60,7 +61,7 @@ interface RespawnPoint {
 }
 
 /** Scene events that must not outlive one run of the stage (Phaser keeps them across restarts). */
-const RUN_EVENTS = ['bossIntro', 'bossHurt', 'bossSfx', 'bossDefeated', 'bossRoomUnlocked', 'gameOver'] as const;
+const RUN_EVENTS = ['bossIntro', 'bossHurt', 'bossSfx', 'bossSummon', 'bossPhase', 'bossDefeated', 'bossRoomUnlocked', 'gameOver'] as const;
 
 /**
  * A playable stage, built from its `StageDef` (map, camera sections, boss, tileset).
@@ -157,7 +158,7 @@ export class StageScene extends Phaser.Scene {
   }
 
   preload(): void {
-    loadMusic(this, [this.def.music, this.def.bossMusic]);
+    loadMusic(this, [this.def.music, this.def.bossMusic, ...(this.def.bossMusic2 ? [this.def.bossMusic2] : [])]);
   }
 
   create(): void {
@@ -283,6 +284,19 @@ export class StageScene extends Phaser.Scene {
     // A fresh boss spawns each time the door shuts behind Bob (Bob's death removes the old one)
     this.events.on('bossIntro', () => this.spawnBoss());
     this.events.on('bossSfx', (id: SfxId) => this.sfx(id));
+    // a wall boss sends enemies out (two at a time at most)
+    this.events.on('bossSummon', (kind: EnemyKind, x: number, y: number) => {
+      if (this.player.isDead || this.enemies.countActive(true) >= 2) return;
+      const e = createEnemy(kind, this, x, y, this.enemyWorld());
+      e.once('destroyed', (ex: number, ey: number) => this.dropFrom(ex, ey));
+      this.enemies.add(e);
+    });
+    // a second boss phase: a big beat, then its own music
+    this.events.on('bossPhase', () => {
+      this.fx.play('bossDefeated');
+      this.sfx('bossExplosion');
+      if (this.def.bossMusic2) this.audio?.music.play(this.def.bossMusic2, 600);
+    });
     this.events.on('bossHurt', () => {
       this.fx.play('bossHit');
       this.sfx('bossHit');
@@ -530,21 +544,24 @@ export class StageScene extends Phaser.Scene {
     return false;
   }
 
+  /** What enemies may ask the stage about the world. */
+  private enemyWorld(): EnemyWorld {
+    return {
+      floorAt: (x, y) => this.solidNow(x, y) || this.cellAt(x, y) === T.platform,
+      bob: () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
+      shoot: (kind, x, y, vx, vy) => {
+        this.enemyShots.add(new EnemyShot(this, kind, x, y, vx, vy));
+        this.sfx(kind === 'block' ? 'throw' : kind === 'cursor' ? 'glitch' : kind === 'card' ? 'cardShot' : 'clockShot');
+      },
+    };
+  }
+
   /** The current section's enemies, fresh (they come back each time Bob re-enters). */
   private spawnEnemies(section: number): void {
     this.enemies.clear(true, true);
     this.enemyShots.clear(true, true);
     this.pickups.clear(true, true);
-    const world: EnemyWorld = {
-      floorAt: (x, y) => {
-        return this.solidNow(x, y) || this.cellAt(x, y) === T.platform;
-      },
-      bob: () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
-      shoot: (kind, x, y, vx, vy) => {
-        this.enemyShots.add(new EnemyShot(this, kind, x, y, vx, vy));
-        this.sfx(kind === 'block' ? 'throw' : kind === 'cursor' ? 'glitch' : 'clockShot');
-      },
-    };
+    const world = this.enemyWorld();
     for (const it of this.placedItems) {
       if (sectionOf(this.sections, it.x, it.y) !== section || this.taken.has(`${it.x},${it.y}`)) continue;
       this.pickups.add(new Pickup(this, it.x, it.y, it.kind, true).setData('spot', `${it.x},${it.y}`));
@@ -559,6 +576,13 @@ export class StageScene extends Phaser.Scene {
 
   private shotHits(shot: Projectile, enemy: Enemy): void {
     if (!shot.active || !enemy.active) return;
+    // a shield in front bounces basic shots; charged ones (level 2+) break through
+    if (shot.level < 2 && enemy.blocks(shot.x)) {
+      playOnce(this, 'fx_hit', shot.x, shot.y, 20);
+      this.sfx('shieldBlock');
+      shot.disableBody(true, true);
+      return;
+    }
     const killed = enemy.hurt(shot.damage);
     if (killed) this.fx.play('enemyKilled');
     this.sfx(killed ? 'explosion' : 'enemyHit');
@@ -633,7 +657,12 @@ export class StageScene extends Phaser.Scene {
     const bob = () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y });
     const boss = createBoss(this.def.boss, this, room.x + room.w / 2, room.y + room.h - 2 * TILE, this.worldHeight, bob);
     this.boss = boss;
+    boss.setArena(room.x, room.x + room.w);
     const track = (c: Phaser.Physics.Arcade.Collider) => this.bossColliders.push(c);
+    for (const w of boss.walls) {
+      track(this.physics.add.collider(this.player, w));
+      track(this.physics.add.collider(this.enemies, w));
+    }
     const isBoss = (o: unknown): o is Boss => o === boss;
     // Bob's shots hit the boss (pairs sorted by type: the old version disabled the boss itself)
     track(this.physics.add.overlap(this.player.shots, boss, (a, b) => {
@@ -664,7 +693,6 @@ export class StageScene extends Phaser.Scene {
     track(this.physics.add.overlap(this.player, boss, () => {
       if (!this.player.isDead && boss.phase === 'fight' && !boss.isFrozen && boss.isTangible) this.player.takeHit(boss.contactDamage, boss.body.center.x);
     }));
-    boss.setArena(room.x, room.x + room.w);
     this.bossHealthBar = new BossHealthBar(this, this.def.name, partEffects(this.player.armor).visor);
     boss.startIntro();
   }
@@ -673,8 +701,16 @@ export class StageScene extends Phaser.Scene {
     this.bossHealthBar?.destroy();
     this.bossHealthBar = undefined;
     this.events.emit('bossRoomUnlocked');
-    // after the explosion: the weapon-get screen (it records the clear), then the stage select
     this.over = true;
+    // its minions go with it
+    for (const e of [...this.enemies.getChildren()] as Enemy[]) e.hurt(999);
+    if (this.def.boss === 'techDebt') {
+      // the end: the game is cleared, then the credits
+      commitSave(this.registry, recordClear(getSave(this.registry), 'techDebt'));
+      this.time.delayedCall(4500, () => fadeTo(this, 'Credits', undefined, 1200));
+      return;
+    }
+    // after the explosion: the weapon-get screen (it records the clear), then the stage select
     const weapon = BOSS_WEAPON[this.def.boss];
     const boss = this.def.boss;
     this.time.delayedCall(3500, () =>

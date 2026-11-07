@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BLOCK_DAMAGE, BLOCK_GRAVITY, CURSOR_DAMAGE, SPIKE_SHOT_DAMAGE } from '../data/enemies';
+import { BLOCK_DAMAGE, BLOCK_GRAVITY, CARD_DAMAGE, CURSOR_DAMAGE, SPIKE_SHOT_DAMAGE } from '../data/enemies';
 
 const CULL_MARGIN = 32;
 
@@ -11,6 +11,8 @@ export const SHOTS = {
   clockSpike: { key: 'clock_spike_shot', size: 8, damage: SPIKE_SHOT_DAMAGE, gravity: 0 },
   // Void Eye's cursor: straight, aimed
   cursor: { key: 'null_cursor', size: 10, damage: CURSOR_DAMAGE, gravity: 0 },
+  // Legacy Turret's punched card: straight, aimed
+  card: { key: 'tech_card', size: 8, damage: CARD_DAMAGE, gravity: 0 },
 } as const;
 
 export type ShotKind = keyof typeof SHOTS;

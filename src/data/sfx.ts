@@ -98,6 +98,21 @@ export const SFX = {
     ],
   },
   throw: { voices: [{ wave: 'triangle', from: 300, to: 520, dur: 0.1, vol: 0.12 }], vary: 0.05 },
+  cardShot: {
+    voices: [
+      { wave: 'square', from: 260, to: 180, dur: 0.06, vol: 0.14 },
+      { wave: 'noise', from: 3000, to: 1200, dur: 0.05, vol: 0.08 },
+    ],
+    vary: 0.05,
+  },
+  shieldBlock: { voices: [{ wave: 'square', from: 1400, to: 1400, dur: 0.04, vol: 0.12 }], vary: 0.04 },
+  laserCharge: { voices: [{ wave: 'sawtooth', from: 120, to: 900, dur: 0.6, vol: 0.12 }] },
+  laser: {
+    voices: [
+      { wave: 'sawtooth', from: 900, to: 700, dur: 0.5, vol: 0.14 },
+      { wave: 'noise', from: 6000, to: 3000, dur: 0.5, vol: 0.08 },
+    ],
+  },
   clockShot: { voices: [{ wave: 'square', from: 1800, to: 1100, dur: 0.06, vol: 0.12 }], vary: 0.05 },
   bossDash: {
     voices: [

@@ -1,4 +1,13 @@
 import {
+  BOT_GUARD_FRAMES,
+  BOT_OPEN_FRAMES,
+  BOT_PUNCH_FRAMES,
+  BOT_PUNCH_SPEED,
+  BOT_REACH,
+  TURRET_AIM_FRAMES,
+  TURRET_COOLDOWN_FRAMES,
+  TURRET_FIRE_FRAMES,
+  TURRET_SIGHT,
   DANGLE_AMP,
   DANGLE_PERIOD,
   EYE_GLITCH_FRAMES,
@@ -425,3 +434,112 @@ export const dangleAngle = (frame: number, phase = 0): number => DANGLE_AMP * Ma
 
 /** Sheet frame for an angle: 0 swung left, 1 center, 2 swung right. */
 export const dangleFrame = (angle: number): 0 | 1 | 2 => (angle < -0.3 ? 0 : angle > 0.3 ? 2 : 1);
+
+// ------------------------------------------------------------------ Legacy Turret
+
+export type TurretState = 'idle' | 'aim' | 'fire';
+
+export interface Turret {
+  state: TurretState;
+  frames: number;
+  cooldown: number;
+  facing: 1 | -1;
+}
+
+export const newTurret = (): Turret => ({ state: 'idle', frames: 0, cooldown: 40, facing: -1 });
+
+export interface TurretOut {
+  /** Sheet frame: 0 idle, 1 aiming (the warning), 2 firing. */
+  frame: 0 | 1 | 2;
+  /** Fire a card along this unit direction this frame. */
+  fire?: { dx: number; dy: number };
+}
+
+/** Legacy Turret, one frame: turns to Bob in range, aims (the warning), fires one aimed card, cools down. */
+export function stepTurret(t: Turret, bob: { dx: number; dy: number } | null): TurretOut {
+  t.frames++;
+  if (t.cooldown > 0) t.cooldown--;
+  const go = (state: TurretState) => {
+    t.state = state;
+    t.frames = 0;
+  };
+  if (bob && bob.dx !== 0 && t.state === 'idle') t.facing = bob.dx < 0 ? -1 : 1;
+  switch (t.state) {
+    case 'idle':
+      if (bob && t.cooldown === 0 && Math.hypot(bob.dx, bob.dy) <= TURRET_SIGHT) go('aim');
+      return { frame: 0 };
+    case 'aim':
+      if (t.frames >= TURRET_AIM_FRAMES) {
+        go('fire');
+        const len = bob ? Math.hypot(bob.dx, bob.dy) || 1 : 1;
+        return { frame: 2, fire: bob ? { dx: bob.dx / len, dy: bob.dy / len } : { dx: t.facing, dy: 0 } };
+      }
+      return { frame: 1 };
+    case 'fire':
+      if (t.frames >= TURRET_FIRE_FRAMES) {
+        t.cooldown = TURRET_COOLDOWN_FRAMES;
+        go('idle');
+      }
+      return { frame: 2 };
+  }
+}
+
+// ------------------------------------------------------------------ Deprecated Bot
+
+export type BotState = 'walk' | 'guard' | 'punch' | 'open';
+
+export interface Bot {
+  state: BotState;
+  frames: number;
+  facing: 1 | -1;
+}
+
+export const newBot = (): Bot => ({ state: 'walk', frames: 0, facing: -1 });
+
+export interface BotOut {
+  vx: number;
+  /** Sheet frame: 0-1 walking, 2 guard (wind-up), 3 punch / open. */
+  frame: 0 | 1 | 2 | 3;
+  /** The shield is in front: basic shots from the side it faces bounce off. */
+  shielded: boolean;
+}
+
+/**
+ * Deprecated Bot, one frame. Walks at Bob behind its shield (turning at walls and ledges);
+ * close and level with him it guards (the warning), punches forward, then stands open,
+ * shield away, before walking on.
+ */
+export function stepBot(b: Bot, s: WalkerSense, bob: { dx: number; dy: number } | null, speed: number): BotOut {
+  b.frames++;
+  const go = (state: BotState) => {
+    b.state = state;
+    b.frames = 0;
+  };
+  switch (b.state) {
+    case 'walk': {
+      if (bob && bob.dx !== 0) b.facing = bob.dx < 0 ? -1 : 1;
+      if (bob && s.onGround && Math.abs(bob.dx) <= BOT_REACH && Math.abs(bob.dy) <= 24) {
+        go('guard');
+        return { vx: 0, frame: 2, shielded: true };
+      }
+      const blocked = s.wallAhead || !s.floorAhead;
+      return { vx: blocked || !s.onGround ? 0 : b.facing * speed, frame: Math.floor(b.frames / 10) % 2 === 0 ? 0 : 1, shielded: true };
+    }
+    case 'guard':
+      if (b.frames >= BOT_GUARD_FRAMES) {
+        go('punch');
+        return { vx: s.floorAhead ? b.facing * BOT_PUNCH_SPEED : 0, frame: 3, shielded: false };
+      }
+      return { vx: 0, frame: 2, shielded: true };
+    case 'punch':
+      if (b.frames >= BOT_PUNCH_FRAMES) go('open');
+      return { vx: s.floorAhead && !s.wallAhead ? b.facing * BOT_PUNCH_SPEED : 0, frame: 3, shielded: false };
+    case 'open':
+      if (b.frames >= BOT_OPEN_FRAMES) go('walk');
+      return { vx: 0, frame: 3, shielded: false };
+  }
+}
+
+/** A shot travelling from `shotX` meets a bot's shield when it comes from the side the bot faces. */
+export const shieldBlocks = (bot: { shielded: boolean; facing: 1 | -1; x: number }, shotX: number): boolean =>
+  bot.shielded && (shotX - bot.x) * bot.facing > 0;

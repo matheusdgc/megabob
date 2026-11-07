@@ -68,6 +68,8 @@ export const ENEMY_MARKERS = {
   k: 'clockSpike',
   o: 'voidEye',
   j: 'danglingRef',
+  t: 'legacyTurret',
+  b: 'deprecatedBot',
 } as const;
 export type EnemyKind = (typeof ENEMY_MARKERS)[keyof typeof ENEMY_MARKERS];
 

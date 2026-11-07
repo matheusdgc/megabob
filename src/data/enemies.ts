@@ -29,6 +29,11 @@ export const ENEMIES: Record<EnemyKind, EnemyStats> = {
   voidEye: { sheet: 'enemy_void_eye', hp: 3, contact: 3, body: [18, 18], speed: 0 },
   // E8 (Null Pointer): a claw on a broken chain, swinging. Frames: left, center, right.
   danglingRef: { sheet: 'enemy_dangling_ref', hp: 4, contact: 4, body: [18, 16], speed: 0 },
+  // E9 (Tech Debt): a stationary cannon that aims and fires punched cards. Frames: idle, aim, fire.
+  legacyTurret: { sheet: 'enemy_legacy_turret', hp: 5, contact: 3, body: [30, 26], speed: 0 },
+  // E10 (Tech Debt): walks behind a shield that stops basic shots, then lowers it to punch.
+  // Frames: walk A, walk B, guard (wind-up), punch (shield away: open to any shot).
+  deprecatedBot: { sheet: 'enemy_deprecated_bot', hp: 5, contact: 3, body: [22, 30], speed: 26 },
 };
 
 // --- Spam Drone behaviour ---
@@ -110,3 +115,20 @@ export const CURSOR_DAMAGE = 3;
 export const DANGLE_AMP = 0.9;
 export const DANGLE_PERIOD = 110;
 export const DANGLE_LENGTH = 40;
+
+// --- Legacy Turret behaviour ---
+export const TURRET_SIGHT = 230;
+export const TURRET_AIM_FRAMES = 30;
+export const TURRET_FIRE_FRAMES = 12;
+export const TURRET_COOLDOWN_FRAMES = 95;
+export const CARD_SPEED = 140;
+export const CARD_DAMAGE = 3;
+
+// --- Deprecated Bot behaviour ---
+/** Bob this close (and about level) makes it stop and punch. */
+export const BOT_REACH = 40;
+export const BOT_GUARD_FRAMES = 16;
+export const BOT_PUNCH_FRAMES = 12;
+export const BOT_PUNCH_SPEED = 110;
+/** After the punch it stands open (shield away) this long: the moment to hit it. */
+export const BOT_OPEN_FRAMES = 36;

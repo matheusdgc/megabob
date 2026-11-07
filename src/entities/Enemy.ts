@@ -50,6 +50,11 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.body.setOffset((this.width - w) / 2, this.height - h);
   }
 
+  /** A shot coming from `shotX` bounces off (a shield in front); basic shots only. */
+  blocks(_shotX: number): boolean {
+    return false;
+  }
+
   get isFrozen(): boolean {
     return this.frozen > 0;
   }

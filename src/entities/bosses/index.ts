@@ -4,6 +4,7 @@ import type { Boss } from '../Boss';
 import { MemoryLeak } from './MemoryLeak';
 import { NullPointer } from './NullPointer';
 import { RaceCondition } from './RaceCondition';
+import { TechDebt } from './TechDebt';
 
 /** Bob's hitbox center, or null while he is dead. */
 export type BobLocator = () => { x: number; y: number } | null;
@@ -17,6 +18,8 @@ export function createBoss(id: BossId, scene: Phaser.Scene, x: number, y: number
       return new RaceCondition(scene, x, y, bob);
     case 'nullPointer':
       return new NullPointer(scene, x, y, bob);
+    case 'techDebt':
+      return new TechDebt(scene, x, y, bob);
     default:
       throw new Error(`no boss class for ${id} yet`);
   }
