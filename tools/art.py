@@ -296,7 +296,7 @@ def title_preview():
     image.resize((960, 540), Image.Resampling.NEAREST).save(PREVIEW / 'title_wide_2x.png')
     prompt = RAW / 'ui/U2_title_cyberpunk.prompt.txt'
     if prompt.exists():
-        (exports / 'megabob-title-wide.prompt.txt').write_text(prompt.read_text(encoding='utf-8'), encoding='utf-8')
+        (exports / 'megabob-title-wide.prompt.txt').write_text(prompt.read_text(encoding='utf-8').rstrip() + '\n', encoding='utf-8')
 
 
 def register(entries):
