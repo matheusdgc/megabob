@@ -6,7 +6,6 @@ import { hasProgress, newSave } from '../systems/save';
 import { fadeIn, fadeTo, hideLabels, type Label, UI, uiText } from '../ui/text';
 import type { OptionsData } from './OptionsScene';
 import { commitSave, getSave } from './progress';
-import { animateTitle } from './titleMotion';
 
 interface Item {
   label: string;
@@ -44,8 +43,7 @@ export class TitleScene extends Phaser.Scene {
 
   create(): void {
     this.add.image(0, 0, 'title_background_wide').setOrigin(0);
-    const logo = this.add.image(16, 8, 'title_logo_night').setOrigin(0).setScale(2);
-    animateTitle(this, logo);
+    this.add.image(16, 8, 'title_logo_night').setOrigin(0).setScale(2);
     // dark bands so the menu reads over the busy skyline
     this.add.rectangle(240, MENU_Y + ROW - 2, 168, 58, 0x000000, 0.6);
     this.add.rectangle(240, 258, 480, 16, 0x000000, 0.6);
