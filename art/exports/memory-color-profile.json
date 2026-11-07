@@ -1,0 +1,116 @@
+{
+  "stage": "memoryLeak",
+  "roles": {
+    "background": [
+      "#161616",
+      "#393939"
+    ],
+    "solidFill": "#393939",
+    "contactEdge": "#E0E0E0",
+    "hazard": "original teal pixels preserved"
+  },
+  "contactEdgeVsMaxBackgroundRatio": 8.75,
+  "hazardPixelsUnchanged": true,
+  "tileAlphaUnchanged": true,
+  "layers": [
+    {
+      "file": "public/assets/bg/t1_memory_leak_far.png",
+      "colors": [
+        [
+          22,
+          22,
+          22
+        ]
+      ],
+      "alphaUnchanged": true,
+      "periodicEdges": true
+    },
+    {
+      "file": "public/assets/bg/t1_memory_leak_far_wide.png",
+      "colors": [
+        [
+          22,
+          22,
+          22
+        ]
+      ],
+      "alphaUnchanged": true,
+      "periodicEdges": true
+    },
+    {
+      "file": "public/assets/bg/t1_memory_leak_mid.png",
+      "colors": [
+        [
+          22,
+          22,
+          22
+        ],
+        [
+          57,
+          57,
+          57
+        ]
+      ],
+      "alphaUnchanged": true,
+      "periodicEdges": true
+    },
+    {
+      "file": "public/assets/bg/t1_memory_leak_mid_wide.png",
+      "colors": [
+        [
+          22,
+          22,
+          22
+        ],
+        [
+          57,
+          57,
+          57
+        ]
+      ],
+      "alphaUnchanged": true,
+      "periodicEdges": true
+    },
+    {
+      "file": "public/assets/bg/t1_memory_leak_near.png",
+      "colors": [
+        [
+          22,
+          22,
+          22
+        ],
+        [
+          57,
+          57,
+          57
+        ]
+      ],
+      "alphaUnchanged": true,
+      "periodicEdges": true
+    },
+    {
+      "file": "public/assets/bg/t1_memory_leak_near_wide.png",
+      "colors": [
+        [
+          22,
+          22,
+          22
+        ],
+        [
+          57,
+          57,
+          57
+        ]
+      ],
+      "alphaUnchanged": true,
+      "periodicEdges": true
+    }
+  ],
+  "screenshots": [
+    "entrance",
+    "platforms",
+    "shaft",
+    "boss-room"
+  ],
+  "note": "Art contrast measurement, not a claim of WCAG conformance or a gameplay playthrough."
+}

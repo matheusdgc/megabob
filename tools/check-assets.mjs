@@ -4,6 +4,8 @@ import { mkdtemp, readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { checkAnimationLoops } from './check-animation-loops.mjs';
+import { captureStageColors } from './check-stage-colors.mjs';
+import { checkBossArt } from './check-boss-art.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -91,6 +93,8 @@ try {
     await writeFile(join(output, `browser-assets-${scene.toLowerCase()}.png`), Buffer.from(screenshot.data, 'base64'));
     scenes.push({ scene, verifiedTextures: manifest.length });
   }
+  const colorArg = process.argv.find(arg => arg.startsWith('--stage-colors='));
+  const stageColors = colorArg ? await captureStageColors(send, output, colorArg.split('=')[1]) : undefined;
   // Temporary QA scene: inspect new art in Phaser without editing production scenes.
   const layout = JSON.parse(await readFile(join(root, 'art/exports/presentation-layout.json'), 'utf8'));
   const presentations = [];
@@ -168,7 +172,8 @@ try {
     endScreens.push(kind);
   }
   const animationLoops = await checkAnimationLoops(send, root, output);
-  const report = { scenes, presentations, endScreens, animationLoops, errors, warnings, failedRequests };
+  const bossArt = await checkBossArt(send, output);
+  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));

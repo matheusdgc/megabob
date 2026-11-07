@@ -1699,6 +1699,7 @@
       "16": "fill",
       "17": "fill"
     },
+    "colorRoles": "memory-steel-teal",
     "topAlignedFrames": [
       12,
       13,
@@ -2445,7 +2446,8 @@
     "frames": 1,
     "source": "bg/T1_memory_leak_bg.png",
     "edgeMismatchBefore": 42,
-    "edgeMismatchAfter": 0
+    "edgeMismatchAfter": 0,
+    "colorRoles": "memory-steel-teal"
   },
   {
     "key": "t1_memory_leak_far_wide",
@@ -2459,7 +2461,8 @@
     "edgeMismatchAfter": 0,
     "extendedFrom": "t1_memory_leak_far",
     "anchor": "bottom",
-    "depthAdjusted": false
+    "depthAdjusted": false,
+    "colorRoles": "memory-steel-teal"
   },
   {
     "key": "t1_memory_leak_mid",
@@ -2470,7 +2473,8 @@
     "frames": 1,
     "source": "bg/T1_memory_leak_bg.png",
     "edgeMismatchBefore": 122,
-    "edgeMismatchAfter": 0
+    "edgeMismatchAfter": 0,
+    "colorRoles": "memory-steel-teal"
   },
   {
     "key": "t1_memory_leak_mid_wide",
@@ -2484,7 +2488,8 @@
     "edgeMismatchAfter": 0,
     "extendedFrom": "t1_memory_leak_mid",
     "anchor": "bottom",
-    "depthAdjusted": false
+    "depthAdjusted": false,
+    "colorRoles": "memory-steel-teal"
   },
   {
     "key": "t1_memory_leak_near",
@@ -2495,7 +2500,8 @@
     "frames": 1,
     "source": "bg/T1_memory_leak_bg.png",
     "edgeMismatchBefore": 2,
-    "edgeMismatchAfter": 0
+    "edgeMismatchAfter": 0,
+    "colorRoles": "memory-steel-teal"
   },
   {
     "key": "t1_memory_leak_near_wide",
@@ -2509,7 +2515,8 @@
     "edgeMismatchAfter": 0,
     "extendedFrom": "t1_memory_leak_near",
     "anchor": "top",
-    "depthAdjusted": false
+    "depthAdjusted": false,
+    "colorRoles": "memory-steel-teal"
   },
   {
     "key": "t2_race_condition_far",

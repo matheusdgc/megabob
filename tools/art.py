@@ -20,6 +20,7 @@ from ui_art import (
     pause_preview, PAUSE_POSITION, PAUSE_SIZE, METER_CHANNEL,
 )
 from stage_art import extend_view, environment_preview, tile_repeat_preview, environment_gallery, quiet_legacy_layer, THEMES
+from memory_colors import quiet_memory_layer, memory_tiles
 from presentation_art import (
     presentation_assets, previews as presentation_previews, gallery as presentation_gallery,
     end_screen_previews,
@@ -209,11 +210,14 @@ def backgrounds():
             resized = background_quantize(resized, stage) if i == 0 else quantize(resized)
             before = edge_mismatch(resized)
             layer = periodic(resized)
+            if stage == 'memory_leak':
+                layer = quiet_memory_layer(layer)
             if edge_mismatch(layer):
                 raise ValueError(f'{source.name}/{name}: periodic edge did not close')
             key = source.stem[:-3].lower() + '_' + name
             entries.append(save_asset(layer, 'bg', key, (512, 224), source.relative_to(RAW).as_posix(),
-                                      edgeMismatchBefore=before, edgeMismatchAfter=0))
+                                      edgeMismatchBefore=before, edgeMismatchAfter=0,
+                                      **({'colorRoles': 'memory-steel-teal'} if stage == 'memory_leak' else {})))
             layers.append(layer)
             wide = extend_view(layer, name)
             depth_adjusted = stage == 'tech_debt' and name != 'far'
@@ -223,7 +227,8 @@ def backgrounds():
                 raise ValueError(f'{source.name}/{name}: extended edge did not close')
             entries.append(save_asset(wide, 'bg', key + '_wide', (512, 270), source.relative_to(RAW).as_posix(),
                                       edgeMismatchBefore=0, edgeMismatchAfter=0, extendedFrom=key,
-                                      anchor='top' if name == 'near' else 'bottom', depthAdjusted=depth_adjusted))
+                                      anchor='top' if name == 'near' else 'bottom', depthAdjusted=depth_adjusted,
+                                      **({'colorRoles': 'memory-steel-teal'} if stage == 'memory_leak' else {})))
             wide_layers.append(wide)
         repeat = Image.new('RGBA', (1024, 672), (25, 25, 34, 255))
         for i, layer in enumerate(layers):
@@ -348,6 +353,8 @@ def run(group='all'):
                       item.get('anchor', 'center'), item.get('stretch', False), item.get('frame_fit'))
         if item.get('top_frames'):
             result = align_top_frames(result, item['size'], item['top_frames'])
+        if item['key'] == 'tiles_memory_leak':
+            result = memory_tiles(result)
         if item['key'] == 'title_logo_night':
             result = night_logo(result)
         if item['key'] == 'tech_laser':
@@ -356,6 +363,8 @@ def run(group='all'):
                            emptyFrames=list(item.get('empty', ())), sourceCells=item['selection'])
         if item.get('frame_fit'):
             entry['frameSizing'] = item['frame_fit']
+        if item['key'] == 'tiles_memory_leak':
+            entry['colorRoles'] = 'memory-steel-teal'
         if item.get('top_frames'):
             entry['topAlignedFrames'] = item['top_frames']
         entries.append(entry)
@@ -384,7 +393,7 @@ def run(group='all'):
                            ['hud_health_frame', 'hud_health_segment', 'hud_weapon_segment', 'pause_panel']))
         for key, image in hud.items():
             entries.append(save_asset(image, 'ui', key, image.size, 'ui/U4_hud.png'))
-        background = scene_preview([Image.open(OUT / ('bg/t1_memory_leak_' + layer + '.png'))
+        background = scene_preview([Image.open(OUT / ('bg/t1_memory_leak_' + layer + '_wide.png'))
                                     for layer in ['far', 'mid', 'near']],
                                    Image.open(OUT / 'tiles/tiles_memory_leak.png'), Image.open(OUT / 'bob/bob_idle.png'))
         weapons = {key: Image.open(OUT / ('ui/icon_' + key + '.png')) for key in ['buster', 'gc', 'mutex', 'null']}

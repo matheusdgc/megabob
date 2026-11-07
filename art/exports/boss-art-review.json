@@ -1,0 +1,559 @@
+{
+  "sheets": 20,
+  "frames": 57,
+  "binaryAlpha": true,
+  "paletteColors": 29,
+  "emptyFrames": 0,
+  "productionPngsUnchanged": true,
+  "runtimeBoss": "memoryLeak",
+  "pendingRuntime": [
+    "raceCondition",
+    "nullPointer",
+    "techDebt"
+  ],
+  "note": "Other boss sheets are reviewed poses, not evidence of implemented attacks.",
+  "entries": [
+    {
+      "key": "boss_memory_leak",
+      "frames": 8,
+      "frameSize": [
+        96,
+        80
+      ],
+      "bounds": [
+        [
+          13,
+          16,
+          82,
+          80
+        ],
+        [
+          14,
+          21,
+          82,
+          80
+        ],
+        [
+          8,
+          16,
+          88,
+          80
+        ],
+        [
+          14,
+          25,
+          82,
+          80
+        ],
+        [
+          13,
+          43,
+          83,
+          80
+        ],
+        [
+          9,
+          17,
+          86,
+          80
+        ],
+        [
+          13,
+          16,
+          82,
+          80
+        ],
+        [
+          13,
+          26,
+          83,
+          80
+        ]
+      ]
+    },
+    {
+      "key": "boss_race_condition",
+      "frames": 8,
+      "frameSize": [
+        96,
+        80
+      ],
+      "bounds": [
+        [
+          20,
+          20,
+          76,
+          80
+        ],
+        [
+          19,
+          24,
+          77,
+          80
+        ],
+        [
+          14,
+          35,
+          81,
+          80
+        ],
+        [
+          4,
+          38,
+          91,
+          80
+        ],
+        [
+          6,
+          20,
+          89,
+          80
+        ],
+        [
+          12,
+          24,
+          84,
+          80
+        ],
+        [
+          14,
+          22,
+          81,
+          80
+        ],
+        [
+          14,
+          27,
+          81,
+          80
+        ]
+      ]
+    },
+    {
+      "key": "boss_null_pointer",
+      "frames": 8,
+      "frameSize": [
+        80,
+        80
+      ],
+      "bounds": [
+        [
+          20,
+          9,
+          60,
+          70
+        ],
+        [
+          20,
+          9,
+          60,
+          71
+        ],
+        [
+          20,
+          8,
+          60,
+          72
+        ],
+        [
+          20,
+          9,
+          60,
+          71
+        ],
+        [
+          15,
+          8,
+          65,
+          71
+        ],
+        [
+          18,
+          9,
+          61,
+          71
+        ],
+        [
+          20,
+          11,
+          60,
+          69
+        ],
+        [
+          37,
+          37,
+          42,
+          43
+        ]
+      ]
+    },
+    {
+      "key": "portrait_memory_leak",
+      "frames": 1,
+      "frameSize": [
+        48,
+        48
+      ],
+      "bounds": [
+        [
+          0,
+          1,
+          48,
+          47
+        ]
+      ]
+    },
+    {
+      "key": "memory_goo",
+      "frames": 2,
+      "frameSize": [
+        16,
+        16
+      ],
+      "bounds": [
+        [
+          1,
+          0,
+          14,
+          16
+        ],
+        [
+          1,
+          0,
+          14,
+          15
+        ]
+      ]
+    },
+    {
+      "key": "memory_puddle",
+      "frames": 2,
+      "frameSize": [
+        32,
+        16
+      ],
+      "bounds": [
+        [
+          1,
+          0,
+          31,
+          16
+        ],
+        [
+          0,
+          0,
+          31,
+          16
+        ]
+      ]
+    },
+    {
+      "key": "portrait_race_condition",
+      "frames": 1,
+      "frameSize": [
+        48,
+        48
+      ],
+      "bounds": [
+        [
+          0,
+          2,
+          48,
+          45
+        ]
+      ]
+    },
+    {
+      "key": "clock_blade",
+      "frames": 4,
+      "frameSize": [
+        24,
+        24
+      ],
+      "bounds": [
+        [
+          0,
+          8,
+          22,
+          16
+        ],
+        [
+          8,
+          1,
+          16,
+          24
+        ],
+        [
+          1,
+          8,
+          24,
+          16
+        ],
+        [
+          8,
+          0,
+          16,
+          23
+        ]
+      ]
+    },
+    {
+      "key": "race_afterimage",
+      "frames": 1,
+      "frameSize": [
+        96,
+        80
+      ],
+      "bounds": [
+        [
+          0,
+          15,
+          96,
+          65
+        ]
+      ]
+    },
+    {
+      "key": "portrait_null_pointer",
+      "frames": 1,
+      "frameSize": [
+        48,
+        48
+      ],
+      "bounds": [
+        [
+          0,
+          0,
+          47,
+          48
+        ]
+      ]
+    },
+    {
+      "key": "null_cursor",
+      "frames": 2,
+      "frameSize": [
+        16,
+        16
+      ],
+      "bounds": [
+        [
+          1,
+          2,
+          15,
+          15
+        ],
+        [
+          0,
+          0,
+          15,
+          16
+        ]
+      ]
+    },
+    {
+      "key": "null_missing_tile",
+      "frames": 2,
+      "frameSize": [
+        16,
+        16
+      ],
+      "bounds": [
+        [
+          0,
+          0,
+          15,
+          16
+        ],
+        [
+          0,
+          0,
+          15,
+          16
+        ]
+      ]
+    },
+    {
+      "key": "boss_tech_debt",
+      "frames": 1,
+      "frameSize": [
+        256,
+        192
+      ],
+      "bounds": [
+        [
+          8,
+          32,
+          248,
+          160
+        ]
+      ]
+    },
+    {
+      "key": "tech_debt_core_portrait",
+      "frames": 1,
+      "frameSize": [
+        48,
+        48
+      ],
+      "bounds": [
+        [
+          0,
+          0,
+          48,
+          47
+        ]
+      ]
+    },
+    {
+      "key": "tech_crt",
+      "frames": 3,
+      "frameSize": [
+        64,
+        48
+      ],
+      "bounds": [
+        [
+          1,
+          4,
+          62,
+          44
+        ],
+        [
+          2,
+          4,
+          62,
+          44
+        ],
+        [
+          0,
+          4,
+          64,
+          44
+        ]
+      ]
+    },
+    {
+      "key": "tech_drawer",
+      "frames": 2,
+      "frameSize": [
+        48,
+        32
+      ],
+      "bounds": [
+        [
+          3,
+          5,
+          44,
+          26
+        ],
+        [
+          3,
+          0,
+          44,
+          32
+        ]
+      ]
+    },
+    {
+      "key": "tech_reels",
+      "frames": 2,
+      "frameSize": [
+        48,
+        32
+      ],
+      "bounds": [
+        [
+          2,
+          0,
+          46,
+          32
+        ],
+        [
+          2,
+          0,
+          46,
+          32
+        ]
+      ]
+    },
+    {
+      "key": "tech_card",
+      "frames": 1,
+      "frameSize": [
+        12,
+        8
+      ],
+      "bounds": [
+        [
+          0,
+          0,
+          12,
+          8
+        ]
+      ]
+    },
+    {
+      "key": "boss_tech_core",
+      "frames": 6,
+      "frameSize": [
+        64,
+        64
+      ],
+      "bounds": [
+        [
+          12,
+          9,
+          51,
+          54
+        ],
+        [
+          12,
+          12,
+          51,
+          52
+        ],
+        [
+          12,
+          10,
+          51,
+          54
+        ],
+        [
+          12,
+          11,
+          52,
+          52
+        ],
+        [
+          12,
+          12,
+          51,
+          52
+        ],
+        [
+          12,
+          8,
+          51,
+          56
+        ]
+      ]
+    },
+    {
+      "key": "tech_laser",
+      "frames": 1,
+      "frameSize": [
+        32,
+        8
+      ],
+      "bounds": [
+        [
+          0,
+          0,
+          32,
+          8
+        ]
+      ]
+    }
+  ]
+}

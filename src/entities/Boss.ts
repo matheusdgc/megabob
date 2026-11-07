@@ -67,6 +67,11 @@ export abstract class Boss extends Phaser.Physics.Arcade.Sprite {
     return this._bossState.hp;
   }
 
+  /** Lets a subclass select its hurt drawing while the shared flash is active. */
+  protected get isFlashing(): boolean {
+    return this._bossState.flash > 0;
+  }
+
   get maxHp(): number {
     return this._bossState.maxHp;
   }

@@ -85,6 +85,14 @@ Gerar uma ilustração panorâmica de encerramento com `imagegen`, usando o Bob 
 
 Conferir os 145 strips do Bob sem alterar a jogabilidade. Ler sequências e fps de `BOB_LOOPS` para produzir comparações animadas das 16 combinações de armadura em idle, corrida e corrida com tiro. Conferir os demais quadros como poses, incluindo air dash, com contatos ampliados e relatório de dimensões, alpha e paleta. Preservar os PNGs de produção e os hashes das fontes; registrar apenas correções sustentadas pela inspeção. Validar os ciclos no Phaser e executar as verificações do projeto.
 
+### T4b — contraste da Memory Leak
+
+A pedido do usuário, separar as funções de cor da primeira fase: fundo escuro e dessaturado, piso metálico com interiores menos ruidosos e bordas claras, verde-água vivo reservado ao lodo/ataques. Aplicar remapeamentos determinísticos nas cópias processadas de T1, preservando alpha, dimensões, emendas, quadros, colisões e fontes. Conferir capturas antes/depois em seções reais, repetição dos tiles e contraste em escala de cinza. Registrar a transformação no pipeline e validar testes/build/navegador antes de commitar apenas a arte.
+
+### T4b — revisão dos chefes
+
+Pedido adicional do usuário: revisar sprites e animação dos quatro chefes. Conferir quadros, alpha, paleta, silhueta, ancoragem e transições; distinguir animações em uso de poses ainda sem integração. Corrigir problemas de arte no pipeline e ligar somente a seleção visual de quadros que estiver faltando no chefe já implementado, preservando IA, tempos, colisões e dano. Validar em uma cena de inspeção e registrar as limitações dos chefes que ainda não têm mecânica.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

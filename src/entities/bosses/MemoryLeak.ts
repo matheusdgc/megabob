@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { Boss } from '../Boss';
+import { memoryLeakFrame, memoryGooFrame, type MemoryLeakArtState } from '../../systems/memoryLeakArt';
 
 // ---------------------------------------------------------------------------
 // Tuning (all in pixels and 60-Hz frames)
@@ -49,21 +50,16 @@ const PUDDLE_DAMAGE = 2;
 // Internal state types
 // ---------------------------------------------------------------------------
 
-type MLState =
-  | 'idle_enter'
-  | 'volley'       // firing goo bubbles
-  | 'volley_wait'  // between bursts
-  | 'dive'         // submerging
-  | 'lurk'         // underground
-  | 'rise'         // coming back up
-  | 'fury_volley'  // faster volley in fury mode
-  | 'fury_wait';
+type MLState = MemoryLeakArtState;
+
+const ART_TIMING = { burstInterval: BURST_INTERVAL, sinkFrames: SINK_FRAMES };
 
 /** Pooled goo projectile: arcs upward, becomes a puddle on landing. */
 class GooBlob extends Phaser.Physics.Arcade.Sprite {
   active = false;
   /** Counts down to 0 then the puddle disappears. */
   private puddleTimer = 0;
+  private visualTick = 0;
   isPuddle = false;
 
   declare body: Phaser.Physics.Arcade.Body;
@@ -78,16 +74,18 @@ class GooBlob extends Phaser.Physics.Arcade.Sprite {
   }
 
   fire(x: number, y: number, vx: number): void {
+    // A pooled object may last have been a wider, bottom-anchored puddle.
+    this.setTexture('memory_goo', 0).setOrigin(0.5);
     this.setActive(true).setVisible(true).setPosition(x, y);
     this.isPuddle = false;
     this.puddleTimer = 0;
+    this.visualTick = 0;
     this.body.enable = true;
     this.body.setSize(10, 10);
     this.body.setAllowGravity(true);
     // set on every launch: the physics group's defaults reset gravityY to 0 when it creates a blob
     this.body.setGravityY(GOO_GRAVITY);
     this.body.setVelocity(vx, GOO_SPEED_Y);
-    this.setFrame(0);
   }
 
   /**
@@ -96,6 +94,7 @@ class GooBlob extends Phaser.Physics.Arcade.Sprite {
    */
   stepBlob(worldH: number): 'dead' | null {
     if (!this.active) return null;
+    this.setFrame(memoryGooFrame(this.visualTick++, this.isPuddle));
     if (!this.isPuddle) {
       // become a puddle when it lands (blocked below or past world bottom)
       if (this.body.blocked.down || this.y > worldH) {
@@ -110,13 +109,11 @@ class GooBlob extends Phaser.Physics.Arcade.Sprite {
   private splat(): void {
     this.isPuddle = true;
     this.puddleTimer = PUDDLE_LIFETIME;
-    this.setFrame(1);
+    this.visualTick = 0;
+    this.setTexture('memory_puddle', 0).setOrigin(0.5, 1);
     this.body.setAllowGravity(false);
     this.body.setVelocity(0, 0);
     this.body.setSize(24, 8);
-    // use the puddle sprite (memory_puddle) at this location
-    this.setTexture('memory_puddle', 0);
-    this.setOrigin(0.5, 1);
   }
 
   deactivate(): void {
@@ -185,6 +182,11 @@ export class MemoryLeak extends Boss {
   /** Damage dealt to Bob when overlapping a blob or puddle. */
   static gooDamage(blob: GooBlob): number {
     return blob.isPuddle ? PUDDLE_DAMAGE : GOO_DAMAGE;
+  }
+
+  override step(): void {
+    super.step();
+    this.setFrame(this.phase === 'dead' ? 7 : memoryLeakFrame(this.mlState, this.stateFrames, ART_TIMING, this.isFlashing));
   }
 
   protected think(): void {
@@ -311,6 +313,7 @@ export class MemoryLeak extends Boss {
     this.x = this.body.x + this.body.halfWidth; // snap back to spawn X is handled by StageScene
     this.y = this.homeY;
     this.setAlpha(1).setVisible(true);
+    this.setFrame(0);
     super.reset();
   }
 }

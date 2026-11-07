@@ -71,6 +71,8 @@ A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar 
 - [x] Preparar molduras de apresentação e onze prévias (quatro chefes, três armas e quatro peças), com layout centralizado e textos separados para integração nas cenas.
 - [x] Preparar fundo de encerramento 480×270, composição de Game Over e layouts para créditos/textos dinâmicos, preservando as fontes e o fluxo de cenas.
 - [x] Revisar os 145 strips do Bob, comparar os três ciclos reais nas 16 combinações de armadura e conferir as poses restantes, sem alterar o ritmo aprovado.
+- [x] Melhorar o contraste da Memory Leak: fundo menos saturado, superfícies jogáveis claras e lodo destacado, com comparações no jogo e fontes preservadas.
+- [x] Revisar sprites dos quatro chefes e corrigir a apresentação visual do Memory Leak sem alterar os padrões de ataque.
 
 As fontes em `art/raw/` permanecem intactas durante a importação. A logo anterior foi preservada e foram acrescentados fundos panorâmicos de título e encerramento; total atual de 68 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 123 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
 

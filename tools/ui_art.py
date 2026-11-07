@@ -90,9 +90,9 @@ def draw_meter(image, assets, position, value, energy=False):
 
 
 def scene_preview(layers, tiles, bob):
-    image = Image.new('RGBA', SIZE, (0, 29, 108, 255))
+    image = Image.new('RGBA', SIZE, INK)
     for layer in layers:
-        image.alpha_composite(layer.convert('RGBA').crop((16, 0, 496, 224)), (0, 30))
+        image.alpha_composite(layer.convert('RGBA').crop((16, 0, 496, 270)), (0, 0))
     tile = tiles.convert('RGBA').crop((0, 0, 16, 16))
     for x in range(0, SIZE[0], 16):
         image.alpha_composite(tile, (x, 254))
