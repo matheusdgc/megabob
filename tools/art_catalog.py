@@ -122,6 +122,7 @@ def catalog():
 
     out.append(spec('ui', 'title_logo', 'ui/U1_logo_readable', 1, 1, [(0, 0)], (224, 48)))
     out.append(spec('ui', 'title_logo_night', 'ui/U1_logo_readable', 1, 1, [(0, 0)], (224, 48), (220, 44)))
+    out.append(spec('ui', 'title_bob_idle', 'bob/B2_idle', 3, 1, cells(0, range(3)), (96, 96)))
     out.append(spec('ui', 'title_background', 'ui/U2_title_bg', 1, 1, [(0, 0)],
                     (256, 224), opaque=True, stretch=True))
     out.append(spec('ui', 'title_background_wide', 'ui/U2_title_cyberpunk', 1, 1, [(0, 0)],

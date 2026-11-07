@@ -6,7 +6,7 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw
 
-from palette import PALETTE
+from bob_colors import BOB_PALETTE as PALETTE
 from sprites import BOB_ANIMS, pixels
 from ui_art import INK, ui_text
 
@@ -100,7 +100,7 @@ def run():
     if before_raw != hashes(ROOT / 'art/raw') or before_processed != hashes(ROOT / 'public/assets'):
         raise RuntimeError('Review modified source or production PNGs')
     report = dict(sheets=len(sheets), frames=frame_count, rawPngs=len(before_raw),
-                  sourceAndProductionPngsUnchanged=True, binaryAlpha=True, paletteColors=29,
+                  sourceAndProductionPngsUnchanged=True, binaryAlpha=True, paletteColors=len(PALETTE),
                   emptyFrames=0, scale=2, loops=animations, posesReviewed=poses,
                   loopsSourceSha256=hashlib.sha256((ROOT / 'src/systems/bobPose.ts').read_bytes()).hexdigest(),
                   poseMasks=[0, 1, 8, 15], airDashMask=15,

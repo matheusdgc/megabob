@@ -8,7 +8,8 @@ For each Bob animation:
   2. frame detection by empty-column gaps (merged/split to the expected count)
   3. per-sheet scale from the helmet brim width (the one part that never deforms), so every
      animation ends up the same size even though each raw sheet was drawn at its own scale
-  4. box downscale, alpha threshold, palette quantization, magenta despill, speck removal
+  4. box alpha/silhouette, magenta despill and speck removal; Bob-only refined color coverage
+     and 41-color retro ramps, without changing that binary silhouette
   5. placement in a 48x48 cell: helmet centered horizontally, feet on the bottom row
   6. armor sheets fitted onto the base frames (shared scale + per-frame offset that maximize
      silhouette overlap), then all 15 part combinations are pre-composed by replacing the
@@ -34,6 +35,7 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from palette import nearest  # noqa: E402
+from bob_colors import nearest_bob  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RAW = os.path.join(ROOT, "art", "raw")
@@ -183,13 +185,19 @@ def helmet_anchor(crop: Image.Image) -> tuple[float, float, float] | None:
 # ---------------------------------------------------------------- downscale + cleanup
 
 
-def downscale(crop: Image.Image, s: float, speck: int = 3) -> Image.Image:
+def downscale(crop: Image.Image, s: float, speck: int = 3, refined=False) -> Image.Image:
     w, h = max(1, round(crop.width * s)), max(1, round(crop.height * s))
     small = crop.convert("RGBa").resize((w, h), Image.BOX).convert("RGBA")
     out = [(*nearest((r, g, b)), 255) if a >= 128 else (0, 0, 0, 0) for r, g, b, a in pixels(small)]
     small.putdata(out)
     despill(small)
     remove_specks(small, speck)
+    if refined:
+        # Refine color coverage only. Keep the established binary silhouette exactly,
+        # including despill/speck decisions, so fitting, masks and pose bounds stay put.
+        sample = crop.convert('RGBa').resize((w, h), Image.Resampling.LANCZOS).convert('RGBA')
+        small.putdata([(*nearest_bob(p[:3]), 255) if old[3] else (0, 0, 0, 0)
+                       for p, old in zip(pixels(sample), pixels(small))])
     return small
 
 
@@ -234,7 +242,8 @@ class Frame:
 
 
 class RawSheet:
-    def __init__(self, path: str, expected: int, warnings: list[str]):
+    def __init__(self, path: str, expected: int, warnings: list[str], refined=False):
+        self.refined = refined
         im = remove_background(Image.open(path))
         ranges = frame_ranges(im, expected)
         if len(ranges) != expected:
@@ -261,7 +270,7 @@ class RawSheet:
         out = []
         for crop, anc, gap in zip(self.crops, self.anchors, self.gaps):
             helm = (anc[0] * scale, anc[1] * scale, anc[2] * scale) if anc else None
-            out.append(Frame(downscale(crop, scale), helm, round(gap * scale)))
+            out.append(Frame(downscale(crop, scale, refined=self.refined), helm, round(gap * scale)))
         return out
 
 
@@ -460,7 +469,7 @@ def run_bob() -> None:
     for name, raw, n, opts in BOB_ANIMS:
         entry: dict = {"frames": n}
         anchor, baseline = opts.get("anchor", "helmet"), opts.get("baseline", "feet")
-        base = RawSheet(os.path.join(RAW, "bob", f"{raw}.png"), n, warnings)
+        base = RawSheet(os.path.join(RAW, "bob", f"{raw}.png"), n, warnings, refined=True)
         b_scale = base.scale_for(target_brim, opts.get("scale_from"))
         if b_scale is None:
             warnings.append(f"{name}: no helmet found, using reference scale")
@@ -479,7 +488,7 @@ def run_bob() -> None:
 
         armor_path = os.path.join(RAW, "bob_armor", f"A2_{raw}.png")
         if os.path.exists(armor_path):
-            armor = RawSheet(armor_path, n, warnings)
+            armor = RawSheet(armor_path, n, warnings, refined=True)
             b_h = statistics.median(c.height for c in base.crops)
             a_h = statistics.median(c.height for c in armor.crops)
             est = b_scale * b_h / a_h  # same overall height as the base
@@ -524,7 +533,7 @@ def run_bob() -> None:
         print(f"bob {name}: {n} frames, scale {entry['base_scale']}", file=sys.stderr)
 
     for name, raw, n, like in ARMOR_ONLY:
-        sheet = RawSheet(os.path.join(RAW, "bob_armor", f"{raw}.png"), n, warnings)
+        sheet = RawSheet(os.path.join(RAW, "bob_armor", f"{raw}.png"), n, warnings, refined=True)
         # same armored size as the reference anim: its armor/base ratio over our helmet scale
         scale = (sheet.scale_for(target_brim) or 0.1) * armor_ratio.get(like, 1.0)
         scale = bounded_scale(sheet.crops, scale)

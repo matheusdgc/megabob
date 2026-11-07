@@ -13,7 +13,7 @@ Categorias disponíveis: `fx`, `enemies`, `bosses`, `icons`, `tiles`, `bg` e `ui
 ## Entradas e saídas
 
 - Fontes: `art/raw/`, com os prompts ao lado. O importador compara os hashes SHA-256 antes e depois e falha se alguma fonte mudar.
-- Jogo: 123 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
+- Jogo: 124 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
 - Registro: `public/assets/art-manifest.json` e `src/data/processedArt.ts`, ambos gerados. `src/data/assets.ts` conserva as chaves anteriores e inclui os novos registros.
 - Revisão: contatos, repetições de fundos e `art_report.json` em `art/preview/`, fora do Git. O relatório distingue fontes processadas, conceitos de referência e fontes do pipeline anterior do Bob.
 - Logo: `art/exports/megabob-logo.png`, recortada com transparência e resolução da fonte; `public/assets/ui/title_logo.png`, versão 224×48 para o jogo. A versão atual foi recriada com `imagegen` a pedido do usuário, com contornos suaves, letras abertas e faixas azuis inspiradas na referência IBM. Fonte intacta em `art/raw/ui/U1_logo_readable.png`, prompt integral ao lado e no export. A versão pixelada está preservada em `art/raw/ui/U1_logo.png` e `art/exports/megabob-logo-pixel.png`; a primeira logo continua em `art/raw/ui/U1_logo-original.png`.
@@ -30,7 +30,7 @@ A fonte atual `art/raw/ui/U2_title_cyberpunk.png` foi gerada com a ferramenta in
 |---|---|---|
 | Fundo panorâmico | `title_background_wide`, 480×270 | `(0, 0)`, origem superior esquerda, escala 1 |
 | Logo sobre o céu | `title_logo_night`, 224×48 | `(16, 8)`, origem superior esquerda, escala 2 |
-| Bob separado | `bob_idle`, quadros 48×48 | pés em `(80,214)`, origem `(0.5,1)`, escala 2 |
+| Bob separado | `title_bob_idle`, quadros 96×96 | pés em `(80,214)`, origem `(0.5,1)`, escala 1; mesmo tamanho aparente |
 
 `title_logo_night` deriva da mesma fonte suave da logo, com contorno claro já desenhado para separar as letras do céu. O encaixe 220×44 dentro do quadro 224×48 preserva as margens. O antigo contorno pixelado e a quantização não são aplicados à nova logo.
 
@@ -133,13 +133,21 @@ Folhas com espaçamento irregular usam os intervalos de conteúdo; folhas de efe
 
 B1, A1, três conceitos de chefes e o logo anterior são referências, sem saída de runtime. Bob B2–B10, a armadura e air dash continuam no pipeline `py -3 tools/sprites.py bob`. O encaixe considera o desenho inteiro, restringe posições aos 48×48 e limita a escala compartilhada de poses grandes, sem recorte. `compile[0]` compartilha as partículas neutras entre todas as combinações. As duas poses horizontais B6 usam divisões anatômicas anotadas por peça. O relatório atual está sem avisos; veja `art/REGENERATE.md`.
 
+### Refinamento do Bob em 16 bits
+
+A pedido do usuário, o menu e todas as 145 folhas / 594 poses do jogo receberam tratamento mais definido, reutilizando as fontes aprovadas. `tools/bob_colors.py` conserva as 29 cores base e acrescenta 12 tons intermediários nas rampas neutra, azul e roxa, total de 41 candidatos. Só Bob/armadura usam essa paleta. O importador mantém a máscara binária exata do processamento anterior e usa amostragem Lanczos apenas para a cor interna, quantizada nessas rampas. Não há alpha suave, filtro de blur no jogo, mudança de pose, máscara de armadura ou escala de gameplay.
+
+No menu, `title_bob_idle` deriva diretamente da fonte B2 em três quadros 96×96, com o personagem a aproximadamente 72 px de altura. Substitui a ampliação 2× do sprite de gameplay, mantendo a mesma área 96×96, os pés em `(80,214)` e a sequência/fps de `BOB_LOOPS`. A exibição continua em pixels, escala 1; cenário e logo não foram redesenhados. `py -3 tools/art.py ui` reproduz essa variante.
+
+`py -3 tools/review_bob_refinement.py` compara todos os PNGs de gameplay com o commit `397c487`: dimensões e cada byte de alpha devem permanecer idênticos. Confere também os hashes das 70 fontes PNG e a paleta local. Comparação visual `art/exports/megabob-bob-refinement.png`; dados e hashes em `bob-refinement-review.json`. `tools/review_animations.py` usa a nova paleta e continua verificando os 594 quadros e os ciclos das 16 armaduras.
+
 Testes do enquadramento: `py -3 -m unittest discover -s tools -p test_bob_fit.py`. Para executar todos os testes Python, use `py -3 -m unittest discover -s tools -p 'test_*.py'`.
 
 ## Validação no jogo
 
 ### Identidade dos PNGs carregados
 
-`tools/check-texture-sources.mjs` complementa a conferência de quadros com a origem e o conteúdo das 268 texturas registradas. As fontes precisam ser imagens carregadas; os pixels RGBA decodificados são comparados por SHA-256 com o arquivo PNG esperado, usando o mesmo decodificador do navegador. Isso evita depender da URL temporária de blob usada pelo loader do Phaser. Os bitmaps esperados são fechados após a leitura e a decodificação roda com concorrência limitada.
+`tools/check-texture-sources.mjs` complementa a conferência de quadros com a origem e o conteúdo das 269 texturas registradas. As fontes precisam ser imagens carregadas; os pixels RGBA decodificados são comparados por SHA-256 com o arquivo PNG esperado, usando o mesmo decodificador do navegador. Isso evita depender da URL temporária de blob usada pelo loader do Phaser. Os bitmaps esperados são fechados após a leitura e a decodificação roda com concorrência limitada.
 
 O mesmo verificador precisa rejeitar dois controles negativos: um placeholder criado pelo gerador real do Boot e um PNG de tamanho idêntico com um pixel alterado. Ambos existem só na sessão isolada e são descartados. A auditoria também confere os vínculos ativos do jogador, inimigos, checkpoints, porta, cenário e lodo com suas texturas esperadas. Nos `TileSprite`, usa o padrão `displayTexture`; o canvas interno gerado pelo Phaser não é um placeholder de arte.
 
@@ -161,6 +169,6 @@ npm.cmd run build
 node tools/check-assets.mjs
 ```
 
-O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 123 texturas do lote e os 145 strips do Bob (268 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script. Para outro servidor local, passe a URL: `node tools/check-assets.mjs http://127.0.0.1:5174`.
+O smoke test usa um perfil isolado do Edge headless, sem dependências adicionais. Confere as 124 texturas do lote e os 145 strips do Bob (269 no total), com seus quadros nas cenas Debug e Stage, registra erros de console/rede e salva screenshots em `art/preview/`. Requer Edge instalado no caminho indicado no script. Para outro servidor local, passe a URL: `node tools/check-assets.mjs http://127.0.0.1:5174`.
 
 O lote está carregado pelo Boot e o mapa de teste usa os tiles reais. Animações e componentes ficam disponíveis para as tarefas de inimigos, chefes, fases e menus; o importador não implementa essas mecânicas.

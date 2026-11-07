@@ -9,11 +9,16 @@
   },
   "normal": {
     "frames": [
-      0,
       1,
+      0,
       2
     ],
     "bobY": 214,
+    "bobTexture": "title_bob_idle",
+    "bobDisplay": [
+      96,
+      96
+    ],
     "logo": {
       "alpha": 1,
       "y": 8
@@ -35,6 +40,11 @@
       0
     ],
     "bobY": 214,
+    "bobTexture": "title_bob_idle",
+    "bobDisplay": [
+      96,
+      96
+    ],
     "logo": {
       "alpha": 1,
       "y": 8

@@ -3,16 +3,16 @@
   "scenes": [
     {
       "scene": "Debug",
-      "verifiedTextures": 268,
-      "verifiedPngSources": 268,
+      "verifiedTextures": 269,
+      "verifiedPngSources": 269,
       "activeBindingsVerified": 0,
       "placeholderControlDetected": true,
       "alteredImageControlDetected": true
     },
     {
       "scene": "Stage",
-      "verifiedTextures": 268,
-      "verifiedPngSources": 268,
+      "verifiedTextures": 269,
+      "verifiedPngSources": 269,
       "activeBindingsVerified": 13,
       "placeholderControlDetected": true,
       "alteredImageControlDetected": true

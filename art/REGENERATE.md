@@ -1,8 +1,10 @@
 # Pendências de arte
 
-O lote atual de 123 strips/imagens passou nas verificações de recorte, dimensões, transparência, paleta e carregamento. A montagem das fases e dos menus ainda precisa de revisão no contexto de cada tela.
+O lote atual de 124 strips/imagens passou nas verificações de recorte, dimensões, transparência, paleta e carregamento. A montagem das fases e dos menus ainda precisa de revisão no contexto de cada tela.
 
 Correção de enquadramento concluída:
+
+Refinamento visual solicitado para menu e gameplay: `tools/bob_colors.py` usa rampas locais de 41 cores, conservando o alpha exato dos 594 quadros anteriores. A cor interna é amostrada com mais gradações; a exibição continua em pixels, sem blur e sem alterar poses, colisões ou fps. `title_bob_idle` amostra a fonte B2 em 96×96 para ocupar o mesmo tamanho de menu com mais detalhe. Comparação `art/exports/megabob-bob-refinement.png`; checker e hashes em `tools/review_bob_refinement.py` / `bob-refinement-review.json`. As fontes aprovadas foram reaproveitadas, sem geração de novas poses.
 
 - O encaixe agora compara a armadura inteira e só aceita posições dentro do quadro. Idle, salto e dash foram reprocessados; as duas poses de air dash usam uma escala compartilhada que conserva o desenho inteiro. Os seis avisos de recorte foram eliminados, mantendo os quadros 48×48 e as fontes intactas. Comparação em `art/preview/bob_bounds_comparison.png`.
 
@@ -13,7 +15,7 @@ Correção de composição concluída:
 
 O relatório atual do Bob está sem avisos de recorte ou sobreposição. As fontes não foram alteradas. Os recortes anatômicos anotados acima são específicos das duas poses B6.
 
-Revisão de movimento concluída por `tools/review_animations.py`: 145 strips e 594 quadros não vazios, alpha binário e paleta global. Os GIFs de idle, corrida e corrida com tiro comparam as 16 combinações a 2×, usando as sequências de `BOB_LOOPS` (3/12/8 fps). O Phaser confirmou as 288 posições de quadro e os 48 retornos de ciclo. Salto, dash, parede, dano, compilação e vitória foram conferidos em contatos com base/cabeça/botas/completa; air dash com a armadura completa. Nenhum problema novo de recorte foi identificado nas poses conferidas. Os PNGs brutos e de produção mantiveram seus hashes. A validação da sensação e da leitura no percurso jogável continua nos checkpoints de fase.
+Revisão de movimento concluída por `tools/review_animations.py`: 145 strips e 594 quadros não vazios, alpha binário e paleta local de 41 cores do Bob. Os GIFs de idle, corrida e corrida com tiro comparam as 16 combinações a 2×, usando as sequências de `BOB_LOOPS` (3/12/8 fps). O Phaser confirmou as 288 posições de quadro e os 48 retornos de ciclo. Salto, dash, parede, dano, compilação e vitória foram conferidos em contatos com base/cabeça/botas/completa; air dash com a armadura completa. Nenhum problema novo de recorte foi identificado nas poses conferidas. Os PNGs brutos e de produção mantiveram seus hashes. A validação da sensação e da leitura no percurso jogável continua nos checkpoints de fase.
 
 Comparações animadas em `art/exports/megabob-{idle,run,shoot}-review.gif`; relatório `art/exports/bob-animation-review.json`. Contatos por pose e screenshots do Phaser em `art/preview/`. As poses por estado não receberam tempos fictícios de animação.
 

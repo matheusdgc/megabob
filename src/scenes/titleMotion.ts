@@ -5,7 +5,7 @@ import { BOB_LOOPS } from '../systems/bobPose';
 /** Scene-owned decoration only: never delays input or touches saves/audio/navigation. */
 export function animateTitle(scene: Phaser.Scene, logo: Phaser.GameObjects.Image): void {
   const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const bob = scene.add.sprite(ART.bob.x, ART.bob.feetY, 'bob_idle', 0)
+  const bob = scene.add.sprite(ART.bob.x, ART.bob.feetY, 'title_bob_idle', 0)
     .setOrigin(0.5, 1).setScale(ART.bob.scale).setName('title-bob');
   const rain = scene.add.graphics().setName('title-rain');
   const maskShape = scene.add.graphics().setVisible(false);

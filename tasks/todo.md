@@ -79,8 +79,9 @@ A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar 
 - [x] Recriar a logo com contornos suaves e letras mais legíveis, preservar a versão pixelada e integrar as duas variantes 224×48 sem quantização.
 - [x] Detalhar o cenário cyberpunk do título em 16 bits e combinar entrada/brilho da logo, Bob animado e chuva discreta; conferir movimento reduzido, reinícios e console.
 - [x] Conferir por teclado real os retornos de opções/seleção ao título animado, pausa dos efeitos, foco e descarte da decoração sem acumular objetos/listeners.
+- [x] Refinar Bob no menu e nos 594 quadros de gameplay/armadura, preservando o estilo 16 bits, as silhuetas e o timing; conferir a variante de menu 96×96 no mesmo tamanho aparente.
 
-As fontes em `art/raw/` permanecem intactas durante a importação. A logo anterior foi preservada e foram acrescentados fundos panorâmicos de título e encerramento; total atual de 70 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 123 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
+As fontes em `art/raw/` permanecem intactas durante a importação. A logo anterior foi preservada e foram acrescentados fundos panorâmicos de título e encerramento; total atual de 70 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 124 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
 
 ## ✅ Checkpoint 1: sensação de jogo
 - [x] Testes, typecheck e build passam

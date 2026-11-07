@@ -85,7 +85,7 @@ try {
     for(let i=0;i<${frames};i++){window.__titleTick+=1000/60;g.step(window.__titleTick,1000/60);frames.push(s.children.getByName('title-bob').frame.name);}
     const bob=s.children.getByName('title-bob'), shine=s.children.getByName('title-shine');
     const logo=s.children.list.find(o=>o.texture?.key==='title_logo_night'&&o.name!=='title-shine');
-    return {frames:[...new Set(frames)],bobY:bob.y,logo:{alpha:logo.alpha,y:logo.y},shine:shine.alpha,children:s.children.length,listeners:s.events.listenerCount('update')};
+    return {frames:[...new Set(frames)],bobY:bob.y,bobTexture:bob.texture.key,bobDisplay:[bob.displayWidth,bob.displayHeight],logo:{alpha:logo.alpha,y:logo.y},shine:shine.alpha,children:s.children.length,listeners:s.events.listenerCount('update')};
   })()`);
   const normal = await advance(240);
   const snapshot = () => evaluate(`(() => {window.__titleTick+=1000/60;window.__game.step(window.__titleTick,1000/60);return window.__game.canvas.toDataURL('image/png');})()`);
@@ -146,7 +146,7 @@ try {
   await writeFile(join(output,'title-reduced-b.png'),Buffer.from(stillB.split(',')[1],'base64'));
   const report={initial,normal,shineSeen,shineAffectsPixels,preferenceState,reduced,reducedPixelsStable:stillA===stillB,restarts,navigation,errors,warnings,failedRequests};
   await writeFile(join(output,'title-menu-review.json'),JSON.stringify(report,null,2)+'\n');
-  if(!initial.menu.length||normal.frames.length<2||normal.bobY!==214||normal.logo.alpha!==1||normal.logo.y!==8||!shineSeen||!shineAffectsPixels||reduced.frames.join(',')!=='0'||reduced.shine!==0||stillA!==stillB||restarts.some(r=>r.children!==initial.children||r.listeners!==initial.listeners)||errors.length||warnings.length||failedRequests.length)throw new Error(JSON.stringify(report));
+  if(!initial.menu.length||normal.frames.length<2||normal.bobY!==214||normal.bobTexture!=='title_bob_idle'||normal.bobDisplay.join(',')!=='96,96'||normal.logo.alpha!==1||normal.logo.y!==8||!shineSeen||!shineAffectsPixels||reduced.frames.join(',')!=='0'||reduced.shine!==0||stillA!==stillB||restarts.some(r=>r.children!==initial.children||r.listeners!==initial.listeners)||errors.length||warnings.length||failedRequests.length)throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));
 } finally {
   socket?.close();

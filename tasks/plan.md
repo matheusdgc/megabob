@@ -148,6 +148,10 @@ A pedido do usuário, combinar as três direções de movimento: entrada suave/b
 
 Complementar o QA com percursos reais por teclado Título → Opções → Título e Título → Seleção → Título, duas vezes cada. Conferir animação pausada sob opções, textos ocultos, foco restaurado, descarte na saída e contagens estáveis no retorno. Preservar arte e fluxo existentes quando os checks passarem.
 
+### T21 — refinamento visual do Bob
+
+Pedido explícito para menu e gameplay. Reutilizar as fontes aprovadas com rampas intermediárias locais (41 cores), conservando exatamente a máscara binária e os quadros 48×48 de todas as poses e armaduras. Amostrar o idle diretamente em 96×96 para o menu, exibindo a 1× na mesma área anterior; sem mudar colisões, escala de gameplay ou fps. Comparar os 594 quadros ao commit anterior, validar as 70 fontes preservadas, os ciclos/armaduras e o menu no Phaser; exportar antes/depois e relatórios, rodar testes/typecheck/build e registrar um commit.
+
 ## Perguntas em aberto
 
 - **Onde publicar** (GitHub Pages ou itch.io): só preciso saber na T23.

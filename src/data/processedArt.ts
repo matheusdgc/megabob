@@ -105,6 +105,7 @@ export const PROCESSED_ART: SheetDef[] = [
   {"key":"tiles_tech_debt","frameWidth":16,"frameHeight":16,"frames":24,"file":"assets/tiles/tiles_tech_debt.png","placeholder":{"color":7303023,"shape":"fx"}},
   {"key":"title_background","frameWidth":256,"frameHeight":224,"frames":1,"file":"assets/ui/title_background.png","placeholder":{"color":7303023,"shape":"fx"}},
   {"key":"title_background_wide","frameWidth":480,"frameHeight":270,"frames":1,"file":"assets/ui/title_background_wide.png","placeholder":{"color":7303023,"shape":"fx"}},
+  {"key":"title_bob_idle","frameWidth":96,"frameHeight":96,"frames":3,"file":"assets/ui/title_bob_idle.png","placeholder":{"color":7303023,"shape":"fx"}},
   {"key":"title_logo","frameWidth":224,"frameHeight":48,"frames":1,"file":"assets/ui/title_logo.png","placeholder":{"color":7303023,"shape":"fx"}},
   {"key":"title_logo_night","frameWidth":224,"frameHeight":48,"frames":1,"file":"assets/ui/title_logo_night.png","placeholder":{"color":7303023,"shape":"fx"}},
   {"key":"update_terminal","frameWidth":40,"frameHeight":64,"frames":6,"file":"assets/icons/update_terminal.png","placeholder":{"color":7303023,"shape":"fx"}},

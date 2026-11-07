@@ -13,7 +13,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter
 
 from palette import nearest, _dist
-from sprites import frame_ranges, is_magenta, pixels
+from sprites import frame_ranges, is_magenta, pixels, RawSheet, TARGET_STAND_HEIGHT
 from art_catalog import EXISTING_FX, REFERENCE_ONLY, catalog
 from ui_art import (
     stage_assets, stage_preview, STAGE_SLOTS, hud_assets, scene_preview, hud_preview,
@@ -289,8 +289,8 @@ def title_preview():
     exports.mkdir(parents=True, exist_ok=True)
     image = Image.open(OUT / 'ui/title_background_wide.png').convert('RGBA')
     logo = Image.open(OUT / 'ui/title_logo_night.png').convert('RGBA')
-    bob = Image.open(OUT / 'bob/bob_idle.png').convert('RGBA').crop((0, 0, 48, 48))
-    image.alpha_composite(bob.resize((96, 96), Image.Resampling.NEAREST), (32, 118))
+    bob = Image.open(OUT / 'ui/title_bob_idle.png').convert('RGBA').crop((0, 0, 96, 96))
+    image.alpha_composite(bob, (32, 118))
     image.alpha_composite(logo.resize((448, 96), Image.Resampling.NEAREST), (16, 8))
     image.save(exports / 'megabob-title-preview.png')
     image.resize((960, 540), Image.Resampling.NEAREST).save(PREVIEW / 'title_wide_2x.png')
@@ -312,6 +312,20 @@ def register(entries):
             "import type { SheetDef } from './assets';\n\nexport const PROCESSED_ART: SheetDef[] = [\n"
             + '\n'.join(declarations) + '\n];\n')
     (ROOT / 'src/data/processedArt.ts').write_text(text, encoding='utf-8')
+
+
+def menu_bob():
+    """Sample the original master at twice the gameplay detail, at the same menu size."""
+    source = RawSheet(str(RAW / 'bob/B2_idle.png'), 3, [], refined=True)
+    scale = TARGET_STAND_HEIGHT * 2 / source.crops[0].height
+    result = Image.new('RGBA', (96 * 3, 96))
+    for i, frame in enumerate(source.frames(scale)):
+        x = round(48 - frame.helmet[0])
+        y = 96 - frame.img.height
+        if x < 0 or y < 0 or x + frame.img.width > 96:
+            raise ValueError('menu Bob would be clipped')
+        result.alpha_composite(frame.img, (96 * i + x, y))
+    return result
 
 
 def run(group='all'):
@@ -351,6 +365,8 @@ def run(group='all'):
             regions = [grids[grid_key][position] for position in item['selection']]
         if item['key'].startswith('title_logo'):
             result = readable_logo(image, item['size'], item['fit'])
+        elif item['key'] == 'title_bob_idle':
+            result = menu_bob()
         elif item['key'] == 'title_background_wide':
             # The night city needs a local dark-blue ramp: 32 flat colors, no dither
             # or smoothing. The sprite palette otherwise crushes its shadow detail.
