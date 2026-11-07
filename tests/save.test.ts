@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_BINDINGS, rebind } from '../src/systems/bindings';
 import {
+  addToRun,
   BACKUP_KEY,
   fortressUnlocked,
   hasProgress,
@@ -10,6 +11,7 @@ import {
   parseSave,
   recordClear,
   SAVE_KEY,
+  SAVE_VERSION,
   serializeSave,
   stepVolume,
   writeSave,
@@ -56,7 +58,7 @@ describe('save data', () => {
     expect(parseSave(null)).toBeNull();
     expect(parseSave('{oops')).toBeNull();
     expect(parseSave('42')).toBeNull();
-    expect(parseSave(JSON.stringify({ ...newSave(), version: 2 }))).toBeNull();
+    expect(parseSave(JSON.stringify({ ...newSave(), version: SAVE_VERSION + 1 }))).toBeNull();
     expect(parseSave(JSON.stringify({ cleared: ['memoryLeak'] }))).toBeNull(); // no version
   });
 
@@ -64,7 +66,14 @@ describe('save data', () => {
     const s = parseSave(
       JSON.stringify({ version: 1, cleared: ['memoryLeak', 'memoryLeak', 'hacker', 7], weapons: ['buster', 'mutexLock'], armor: 255, volume: { master: 9, music: 0.3 } }),
     );
-    expect(s).toEqual({ version: 1, cleared: ['memoryLeak'], weapons: ['mutexLock'], armor: 15, volume: { master: 0.8, music: 0.3, sfx: 0.8 } });
+    expect(s).toEqual({
+      version: SAVE_VERSION,
+      cleared: ['memoryLeak'],
+      weapons: ['mutexLock'],
+      armor: 15,
+      volume: { master: 0.8, music: 0.3, sfx: 0.8 },
+      run: { deaths: 0, kills: 0, frames: 0, ranked: false }, // a version 1 run under way: not ranked
+    });
   });
 });
 
@@ -139,5 +148,26 @@ describe('volume steps', () => {
     expect(stepVolume(1, 1)).toBe(1);
     expect(stepVolume(0, -1)).toBe(0);
     expect(stepVolume(0.30000000000000004, 1)).toBe(0.4);
+  });
+});
+
+describe('run stats (version 2)', () => {
+  it('start at zero and ranked on a new game, and add up', () => {
+    const s = addToRun(addToRun(newSave(), { kills: 3, frames: 600 }), { deaths: 1, frames: 60 });
+    expect(s.run).toEqual({ deaths: 1, kills: 3, frames: 660, ranked: true });
+    expect(newSave().run).toEqual({ deaths: 0, kills: 0, frames: 0, ranked: true });
+  });
+
+  it('survive a round trip and drop bad counters', () => {
+    const s = addToRun(newSave(), { deaths: 2, kills: 40, frames: 9000 });
+    expect(parseSave(serializeSave(s))).toEqual(s);
+    const bad = parseSave(JSON.stringify({ ...s, run: { deaths: -1, kills: 'x', frames: 1.5, ranked: false } }))!;
+    expect(bad.run).toEqual({ deaths: 0, kills: 0, frames: 0, ranked: false });
+  });
+
+  it('a version 1 save with no progress migrates to a ranked fresh run', () => {
+    const s = parseSave(JSON.stringify({ version: 1, cleared: [], weapons: [], armor: 0 }))!;
+    expect(s.version).toBe(SAVE_VERSION);
+    expect(s.run.ranked).toBe(true);
   });
 });

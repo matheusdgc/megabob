@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GameAudio, loadMusic } from '../audio';
 import { CREDITS } from '../data/credits';
 import { GameInput } from '../systems/input';
+import { getSave } from './progress';
 import { fadeIn, fadeTo, FONT_FAMILY, UI, uiText } from '../ui/text';
 
 /** Credit scroll: window (from art/exports/end-screen-layout.json) and speed. */
@@ -81,6 +82,7 @@ export class CreditsScene extends Phaser.Scene {
     if (this.leaving) return;
     this.leaving = true;
     GameAudio.of(this.game)?.music.stop(1000);
-    fadeTo(this, 'Title', undefined, 1000);
+    // a run that can still enter the records shows its result next; otherwise back to the title
+    fadeTo(this, getSave(this.registry).run.ranked ? 'Records' : 'Title', { result: true }, 1000);
   }
 }

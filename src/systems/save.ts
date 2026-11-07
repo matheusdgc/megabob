@@ -1,5 +1,6 @@
 import { type BossId, BOSS_WEAPON, type WeaponId } from '../data/weapons';
 import { type Bindings, normalizeBindings } from './bindings';
+import { newRun, type RunStats } from './scores';
 
 /**
  * Progress save (gamedev save-systems skill): plain data, a version stamp from day one,
@@ -7,7 +8,8 @@ import { type Bindings, normalizeBindings } from './bindings';
  * Pure apart from the `KeyValueStore` it is handed (localStorage in the game, a fake in tests).
  */
 
-export const SAVE_VERSION = 1;
+/** 2: the run's stats for the records (`run`). Version 1 saves migrate in parseSave. */
+export const SAVE_VERSION = 2;
 export const SAVE_KEY = 'megabob.save';
 export const BACKUP_KEY = 'megabob.save.bak';
 
@@ -34,9 +36,17 @@ export interface SaveData {
   volume?: Volumes;
   /** Accessibility: no screen shake or flash. */
   reduceMotion?: boolean;
+  /** This run's deaths, enemies destroyed and time, for the records. */
+  run: RunStats;
 }
 
-export const newSave = (): SaveData => ({ version: SAVE_VERSION, cleared: [], weapons: [], armor: 0 });
+export const newSave = (): SaveData => ({ version: SAVE_VERSION, cleared: [], weapons: [], armor: 0, run: newRun() });
+
+/** Add to the run's counters (a death, enemies destroyed, time in a stage). Returns a new save. */
+export function addToRun(s: SaveData, add: Partial<Pick<RunStats, 'deaths' | 'kills' | 'frames'>>): SaveData {
+  const r = s.run;
+  return { ...s, run: { ...r, deaths: r.deaths + (add.deaths ?? 0), kills: r.kills + (add.kills ?? 0), frames: r.frames + (add.frames ?? 0) } };
+}
 
 /** Something was achieved (a boss, an armor part): the title offers Continue. */
 export const hasProgress = (s: SaveData): boolean => s.cleared.length > 0 || s.armor !== 0;
@@ -72,13 +82,16 @@ export function parseSave(text: string | null): SaveData | null {
   }
   if (!raw || typeof raw !== 'object') return null;
   const r = raw as Record<string, unknown>;
-  if (r.version !== SAVE_VERSION) return null; // future migrations go here, version by version
+  if (r.version !== 1 && r.version !== SAVE_VERSION) return null;
   const s: SaveData = {
     version: SAVE_VERSION,
     cleared: uniqueOf(r.cleared, [...STAGE_BOSSES, 'techDebt' as BossId]),
     weapons: uniqueOf(r.weapons, SPECIALS),
     armor: Number.isInteger(r.armor) ? (r.armor as number) & 15 : 0,
+    run: parseRun(r.version === 1 ? undefined : r.run),
   };
+  // version 1 had no run stats: a run already under way cannot enter the records honestly
+  if (r.version === 1 && hasProgress(s)) s.run.ranked = false;
   if (r.bindings) s.bindings = normalizeBindings(r.bindings);
   if (r.volume && typeof r.volume === 'object') {
     const v = r.volume as Record<string, unknown>;
@@ -86,6 +99,18 @@ export function parseSave(text: string | null): SaveData | null {
   }
   if (r.reduceMotion === true) s.reduceMotion = true;
   return s;
+}
+
+function parseRun(raw: unknown): RunStats {
+  const run = newRun();
+  if (!raw || typeof raw !== 'object') return run;
+  const r = raw as Record<string, unknown>;
+  for (const k of ['deaths', 'kills', 'frames'] as const) {
+    const v = r[k];
+    if (Number.isInteger(v) && (v as number) >= 0) run[k] = v as number;
+  }
+  if (r.ranked === false) run.ranked = false;
+  return run;
 }
 
 export const serializeSave = (s: SaveData): string => JSON.stringify(s);

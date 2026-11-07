@@ -5,6 +5,7 @@ import { GameInput } from '../systems/input';
 import { hasProgress, newSave } from '../systems/save';
 import { fadeIn, fadeTo, hideLabels, type Label, UI, uiText } from '../ui/text';
 import type { OptionsData } from './OptionsScene';
+import type { RecordsData } from './RecordsScene';
 import { commitSave, getSave } from './progress';
 import { animateTitle } from './titleMotion';
 
@@ -27,6 +28,8 @@ export class TitleScene extends Phaser.Scene {
   private rows!: Label[];
   private pointer!: Label;
   private confirming!: boolean;
+  /** The dark band behind the menu, sized to its rows. */
+  private band!: Phaser.GameObjects.Rectangle;
 
   constructor() {
     super('Title');
@@ -47,7 +50,7 @@ export class TitleScene extends Phaser.Scene {
     const logo = this.add.image(16, 8, 'title_logo_night').setOrigin(0).setScale(2);
     animateTitle(this, logo);
     // dark bands so the menu reads over the busy skyline
-    this.add.rectangle(240, MENU_Y + ROW - 2, 168, 58, 0x000000, 0.6);
+    this.band = this.add.rectangle(240, MENU_Y, 168, 58, 0x000000, 0.6);
     this.add.rectangle(240, 258, 480, 16, 0x000000, 0.6);
     this.controls = new GameInput(this, true);
     const keys = this.controls.bindings;
@@ -61,11 +64,14 @@ export class TitleScene extends Phaser.Scene {
   private mainMenu(cursor = 0): void {
     const save = getSave(this.registry);
     this.confirming = false;
-    const options = { label: 'OPTIONS', run: () => this.options() };
+    const more = [
+      { label: 'RECORDS', run: () => this.records() },
+      { label: 'OPTIONS', run: () => this.options() },
+    ];
     this.show(
       hasProgress(save)
-        ? [{ label: 'CONTINUE', run: () => this.start() }, { label: 'NEW GAME', run: () => this.askErase() }, options]
-        : [{ label: 'START', run: () => this.start() }, options],
+        ? [{ label: 'CONTINUE', run: () => this.start() }, { label: 'NEW GAME', run: () => this.askErase() }, ...more]
+        : [{ label: 'START', run: () => this.start() }, ...more],
       cursor,
     );
   }
@@ -76,6 +82,13 @@ export class TitleScene extends Phaser.Scene {
     const data: OptionsData = { onClose: () => this.scene.restart({ cursor: this.cursor }) };
     this.scene.pause();
     this.scene.launch('Options', data);
+  }
+
+  /** The records board; it comes back here with the cursor where it was. */
+  private records(): void {
+    GameAudio.of(this.game)?.sfx.play('weaponSwitch');
+    const data: RecordsData = { cursor: this.cursor };
+    fadeTo(this, 'Records', data);
   }
 
   private askErase(): void {
@@ -102,6 +115,7 @@ export class TitleScene extends Phaser.Scene {
     this.items = items;
     this.cursor = cursor;
     this.rows = items.map((it, i) => uiText(this, 240, MENU_Y + i * ROW, it.label, { origin: 0.5 }));
+    this.band.setSize(168, items.length * ROW + 8).setOrigin(0.5, 0).setY(MENU_Y - ROW / 2 - 4);
     this.focus();
   }
 

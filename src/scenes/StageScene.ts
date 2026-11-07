@@ -11,7 +11,7 @@ import { EnemyShot } from '../entities/EnemyShot';
 import { MovingPlatform } from '../entities/MovingPlatform';
 import { UpdateTerminal } from '../entities/UpdateTerminal';
 import { hasPart, installPart, partEffects } from '../systems/upgrades';
-import { recordClear } from '../systems/save';
+import { addToRun, recordClear } from '../systems/save';
 import { loopAnim, playOnce } from '../entities/effects';
 import { Feedback } from '../entities/feedback';
 import { GameAudio, loadMusic } from '../audio';
@@ -103,6 +103,9 @@ export class StageScene extends Phaser.Scene {
   private pauseLock!: number;
   /** The stage is ending (game over, exit, boss beaten): no more pausing. */
   private over!: boolean;
+  /** This visit's enemies destroyed and fixed steps, not yet added to the run in the save. */
+  private runKills!: number;
+  private runFrames!: number;
   private audio!: GameAudio | null;
   private parallax!: Phaser.GameObjects.TileSprite[];
   /** Rising goo: its sprite, and frames since Bob entered its section. */
@@ -134,6 +137,8 @@ export class StageScene extends Phaser.Scene {
 
   init(data: { stage?: StageId }): void {
     this.def = STAGES[data.stage ?? DEFAULT_STAGE];
+    this.runKills = 0;
+    this.runFrames = 0;
     this.scripted = new ActionState();
     this.readout = undefined;
     this.section = 0;
@@ -239,6 +244,7 @@ export class StageScene extends Phaser.Scene {
       this.sfx('hurt');
     });
     this.player.on('died', () => {
+      this.flushRun(1);
       this.fx.play('bobDeath');
       this.audio?.music.stop();
       this.sfx('death');
@@ -298,7 +304,7 @@ export class StageScene extends Phaser.Scene {
     this.events.on('bossSummon', (kind: EnemyKind, x: number, y: number) => {
       if (this.player.isDead || this.enemies.countActive(true) >= 2) return;
       const e = createEnemy(kind, this, x, y, this.enemyWorld());
-      e.once('destroyed', (ex: number, ey: number) => this.dropFrom(ex, ey));
+      e.once('destroyed', (ex: number, ey: number) => this.enemyDestroyed(ex, ey));
       this.enemies.add(e);
     });
     // a second boss phase: a big beat, then its own music
@@ -338,6 +344,7 @@ export class StageScene extends Phaser.Scene {
   /** One fixed logic step, right after each physics step. */
   private tick(): void {
     const p = this.player;
+    if (!this.over) this.runFrames++;
     let input = this.controls.poll();
     if (this.door?.busy) {
       // the door walks Bob through; the buster stays quiet
@@ -579,7 +586,7 @@ export class StageScene extends Phaser.Scene {
     for (const m of this.mapEnemies) {
       if (m.section !== section) continue;
       const e = createEnemy(m.kind, this, m.x, m.y, world);
-      e.once('destroyed', (x: number, y: number) => this.dropFrom(x, y));
+      e.once('destroyed', (x: number, y: number) => this.enemyDestroyed(x, y));
       this.enemies.add(e);
     }
   }
@@ -712,7 +719,8 @@ export class StageScene extends Phaser.Scene {
     this.bossHealthBar = undefined;
     this.events.emit('bossRoomUnlocked');
     this.over = true;
-    // its minions go with it
+    this.flushRun();
+    // its minions go with it (they do not count as destroyed: the stage is over)
     for (const e of [...this.enemies.getChildren()] as Enemy[]) e.hurt(999);
     if (this.def.boss === 'techDebt') {
       // the end: the game is cleared, then the credits
@@ -728,6 +736,20 @@ export class StageScene extends Phaser.Scene {
     );
   }
 
+  /** An enemy Bob destroyed: it counts for the records, and it may drop an item. */
+  private enemyDestroyed(x: number, y: number): void {
+    if (!this.over) this.runKills++;
+    this.dropFrom(x, y);
+  }
+
+  /** Add this visit's counters (and a death) to the run in the save, which is written now. */
+  private flushRun(deaths = 0): void {
+    if (!deaths && !this.runKills && !this.runFrames) return;
+    commitSave(this.registry, addToRun(getSave(this.registry), { deaths, kills: this.runKills, frames: this.runFrames }));
+    this.runKills = 0;
+    this.runFrames = 0;
+  }
+
   /** Death animation over: spend a life and respawn. */
   private afterDeath(): void {
     if (loseLife(this.player.health) === 'respawn') {
@@ -736,6 +758,7 @@ export class StageScene extends Phaser.Scene {
     }
     // last life: GAME OVER, then back to the stage select (weapons won are kept in the save)
     this.over = true;
+    this.flushRun();
     this.events.emit('gameOver');
     this.fx.hold('gameOver');
     const cam = this.cameras.main;
@@ -778,6 +801,7 @@ export class StageScene extends Phaser.Scene {
         this.player.applyWeaponTint();
         if (exit) {
           this.over = true;
+          this.flushRun();
           this.audio?.music.stop(300);
           fadeTo(this, 'StageSelect');
         }
