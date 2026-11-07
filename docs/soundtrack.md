@@ -30,10 +30,10 @@ Fonte: `art/raw/soundtrack/` (14 faixas). Análise feita por script (duração, 
 
 ## Processamento (feito na T11)
 
-- **Volume:** normalizar todas as faixas para o mesmo volume percebido (RMS alvo ≈ −14 dB, pico ≤ −1 dB). Hoje vai de −28 dB (Null Pointer) até picos acima de 0 dB (Sewer Nightclub, Boss Fight).
-- **Formato:** OGG Vorbis ~128 kbps + MP3 de fallback para o Safari. Os 64 MB atuais devem cair para algo em torno de 14 MB.
-- **Loop:** os pontos de loop ficam num manifesto (`src/data/music.ts`, com `loopStart` e `loopEnd` em segundos), e o player faz o loop sem emenda via WebAudio.
-- **Transições:** crossfade curto entre cenas, e corte seco na entrada do chefe.
+- **Conversão:** `py -3 tools/music.py` (precisa do `ffmpeg`) gera `public/assets/music/<faixa>.ogg` (Vorbis q4, ~128 kbps) e um `.mp3` de reserva, e escreve `src/data/musicFiles.ts`. Em OGG são ~12 MB, o que o navegador baixa.
+- **Volume:** igualado no jogo, sem mexer nos arquivos: o player mede RMS e pico de cada faixa ao carregar e aplica o ganho até −16 dBFS RMS, sem passar de −1 dBFS de pico (`normalizeGain` em `src/systems/audioMath.ts`). Medido: todas em −16, menos Null Pointer (−17,3, segura pelos próprios picos).
+- **Loop:** `loopStart` em `src/data/music.ts` (a Memory Leak pula o fade-in de 4 s). O player ajusta os pontos para a emenda não estalar (`snapLoop`): o início num cruzamento por zero, o fim até 30 ms antes, onde as próximas amostras repetem as do início. Os créditos tocam uma vez.
+- **Transições:** crossfade curto ao entrar numa fase; corte seco com alarme na entrada do chefe; a morte para a música e o respawn recomeça do início.
 
 ## Licenças: preencha antes de publicar
 

@@ -1,6 +1,6 @@
 # Handoff: estado do projeto
 
-> Atualizado em 06/11/2026, no fim da T12 (editor). Branch `dev`.
+> Atualizado em 06/11/2026, no fim da T11 (editor). Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)
@@ -22,6 +22,7 @@
 | T10 | Armas: `src/data/weapons.ts` (tabela, `WEAKNESS`, `damageFor`, arma de cada chefe) e `src/systems/weapons.ts` (arsenal: armas ganhas, troca Q/E pulando as não ganhas, energia por arma, recarga). Bob tingido pela arma. Garbage Collector (`src/entities/weapons/GarbageCollector.ts`): orbe lento, 1 na tela, 2 de energia, atravessa inimigos acertando cada um uma vez e engole o lodo do chefe. HUD com barra de energia; barras verticais reutilizáveis (`src/ui/meter.ts`), a do chefe à direita. `WeaponGetScene` depois do chefe, gravando a arma no registry (`ownedWeapons`) e voltando à fase. Dev key G dá o Garbage Collector |
 | Auditoria gamedev | Código de T1–T10 revisado contra as skills do pack (`phaser-core`, `input-systems`, `level-design`, `game-feel`, `platformer`). **Cenas:** a `StageScene` zera o estado da partida em `init()` e solta seus eventos no `shutdown` (antes, `bossIntro`/`bossDefeated` se acumulavam a cada reinício); a `WeaponGet` não se pula mais sozinha. **Fase como dado:** `StageDef` em `src/stages/stages.ts` (mapa, seções, chefe, tileset), `scene.start('Stage', { stage })`. **Controles como dado:** `src/systems/bindings.ts` (`rebind` troca em conflito, `normalizeBindings` valida o save), lidos do registry `bindings`; teclas de dev só no build de dev. **Caminho crítico:** `src/systems/reach.ts` roda o `stepMotion` real num colisor de tiles e `tests/reach.test.ts` exige que toda fase chegue à porta do chefe com 75% do controle aéreo e sem dash. **Retorno:** níveis em `FEEDBACK` (`tuning.ts`): congelamento, tremor e flash por importância, poeira no pouso; `src/entities/feedback.ts` controla a pausa da física por motivos (congelamento e troca de seção). **Pulo:** correção de quina de até 4 px (`src/systems/corner.ts`) |
 | T12 | Fase Memory Leak (`src/stages/memoryLeak.ts`, 174×51 tiles), padrão em `src/stages/README.md`. Seções: A ensina Drip e Heap Crab no plano e 2 poças curtas; B é um poço vertical com lodo subindo (`GooDef`, `src/systems/goo.ts`); C tem checkpoint, uma poça longa com plataformas e a porta; D é a sala do chefe. 2 checkpoints (antes do poço e no começo de C). Autotile (`src/stages/autotile.ts`): a colisão lê o mapa lógico, o skin só escolhe o quadro. Parallax de 3 camadas `_wide`. Inimigos em `src/entities/enemies/` (Drip, Heap Crab; IA pura em `enemyAI.ts`) e projétil `EnemyShot`, que o Garbage Collector engole. Corrigido: bolhas do chefe grudavam no teto (o grupo de física zerava a gravidade). O jogo começa nesta fase; em dev, `?stage=test` abre o mapa antigo |
+| T11 | Áudio (skill `audio-design`): `src/audio/` com mixer em barramentos (música → duck → música → master; sfx → master; sliders ao quadrado; registry `volume`), M para mudo, player de música com loop na amostra e crossfade, SFX e jingles originais sintetizados (`src/data/sfx.ts`). Trilha: `py -3 tools/music.py` (com `ffmpeg`) gera OGG + MP3 em `public/assets/music/` e `src/data/musicFiles.ts`; ~12 MB em OGG. Volume igualado no jogo (−16 dBFS RMS) e pontos de loop ajustados para não estalar (`snapLoop`). Fase toca sua música; a porta corta para o alarme e o tema do chefe; morte para a música e o respawn recomeça |
 
 Validação atual, incluindo a revisão visual e a base com áudio: 450 testes TypeScript e 19 testes Python passando; typecheck e build também passam. O smoke test confere 268 texturas, os três ciclos do Bob nas 16 armaduras, quadros/orientação do Memory Leak e reutilização de bolhas/poças no Phaser, sem erros ou avisos.
 
@@ -35,10 +36,11 @@ Validação atual, incluindo a revisão visual e a base com áudio: 450 testes T
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
 - **Licenças da trilha:** o usuário pediu para ignorar por enquanto. Faltam as faixas 05, 07, 08 e 09 em `docs/soundtrack.md`.
 
-## Próximo passo: Checkpoint 3 com o usuário, depois T11 (áudio) e T13 (fluxo)
+## Próximo passo: Checkpoint 3 com o usuário, depois T13 (fluxo)
 
 - **Checkpoint 3:** o usuário joga a Memory Leak de ponta a ponta e ganha o Garbage Collector. O caminho crítico foi provado por `tests/reach.test.ts`, e cada seção, os inimigos, o lodo e a luta foram conferidos no Edge, mas ninguém jogou a fase inteira com as mãos. Ajustes prováveis depois de jogar: velocidade do lodo (`MEMORY_LEAK_GOO.speed`, 16 px/s) e o ritmo dos inimigos (`src/data/enemies.ts`).
-- **T11:** independente. **T13:** título, seleção de fase (a arte já existe), save e pausa. A seleção deve chamar `scene.start('Stage', { stage })`.
+- **T13:** título, seleção de fase (a arte já existe), save e pausa. A seleção chama `scene.start('Stage', { stage })`; título e seleção usam as faixas `title` e `select` (`loadMusic` no `preload`, `GameAudio.of(game).music.play`). Volume e mudo entram nas opções da T13b (`mixer.setVolumes`, registry `volume`).
+- **Áudio, falta ouvir:** ninguém ouviu o mix. Balanço entre música e SFX (`DEFAULT_VOLUMES`, volumes em `src/data/sfx.ts`) e os loops precisam de ouvido humano. No Safari, o MP3 de reserva pode ter um respiro curto na emenda.
 - **Armas:** `player.arsenal` vem de `registry.get('ownedWeapons')`. O save em `localStorage` é da T13. Mutex Lock e Null Pointer ainda não disparam (`fireSpecial` ignora); entram na T14 e T15. Carregar armas especiais com o Compiler Cannon não foi feito.
 - **Overlaps:** sempre identifique cada lado pelo tipo (`pick` no topo da `StageScene`). O chefe da T9 sumia por causa disso.
 - **Eventos da cena:** o Phaser não limpa `this.events` no reinício. Evento novo da partida entra em `RUN_EVENTS` (`StageScene`). Pausar a física só por `this.fx.hold(motivo)` / `release(motivo)`, nunca `world.pause()` direto.

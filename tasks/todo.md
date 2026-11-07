@@ -143,11 +143,11 @@ Tabela de armas e fraquezas com testes. Energia por arma, troca com Q/E, troca d
 **Verificar:** `npm test` e jogar · **Dep.:** T9
 **Arquivos:** `src/data/weapons.ts`, `src/systems/weapons.ts`, `src/entities/weapons/GarbageCollector.ts`, `src/scenes/WeaponGetScene.ts`, `tests/weapons.test.ts`
 
-### T11: Áudio: pipeline de música, player e SFX [M]
+### ✅ T11: Áudio: pipeline de música, player e SFX [M]
 `tools/music.py` normaliza as 10 faixas de [docs/soundtrack.md](../docs/soundtrack.md) (RMS ≈ −14 dB, pico ≤ −1 dB) e gera OGG + MP3 em `public/assets/music/`. Manifesto `src/data/music.ts` com `loopStart`/`loopEnd`. Player WebAudio com loop sem emenda, crossfade e desbloqueio do áudio no primeiro input. SFX sintetizados (pulo, tiro, tiro carregado, dano, explosão, item, porta) e jingles.
-- [ ] As 10 faixas saem convertidas, com volume parecido entre si, e o total fica abaixo de ~20 MB
-- [ ] A música toca em loop sem emenda audível e os SFX não cortam a música
-- [ ] Existe um controle de volume (mudo com M)
+- [x] As 10 faixas saem convertidas, com volume parecido entre si, e o total fica abaixo de ~20 MB (~12 MB em OGG; volume igualado no jogo)
+- [x] A música toca em loop sem emenda audível e os SFX não cortam a música (emendas medidas; falta ouvir)
+- [x] Existe um controle de volume (mudo com M; sliders na T13b)
 
 **Verificar:** rodar `python tools/music.py` e jogar com som · **Dep.:** T1
 **Arquivos:** `tools/music.py`, `src/data/music.ts`, `src/audio/musicPlayer.ts`, `src/audio/sfx.ts`, `src/audio/jingles.ts`
