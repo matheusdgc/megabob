@@ -196,10 +196,10 @@ Tela de opções (pelo título e pelo menu de pausa) que lista as ações (`ACTI
 
 ## Fase 5: Outras fases (podem rodar em paralelo)
 
-### T14: Race Condition (fase, inimigos, chefe, Mutex Lock) [M]
+### ✅ T14: Race Condition (fase, inimigos, chefe, Mutex Lock) [M]
 Esteiras e plataformas rápidas, Thread Runner e Clock Spike, chefe com dashes, clones fora de sincronia e arremesso, e a arma Mutex Lock (congela os inimigos).
-- [ ] Dá para terminar a fase, e o chefe recebe 3× de dano do Null Pointer
-- [ ] O Mutex Lock congela os inimigos comuns por um tempo fixo, e os chefes por menos tempo
+- [x] Dá para terminar a fase, e o chefe recebe 3× de dano do Null Pointer (caminho crítico em `tests/reach.test.ts`; fraqueza em `tests/weapons.test.ts`)
+- [x] O Mutex Lock congela os inimigos comuns por um tempo fixo, e os chefes por menos tempo
 
 **Verificar:** uma partida completa · **Dep.:** T13
 **Arquivos:** `src/stages/raceCondition.ts`, `src/entities/enemies/{ThreadRunner,ClockSpike}.ts`, `src/entities/bosses/RaceCondition.ts`, `src/entities/weapons/MutexLock.ts`
