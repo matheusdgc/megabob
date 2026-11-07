@@ -1,0 +1,286 @@
+{
+  "baseline": "2142002",
+  "rooms": [
+    {
+      "stage": "raceCondition",
+      "scope": "Direct QA entry into the actual StageScene boss room; protected Bob, no traversal claim.",
+      "arena": {
+        "x": 2720,
+        "y": 0,
+        "w": 480,
+        "h": 272,
+        "floor": 240
+      },
+      "segments": [
+        {
+          "segment": "normal",
+          "hp": 27,
+          "phase": "fight",
+          "frame": 3,
+          "colliderCount": 7,
+          "minions": 0,
+          "healthBar": true
+        },
+        {
+          "segment": "fury",
+          "hp": 7,
+          "phase": "fight",
+          "frame": 0,
+          "colliderCount": 7,
+          "minions": 0,
+          "healthBar": true
+        }
+      ],
+      "maxAlignment": 0,
+      "states": [
+        ":dash",
+        ":idle",
+        ":skid",
+        ":split",
+        ":throw",
+        ":windup"
+      ],
+      "maxPuddles": 0,
+      "puddleFloorError": 0,
+      "maxOpaqueClip": 0,
+      "travelMin": 2780,
+      "travelMax": 3140,
+      "projectileHit": true,
+      "hazardHit": true,
+      "hazardDamage": 3,
+      "opaqueFrames": {
+        "0": [
+          20,
+          76
+        ],
+        "1": [
+          19,
+          77
+        ],
+        "2": [
+          14,
+          81
+        ],
+        "3": [
+          4,
+          91
+        ],
+        "4": [
+          6,
+          89
+        ],
+        "5": [
+          12,
+          84
+        ],
+        "6": [
+          14,
+          81
+        ],
+        "7": [
+          14,
+          81
+        ]
+      },
+      "defeat": {
+        "phase": "dead",
+        "healthBar": false,
+        "liveHazards": 0,
+        "minions": 0,
+        "stageOver": true
+      }
+    },
+    {
+      "stage": "nullPointer",
+      "scope": "Direct QA entry into the actual StageScene boss room; protected Bob, no traversal claim.",
+      "arena": {
+        "x": 2400,
+        "y": 0,
+        "w": 480,
+        "h": 272,
+        "floor": 240
+      },
+      "segments": [
+        {
+          "segment": "normal",
+          "hp": 27,
+          "phase": "fight",
+          "frame": 4,
+          "colliderCount": 7,
+          "minions": 0,
+          "healthBar": true
+        },
+        {
+          "segment": "fury",
+          "hp": 7,
+          "phase": "fight",
+          "frame": 5,
+          "colliderCount": 7,
+          "minions": 0,
+          "healthBar": true
+        }
+      ],
+      "maxAlignment": 0,
+      "states": [
+        ":hidden",
+        ":idle",
+        ":in",
+        ":out",
+        ":shoot",
+        ":summon"
+      ],
+      "maxPuddles": 0,
+      "puddleFloorError": 0,
+      "maxOpaqueClip": 0,
+      "travelMin": 2472,
+      "travelMax": 2808,
+      "projectileHit": true,
+      "hazardHit": true,
+      "hazardDamage": 3,
+      "defeat": {
+        "phase": "dead",
+        "healthBar": false,
+        "liveHazards": 0,
+        "minions": 0,
+        "stageOver": true
+      }
+    },
+    {
+      "stage": "techDebt",
+      "scope": "Direct QA entry into the actual StageScene boss room; protected Bob, no traversal claim.",
+      "arena": {
+        "x": 2720,
+        "y": 0,
+        "w": 480,
+        "h": 272,
+        "floor": 240
+      },
+      "segments": [
+        {
+          "segment": "normal",
+          "hp": 27,
+          "phase": "fight",
+          "frame": 0,
+          "colliderCount": 9,
+          "minions": 2,
+          "healthBar": true
+        },
+        {
+          "segment": "fury",
+          "hp": 7,
+          "phase": "fight",
+          "frame": 2,
+          "colliderCount": 9,
+          "minions": 2,
+          "healthBar": true
+        },
+        {
+          "segment": "core",
+          "hp": 28,
+          "phase": "fight",
+          "frame": 3,
+          "colliderCount": 9,
+          "minions": 2,
+          "healthBar": true
+        },
+        {
+          "segment": "core-fury",
+          "hp": 8,
+          "phase": "fight",
+          "frame": 0,
+          "colliderCount": 9,
+          "minions": 2,
+          "healthBar": true
+        }
+      ],
+      "maxAlignment": 0,
+      "states": [
+        "1:fire",
+        "1:idle",
+        "1:open",
+        "1:summon",
+        "2:charge",
+        "2:fire",
+        "2:idle",
+        "2:patch"
+      ],
+      "maxPuddles": 0,
+      "puddleFloorError": 0,
+      "maxOpaqueClip": 0,
+      "travelMin": 2977.8136319272417,
+      "travelMax": 3144,
+      "projectileHit": true,
+      "hazardHit": true,
+      "hazardDamage": 3,
+      "defeat": {
+        "phase": "dead",
+        "healthBar": false,
+        "liveHazards": 0,
+        "minions": 0,
+        "stageOver": true
+      }
+    },
+    {
+      "stage": "memoryLeak",
+      "scope": "Direct QA entry into the actual StageScene boss room; protected Bob, no traversal claim.",
+      "arena": {
+        "x": 2304,
+        "y": 0,
+        "w": 480,
+        "h": 272,
+        "floor": 240
+      },
+      "segments": [
+        {
+          "segment": "normal",
+          "hp": 27,
+          "phase": "fight",
+          "frame": 2,
+          "colliderCount": 6,
+          "minions": 0,
+          "healthBar": true
+        },
+        {
+          "segment": "fury",
+          "hp": 7,
+          "phase": "fight",
+          "frame": 2,
+          "colliderCount": 6,
+          "minions": 0,
+          "healthBar": true
+        }
+      ],
+      "maxAlignment": 0,
+      "states": [
+        ":dive",
+        ":fury_volley",
+        ":fury_wait",
+        ":idle_enter",
+        ":lurk",
+        ":rise",
+        ":volley",
+        ":volley_wait"
+      ],
+      "maxPuddles": 8,
+      "puddleFloorError": 0,
+      "maxOpaqueClip": 0,
+      "travelMin": 2356,
+      "travelMax": 2544,
+      "projectileHit": true,
+      "hazardHit": true,
+      "hazardDamage": 3,
+      "defeat": {
+        "phase": "dead",
+        "healthBar": false,
+        "liveHazards": 0,
+        "minions": 0,
+        "stageOver": true
+      }
+    }
+  ],
+  "productionPngsChanged": false,
+  "errors": [],
+  "warnings": [],
+  "failedRequests": [],
+  "scope": "Actual StageScene terrain, HUD, damage callbacks and defeat cleanup; direct QA entry, protected Bob, no full traversal."
+}

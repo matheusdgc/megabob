@@ -75,6 +75,17 @@ describe('Race Condition boss', () => {
     expect(order).toEqual(['windup', 'throw', 'windup', 'split']);
   });
 
+  it('charges back across the room when Bob waits in the corner beyond its stopping point', () => {
+    for (const [x, bobX, direction] of [[60,40,1],[420,440,-1]] as const) {
+      const r = newRace();
+      const firstDash = run(r,100,sense(x,1,bobX)).find(out=>out.vx!==0);
+      expect(firstDash?.vx).toBe(direction*RACE_DASH_SPEED);
+      r.state='split';r.frames=100;
+      const split=stepRace(r,sense(x,1,bobX));
+      expect(split.clones?.every(clone=>clone.dir===direction)).toBe(true);
+    }
+  });
+
   it('throws one blade at Bob, three when hurt', () => {
     const throwFrom = (hp: number) => {
       const r = newRace();

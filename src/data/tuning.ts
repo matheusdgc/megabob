@@ -107,6 +107,9 @@ export const FEEDBACK: Record<FeedbackEvent, FeedbackTier> = {
 /** Falls shorter than this (airborne frames) land without a dust puff. */
 export const LAND_DUST_FRAMES = 14;
 
+/** Race's widest pose extends 44 px from its center; leave one wall tile visible. */
+export const RACE_VISUAL_WALL_MARGIN = 60;
+
 // --- Null Pointer enemies: pixel motion and local feedback ---
 export const NULL_ENEMY_ART = {
   hoverHeight: 3, hoverPeriod: 120,

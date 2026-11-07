@@ -8,11 +8,13 @@
  * health every warning is shorter and the throws and copies double.
  */
 
+import { RACE_VISUAL_WALL_MARGIN as RACE_WALL_MARGIN } from '../data/tuning';
+
 export const RACE_HP = 28;
 export const RACE_CONTACT = 4;
 /** Dash speed, px/s, and how close to the arena wall it stops. */
 export const RACE_DASH_SPEED = 330;
-export const RACE_WALL_MARGIN = 24;
+export { RACE_WALL_MARGIN };
 export const RACE_BLADE_SPEED = 170;
 export const RACE_BLADE_DAMAGE = 3;
 export const RACE_CLONE_DAMAGE = 3;
@@ -77,6 +79,12 @@ export function stepRace(r: Race, s: RaceSense): RaceOut {
   const faceBob = () => {
     if (s.bob && s.bob.x !== s.x) r.facing = s.bob.x < s.x ? -1 : 1;
   };
+  const faceDash = () => {
+    // Bob can wait between the visible wall and the boss's stopping point.
+    if (s.x <= s.arenaLeft + RACE_WALL_MARGIN) r.facing = 1;
+    else if (s.x >= s.arenaRight - RACE_WALL_MARGIN) r.facing = -1;
+    else faceBob();
+  };
   const idleFrame = (Math.floor(r.frames / 8) % 2) as 0 | 1;
   switch (r.state) {
     case 'idle': {
@@ -85,11 +93,12 @@ export function stepRace(r: Race, s: RaceSense): RaceOut {
       const attack = CYCLE[r.next]!;
       r.next = (r.next + 1) % CYCLE.length;
       go(attack === 'dash' ? 'windup' : attack);
+      if (attack === 'dash') faceDash();
       return { vx: 0, frame: attack === 'dash' ? 2 : attack === 'throw' ? 5 : 4, low: false };
     }
     case 'split':
       if (r.frames >= SPLIT_FRAMES) {
-        faceBob();
+        faceDash();
         go('windup');
         // the copies wait at its side and take off after it
         return { vx: 0, frame: 2, low: false, clones: RACE_CLONE_DELAYS[f]!.map((delay) => ({ delay: delay + WINDUP[f]!, dir: r.facing })) };
