@@ -60,4 +60,4 @@ export const MUTEX_BOSS_IMMUNE_FRAMES = 120;
 export const freezeFrames = (isBoss: boolean): number => (isBoss ? MUTEX_BOSS_FREEZE_FRAMES : MUTEX_FREEZE_FRAMES);
 
 /** Special-weapon shots allowed on screen at once. */
-export const SPECIALS_ON_SCREEN: Partial<Record<WeaponId, number>> = { garbageCollector: 1, mutexLock: 2 };
+export const SPECIALS_ON_SCREEN: Partial<Record<WeaponId, number>> = { garbageCollector: 1, mutexLock: 2, nullPointer: 2 };

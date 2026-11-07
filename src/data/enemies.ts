@@ -25,6 +25,10 @@ export const ENEMIES: Record<EnemyKind, EnemyStats> = {
   threadRunner: { sheet: 'enemy_thread_runner', hp: 3, contact: 3, body: [24, 18], speed: 210 },
   // E6 (Race Condition): wall turret that fires clock-hand spikes. Frames: idle, charging, fire.
   clockSpike: { sheet: 'enemy_clock_spike', hp: 4, contact: 2, body: [22, 22], speed: 0 },
+  // E7 (Null Pointer): floats, opens its eye, shoots a cursor, blinks out and back. Frames: idle, wide, glitch, gone.
+  voidEye: { sheet: 'enemy_void_eye', hp: 3, contact: 3, body: [18, 18], speed: 0 },
+  // E8 (Null Pointer): a claw on a broken chain, swinging. Frames: left, center, right.
+  danglingRef: { sheet: 'enemy_dangling_ref', hp: 4, contact: 4, body: [18, 16], speed: 0 },
 };
 
 // --- Spam Drone behaviour ---
@@ -88,3 +92,21 @@ export const SPIKE_FIRE_FRAMES = 10;
 export const SPIKE_COOLDOWN_FRAMES = 80;
 export const SPIKE_SHOT_SPEED = 150;
 export const SPIKE_SHOT_DAMAGE = 3;
+
+
+// --- Void Eye behaviour ---
+export const EYE_SIGHT = 200;
+export const EYE_IDLE_FRAMES = 70;
+export const EYE_WIDE_FRAMES = 22;
+export const EYE_GLITCH_FRAMES = 10;
+export const EYE_GONE_FRAMES = 45;
+/** How far from home it may reappear, px. */
+export const EYE_HOP = 56;
+export const CURSOR_SPEED = 140;
+export const CURSOR_DAMAGE = 3;
+
+// --- Dangling Ref behaviour ---
+/** Swing amplitude (radians), period (frames) and chain length (px). */
+export const DANGLE_AMP = 0.9;
+export const DANGLE_PERIOD = 110;
+export const DANGLE_LENGTH = 40;

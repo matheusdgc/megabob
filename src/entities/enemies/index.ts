@@ -8,6 +8,8 @@ import { Drip } from './Drip';
 import { HeapCrab } from './HeapCrab';
 import { ClockSpike } from './ClockSpike';
 import { ThreadRunner } from './ThreadRunner';
+import { DanglingRef } from './DanglingRef';
+import { VoidEye } from './VoidEye';
 
 /** E1 Pixel Mite: crawls along floors, turning at walls and ledges. */
 export class PixelMite extends Enemy {
@@ -73,5 +75,9 @@ export function createEnemy(kind: EnemyKind, scene: Phaser.Scene, x: number, y: 
       return new ThreadRunner(scene, x, y, world);
     case 'clockSpike':
       return new ClockSpike(scene, x, y, world);
+    case 'voidEye':
+      return new VoidEye(scene, x, y, world);
+    case 'danglingRef':
+      return new DanglingRef(scene, x, y, world);
   }
 }

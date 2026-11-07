@@ -1,4 +1,12 @@
 import {
+  DANGLE_AMP,
+  DANGLE_PERIOD,
+  EYE_GLITCH_FRAMES,
+  EYE_GONE_FRAMES,
+  EYE_HOP,
+  EYE_IDLE_FRAMES,
+  EYE_SIGHT,
+  EYE_WIDE_FRAMES,
   RUNNER_BRAKE_FRAMES,
   RUNNER_REST_FRAMES,
   RUNNER_REV_FRAMES,
@@ -350,3 +358,70 @@ export function stepSpike(k: Spike, bob: { dx: number; dy: number } | null): Spi
       return { frame: 2, fire: false };
   }
 }
+
+// ------------------------------------------------------------------ Void Eye
+
+export type EyeState = 'idle' | 'wide' | 'glitch' | 'gone';
+
+export interface Eye {
+  state: EyeState;
+  frames: number;
+  /** Where it floats around (it reappears near here, never far). */
+  homeX: number;
+  homeY: number;
+}
+
+export const newEye = (x: number, y: number): Eye => ({ state: 'idle', frames: 0, homeX: x, homeY: y });
+
+export interface EyeOut {
+  /** Sheet frame: 0 idle, 1 eye wide (about to shoot), 2 glitching out, 3 gone. */
+  frame: 0 | 1 | 2 | 3;
+  /** Hit and harmful (false while gone). */
+  solid: boolean;
+  /** Fire a cursor at Bob this frame. */
+  fire: boolean;
+  /** Reappear here this frame. */
+  moveTo?: { x: number; y: number };
+}
+
+/**
+ * Void Eye, one frame. Floats; when Bob is near it opens its eye wide (the warning), shoots a
+ * cursor at him, glitches out, stays gone a moment (untouchable) and reappears near home.
+ * `rand` (0..1) picks where it reappears, so the behaviour is testable.
+ */
+export function stepEye(e: Eye, bob: { dx: number; dy: number } | null, rand: () => number): EyeOut {
+  e.frames++;
+  const go = (state: EyeState) => {
+    e.state = state;
+    e.frames = 0;
+  };
+  switch (e.state) {
+    case 'idle':
+      if (e.frames >= EYE_IDLE_FRAMES && bob && Math.hypot(bob.dx, bob.dy) <= EYE_SIGHT) go('wide');
+      return { frame: 0, solid: true, fire: false };
+    case 'wide':
+      if (e.frames >= EYE_WIDE_FRAMES) {
+        go('glitch');
+        return { frame: 2, solid: true, fire: true };
+      }
+      return { frame: 1, solid: true, fire: false };
+    case 'glitch':
+      if (e.frames >= EYE_GLITCH_FRAMES) go('gone');
+      return { frame: 2, solid: true, fire: false };
+    case 'gone':
+      if (e.frames >= EYE_GONE_FRAMES) {
+        go('idle');
+        const a = rand() * Math.PI * 2;
+        return { frame: 0, solid: true, fire: false, moveTo: { x: e.homeX + Math.cos(a) * EYE_HOP, y: e.homeY + Math.sin(a) * EYE_HOP * 0.5 } };
+      }
+      return { frame: 3, solid: false, fire: false };
+  }
+}
+
+// ------------------------------------------------------------------ Dangling Ref
+
+/** Swing angle (radians, 0 = straight down) of a pendulum at `frame`, started at `phase`. */
+export const dangleAngle = (frame: number, phase = 0): number => DANGLE_AMP * Math.sin(((frame + phase) / DANGLE_PERIOD) * Math.PI * 2);
+
+/** Sheet frame for an angle: 0 swung left, 1 center, 2 swung right. */
+export const dangleFrame = (angle: number): 0 | 1 | 2 => (angle < -0.3 ? 0 : angle > 0.3 ? 2 : 1);

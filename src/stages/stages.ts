@@ -5,10 +5,11 @@ import type { GooDef } from '../systems/goo';
 import type { MoverDef } from '../systems/movers';
 import { PLAIN_SKIN, STAGE_SKIN, type TileSkin } from './autotile';
 import { MEMORY_LEAK_GOO, MEMORY_LEAK_MAP, MEMORY_LEAK_SECTIONS } from './memoryLeak';
+import { NULL_POINTER_MAP, NULL_POINTER_SECTIONS } from './nullPointer';
 import { RACE_CONDITION_MAP, RACE_CONDITION_MOVERS, RACE_CONDITION_SECTIONS } from './raceCondition';
 import { TEST_MAP, TEST_SECTIONS } from './test';
 
-export type StageId = 'test' | 'memoryLeak' | 'raceCondition';
+export type StageId = 'test' | 'memoryLeak' | 'raceCondition' | 'nullPointer';
 
 /**
  * Everything a stage is, as data: the StageScene only builds what this describes, so a new
@@ -77,6 +78,19 @@ export const STAGES: Record<StageId, StageDef> = {
     music: 'raceCondition',
     bossMusic: 'boss',
     movers: RACE_CONDITION_MOVERS,
+  },
+  nullPointer: {
+    id: 'nullPointer',
+    name: 'NULL POINTER',
+    map: NULL_POINTER_MAP,
+    sections: NULL_POINTER_SECTIONS,
+    boss: 'nullPointer',
+    tileset: 'tiles_null_pointer',
+    skin: STAGE_SKIN,
+    parallax: ['t3_null_pointer_far_wide', 't3_null_pointer_mid_wide', 't3_null_pointer_near_wide'],
+    background: '#0b0716',
+    music: 'nullPointer',
+    bossMusic: 'boss',
   },
 };
 

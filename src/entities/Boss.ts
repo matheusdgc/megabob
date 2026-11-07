@@ -120,6 +120,11 @@ export abstract class Boss extends Phaser.Physics.Arcade.Sprite {
     this.arenaRight = right;
   }
 
+  /** Can be hit and hurts on contact (a teleporting boss is not, for a moment). */
+  get isTangible(): boolean {
+    return true;
+  }
+
   get isFrozen(): boolean {
     return this.frozen > 0;
   }

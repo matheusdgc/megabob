@@ -9,10 +9,23 @@ export const T = {
   platform: 3, // one-way: solid only from above
   conveyorRight: 4, // solid; carries whoever stands on it
   conveyorLeft: 5,
+  vanish0: 6, // solid blocks that vanish and come back, in three phase groups (src/systems/vanish.ts)
+  vanish1: 7,
+  vanish2: 8,
+  thin: 9, // a thin wall: solid, stops shots except the Null Pointer
 } as const;
 
-/** Blocks movement from every side (ground, walls, conveyors). */
-export const isSolid = (t: number | undefined): boolean => t === T.solid || t === T.conveyorRight || t === T.conveyorLeft;
+/** Phase group (0-2) of a vanishing block, or null for any other cell. */
+export const vanishGroup = (t: number | undefined): 0 | 1 | 2 | null =>
+  t === T.vanish0 ? 0 : t === T.vanish1 ? 1 : t === T.vanish2 ? 2 : null;
+
+/**
+ * Blocks movement from every side (ground, walls, conveyors, thin walls, vanishing blocks).
+ * Vanishing blocks count as solid here: the stage switches them off in time, and the reach
+ * check assumes Bob waits for them.
+ */
+export const isSolid = (t: number | undefined): boolean =>
+  t === T.solid || t === T.conveyorRight || t === T.conveyorLeft || t === T.thin || vanishGroup(t) !== null;
 
 /** Something Bob can stand on (solids and one-way platforms). */
 export const isFloor = (t: number | undefined): boolean => isSolid(t) || t === T.platform;
@@ -36,11 +49,24 @@ const LEGEND: Record<string, number> = {
   '=': T.platform,
   '>': T.conveyorRight,
   '<': T.conveyorLeft,
+  '1': T.vanish0,
+  '2': T.vanish1,
+  '3': T.vanish2,
+  '|': T.thin,
   P: T.empty, // player spawn
 };
 
 /** Enemy markers. The cell keeps the tile to its left, so markers don't punch holes. */
-export const ENEMY_MARKERS = { m: 'pixelMite', d: 'spamDrone', v: 'drip', h: 'heapCrab', r: 'threadRunner', k: 'clockSpike' } as const;
+export const ENEMY_MARKERS = {
+  m: 'pixelMite',
+  d: 'spamDrone',
+  v: 'drip',
+  h: 'heapCrab',
+  r: 'threadRunner',
+  k: 'clockSpike',
+  o: 'voidEye',
+  j: 'danglingRef',
+} as const;
 export type EnemyKind = (typeof ENEMY_MARKERS)[keyof typeof ENEMY_MARKERS];
 
 /** Stage object markers (same tile rule as enemies). `B` is the bottom-left cell of the door. */

@@ -25,10 +25,12 @@ import { type Arsenal, cycleWeapon, newArsenal, spend } from '../systems/weapons
 import { SPECIALS_ON_SCREEN, WEAPONS } from '../data/weapons';
 import { GcOrb } from './weapons/GarbageCollector';
 import { MutexBolt } from './weapons/MutexLock';
+import { NullPointerShot } from './weapons/NullPointerShot';
 
 /** A special-weapon shot (each class keeps its own behaviour; the stage reads these fields). */
-export type Special = GcOrb | MutexBolt;
-const SPECIAL_CLASS = { garbageCollector: GcOrb, mutexLock: MutexBolt } as const;
+export type Special = GcOrb | MutexBolt | NullPointerShot;
+const SPECIAL_CLASS = { garbageCollector: GcOrb, mutexLock: MutexBolt, nullPointer: NullPointerShot } as const;
+const SPECIAL_TEXTURE = { garbageCollector: 'fx_gc', mutexLock: 'fx_mutex', nullPointer: 'fx_null' } as const;
 import { fxAnim, Projectile } from './Projectile';
 
 /** Frames the muzzle flash stays on after a shot. */
@@ -265,14 +267,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   private fireSpecial(): void {
     const weapon = this.arsenal.current;
-    if (weapon !== 'garbageCollector' && weapon !== 'mutexLock') return; // Null Pointer arrives in T15
+    if (weapon === 'buster') return;
     const Cls = SPECIAL_CLASS[weapon];
     const mine = (this.specials.getChildren() as Special[]).filter((c) => c instanceof Cls);
     if (mine.filter((c) => c.active).length >= (SPECIALS_ON_SCREEN[weapon] ?? 1) || !spend(this.arsenal)) return;
     // reuse a spent shot of this weapon, or make one
     let shot = mine.find((c) => !c.active);
     if (!shot) {
-      shot = new Cls(this.scene, 0, 0, weapon === 'mutexLock' ? 'fx_mutex' : 'fx_gc');
+      shot = new Cls(this.scene, 0, 0, SPECIAL_TEXTURE[weapon]);
       this.specials.add(shot, true);
     }
     const o = shotOrigin(this.motion);

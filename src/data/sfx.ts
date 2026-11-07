@@ -61,6 +61,13 @@ export const SFX = {
       { wave: 'square', from: 700, to: 700, dur: 0.08, vol: 0.12, at: 0.06 },
     ],
   },
+  nullPointer: {
+    voices: [
+      { wave: 'square', from: 1600, to: 400, dur: 0.09, vol: 0.13 },
+      { wave: 'noise', from: 8000, to: 3000, dur: 0.05, vol: 0.07, at: 0.04 },
+    ],
+  },
+  glitch: { voices: [{ wave: 'noise', from: 6000, to: 1500, dur: 0.12, vol: 0.12 }], vary: 0.1 },
   freeze: {
     voices: [
       { wave: 'triangle', from: 2000, to: 600, dur: 0.18, vol: 0.14 },

@@ -18,7 +18,8 @@ import { Pickup } from '../entities/Pickup';
 import type { Projectile } from '../entities/Projectile';
 import { Player, type Special } from '../entities/Player';
 import { skinTiles, solidFrames } from '../stages/autotile';
-import { conveyorDir, conveyorUnder, isFloor, isSolid, type MapEnemy, parseMap, T } from '../stages/map';
+import { conveyorDir, conveyorUnder, isSolid, type MapEnemy, parseMap, T, vanishGroup } from '../stages/map';
+import { vanishSolid, vanishState } from '../systems/vanish';
 import { bossRoomIndex, DEFAULT_STAGE, type StageDef, type StageId, STAGES } from '../stages/stages';
 import { type Action, ActionState } from '../systems/actions';
 import { cameraScroll, type Section, sectionAt, sectionOf, sectionsFromTiles } from '../systems/camera';
@@ -80,6 +81,8 @@ export class StageScene extends Phaser.Scene {
   /** Conveyor tiles, animated on the logic tick. */
   private conveyors!: Phaser.Tilemaps.Tile[];
   private movers!: MovingPlatform[];
+  /** Vanishing-block tiles and their phase group. */
+  private vanishing!: { tile: Phaser.Tilemaps.Tile; group: 0 | 1 | 2 }[];
   private ticks!: number;
   private hud!: Hud;
   private fx!: Feedback;
@@ -134,6 +137,7 @@ export class StageScene extends Phaser.Scene {
     this.over = false;
     this.conveyors = [];
     this.movers = [];
+    this.vanishing = [];
     this.ticks = 0;
   }
 
@@ -166,6 +170,8 @@ export class StageScene extends Phaser.Scene {
     layer.forEachTile((tile) => {
       const t = this.grid[tile.y]?.[tile.x];
       if (t === T.platform) tile.setCollision(false, false, true, false);
+      const g = vanishGroup(t);
+      if (g !== null) this.vanishing.push({ tile, group: g });
       if (conveyorDir(t) !== 0) {
         this.conveyors.push(tile);
         tile.flipX = conveyorDir(t) < 0;
@@ -191,7 +197,7 @@ export class StageScene extends Phaser.Scene {
     this.movers = (this.def.movers ?? []).map((m) => new MovingPlatform(this, m));
     if (this.movers.length) this.physics.add.collider(this.player, this.movers);
     if (this.door) this.physics.add.collider(this.player, this.door);
-    this.player.solidAt = (x, y) => isSolid(this.cellAt(x, y));
+    this.player.solidAt = (x, y) => this.solidNow(x, y);
     this.player.on('deathDone', () => this.afterDeath());
     this.player.on('sfx', (id: SfxId) => this.sfx(id));
     this.player.on('hurt', () => {
@@ -299,6 +305,8 @@ export class StageScene extends Phaser.Scene {
     const b0 = p.body;
     p.step(input, b0.blocked.down ? conveyorUnder((x, y) => this.cellAt(x, y), b0.left, b0.right, b0.bottom) * CONVEYOR_SPEED : 0);
     for (const m of this.movers) m.step();
+    this.stepVanishing();
+    this.stopShotsAtThinWalls();
     if (++this.ticks % CONVEYOR_ANIM_FRAMES === 0 && this.conveyors.length) {
       const [a, b] = this.def.skin.conveyor;
       for (const t of this.conveyors) t.index = t.index === a ? b : a;
@@ -405,6 +413,37 @@ export class StageScene extends Phaser.Scene {
     this.time.delayedCall((frames / 60) * 1000 + 100, follow);
   }
 
+  /** Solid right now: like isSolid, but a vanishing block counts only while it is there. */
+  private solidNow(x: number, y: number): boolean {
+    const t = this.cellAt(x, y);
+    const g = vanishGroup(t);
+    return g === null ? isSolid(t) : vanishSolid(g, this.ticks);
+  }
+
+  /** Vanishing blocks follow the shared clock: solid, flickering (the warning), gone. */
+  private stepVanishing(): void {
+    if (!this.vanishing.length) return;
+    const [solid, flicker] = this.def.skin.vanish;
+    for (const v of this.vanishing) {
+      const state = vanishState(v.group, this.ticks);
+      const on = state !== 'gone';
+      if (v.tile.collides !== on) {
+        v.tile.setCollision(on, on, on, on);
+        v.tile.setVisible(on);
+      }
+      if (on) v.tile.index = state === 'flicker' && Math.floor(this.ticks / 4) % 2 === 0 ? flicker : solid;
+    }
+  }
+
+  /** Thin walls stop every player shot except the Null Pointer, which phases through. */
+  private stopShotsAtThinWalls(): void {
+    for (const s of [...this.player.shots.getChildren(), ...this.player.specials.getChildren()] as (Projectile | Special)[]) {
+      if (!s.active || s.weapon === 'nullPointer' || this.cellAt(s.x, s.y) !== T.thin) continue;
+      playOnce(this, 'fx_hit', s.x, s.y, 20);
+      s.disableBody(true, true);
+    }
+  }
+
   /** Logical cell (`T`) at a world point; outside the map is empty. */
   private cellAt(x: number, y: number): number {
     return this.grid[Math.floor(y / TILE)]?.[Math.floor(x / TILE)] ?? T.empty;
@@ -425,12 +464,12 @@ export class StageScene extends Phaser.Scene {
     this.pickups.clear(true, true);
     const world: EnemyWorld = {
       floorAt: (x, y) => {
-        return isFloor(this.cellAt(x, y));
+        return this.solidNow(x, y) || this.cellAt(x, y) === T.platform;
       },
       bob: () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
       shoot: (kind, x, y, vx, vy) => {
         this.enemyShots.add(new EnemyShot(this, kind, x, y, vx, vy));
-        this.sfx(kind === 'block' ? 'throw' : 'clockShot');
+        this.sfx(kind === 'block' ? 'throw' : kind === 'cursor' ? 'glitch' : 'clockShot');
       },
     };
     for (const m of this.mapEnemies) {
@@ -545,7 +584,7 @@ export class StageScene extends Phaser.Scene {
     }
     // the boss's body hurts Bob on contact (not while the Mutex Lock holds it)
     track(this.physics.add.overlap(this.player, boss, () => {
-      if (!this.player.isDead && boss.phase === 'fight' && !boss.isFrozen) this.player.takeHit(boss.contactDamage, boss.body.center.x);
+      if (!this.player.isDead && boss.phase === 'fight' && !boss.isFrozen && boss.isTangible) this.player.takeHit(boss.contactDamage, boss.body.center.x);
     }));
     boss.setArena(room.x, room.x + room.w);
     this.bossHealthBar = new BossHealthBar(this, this.def.name);

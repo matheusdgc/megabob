@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { BLOCK_DAMAGE, BLOCK_GRAVITY, SPIKE_SHOT_DAMAGE } from '../data/enemies';
+import { BLOCK_DAMAGE, BLOCK_GRAVITY, CURSOR_DAMAGE, SPIKE_SHOT_DAMAGE } from '../data/enemies';
 
 const CULL_MARGIN = 32;
 
@@ -9,6 +9,8 @@ export const SHOTS = {
   block: { key: 'memory_block', size: 8, damage: BLOCK_DAMAGE, gravity: BLOCK_GRAVITY },
   // Clock Spike's clock-hand spike: straight
   clockSpike: { key: 'clock_spike_shot', size: 8, damage: SPIKE_SHOT_DAMAGE, gravity: 0 },
+  // Void Eye's cursor: straight, aimed
+  cursor: { key: 'null_cursor', size: 10, damage: CURSOR_DAMAGE, gravity: 0 },
 } as const;
 
 export type ShotKind = keyof typeof SHOTS;

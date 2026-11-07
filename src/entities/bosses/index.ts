@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import type { BossId } from '../../data/weapons';
 import type { Boss } from '../Boss';
 import { MemoryLeak } from './MemoryLeak';
+import { NullPointer } from './NullPointer';
 import { RaceCondition } from './RaceCondition';
 
 /** Bob's hitbox center, or null while he is dead. */
@@ -14,6 +15,8 @@ export function createBoss(id: BossId, scene: Phaser.Scene, x: number, y: number
       return new MemoryLeak(scene, x, y, worldH, bob);
     case 'raceCondition':
       return new RaceCondition(scene, x, y, bob);
+    case 'nullPointer':
+      return new NullPointer(scene, x, y, bob);
     default:
       throw new Error(`no boss class for ${id} yet`);
   }
