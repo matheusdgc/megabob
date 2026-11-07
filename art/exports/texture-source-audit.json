@@ -11,6 +11,16 @@
     },
     {
       "scene": "Stage",
+      "stage": "raceCondition",
+      "verifiedTextures": 269,
+      "verifiedPngSources": 269,
+      "activeBindingsVerified": 14,
+      "placeholderControlDetected": true,
+      "alteredImageControlDetected": true
+    },
+    {
+      "scene": "Stage",
+      "stage": "memoryLeak",
       "verifiedTextures": 269,
       "verifiedPngSources": 269,
       "activeBindingsVerified": 13,
@@ -76,6 +86,64 @@
     "generatedPlaceholderRejected": true,
     "sameSizeAlteredImageRejected": true
   },
-  "scope": "Registered raster assets in Debug and Memory Leak; not a complete gameplay playthrough",
-  "productionAssetsChanged": false
+  "scope": "Registered raster assets in Debug, Memory Leak and Race Condition; not a complete gameplay playthrough",
+  "productionAssetsChanged": false,
+  "activeRaceBindings": [
+    {
+      "role": "player",
+      "texture": "bob_idle"
+    },
+    {
+      "role": "enemy:spamDrone",
+      "texture": "enemy_spam_drone"
+    },
+    {
+      "role": "enemy:threadRunner",
+      "texture": "enemy_thread_runner"
+    },
+    {
+      "role": "enemy:clockSpike",
+      "texture": "enemy_clock_spike"
+    },
+    {
+      "role": "enemy:pixelMite",
+      "texture": "enemy_pixel_mite"
+    },
+    {
+      "role": "enemy:threadRunner",
+      "texture": "enemy_thread_runner"
+    },
+    {
+      "role": "checkpoint",
+      "texture": "checkpoint"
+    },
+    {
+      "role": "bossDoor",
+      "texture": "boss_door"
+    },
+    {
+      "role": "parallax:0",
+      "texture": "t2_race_condition_far_wide"
+    },
+    {
+      "role": "parallax:1",
+      "texture": "t2_race_condition_mid_wide"
+    },
+    {
+      "role": "parallax:2",
+      "texture": "t2_race_condition_near_wide"
+    },
+    {
+      "role": "terrain",
+      "texture": "tiles_race_condition"
+    },
+    {
+      "role": "movingPlatform",
+      "texture": "moving_platform"
+    },
+    {
+      "role": "movingPlatform",
+      "texture": "moving_platform"
+    }
+  ]
 }

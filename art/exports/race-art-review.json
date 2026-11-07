@@ -1,0 +1,84 @@
+{
+  "normal": {
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "bodies": [
+      "28x48",
+      "44x22"
+    ],
+    "facings": [
+      false,
+      true
+    ],
+    "bladeFrames": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "cloneBlendModes": [
+      0
+    ],
+    "clones": 1,
+    "waiting": true,
+    "active": true
+  },
+  "fury": {
+    "frames": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "bodies": [
+      "28x48",
+      "44x22"
+    ],
+    "facings": [
+      false,
+      true
+    ],
+    "bladeFrames": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "cloneBlendModes": [
+      0
+    ],
+    "clones": 2,
+    "waiting": true,
+    "active": true
+  },
+  "hurtFrame": 6,
+  "defeat": {
+    "frame": 7,
+    "visible": false,
+    "hazards": 0
+  },
+  "cloneOutline": {
+    "baseline": "12f4020",
+    "frame": [
+      96,
+      80
+    ],
+    "originalVisiblePixelsPreserved": 2158,
+    "addedKeylinePixels": 413,
+    "width": 1,
+    "color": "#A6C8FF",
+    "binaryAlpha": true,
+    "footAlignmentShiftY": 15,
+    "visibleFeetAtFrameBottom": true
+  },
+  "scope": "Actual RaceCondition entity and Arcade physics, 1800 normal + 1800 fury fixed steps; static art captures are not a complete gameplay playthrough."
+}

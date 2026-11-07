@@ -5,13 +5,15 @@
   "paletteColors": 29,
   "emptyFrames": 0,
   "productionPngsUnchanged": true,
-  "runtimeBoss": "memoryLeak",
-  "pendingRuntime": [
-    "raceCondition",
+  "runtimeBossesReviewed": [
+    "memoryLeak",
+    "raceCondition"
+  ],
+  "pendingRuntimeReview": [
     "nullPointer",
     "techDebt"
   ],
-  "note": "Other boss sheets are reviewed poses, not evidence of implemented attacks.",
+  "note": "Pose contacts alone are not evidence of implemented attacks.",
   "entries": [
     {
       "key": "boss_memory_leak",
@@ -307,9 +309,9 @@
       "bounds": [
         [
           0,
-          15,
+          29,
           96,
-          65
+          80
         ]
       ]
     },

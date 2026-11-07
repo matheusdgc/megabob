@@ -9,6 +9,7 @@ import { checkBossArt } from './check-boss-art.mjs';
 import { checkStageInteractives } from './check-stage-interactives.mjs';
 import { checkTextureSources } from './check-texture-sources.mjs';
 import { checkBobWeaponArt } from './check-bob-weapon-art.mjs';
+import { checkRaceArt } from './check-race-art.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -77,26 +78,27 @@ try {
       frameWidth: 48, frameHeight: height, frames: width / 48 });
   }
   const scenes = [];
-  for (const [query, scene] of [['?sprites', 'Debug'], ['?stage=memoryLeak', 'Stage']]) {
+  for (const [query, scene, name] of [['?sprites', 'Debug', 'debug'], ['?stage=raceCondition', 'Stage', 'race-condition'], ['?stage=memoryLeak', 'Stage', 'stage']]) {
+    const expectedStage = new URLSearchParams(query).get('stage');
     await send('Page.navigate', { url: `${baseUrl}/${query}` });
     let state;
     for (let i = 0; i < 120; i++) {
       const result = await send('Runtime.evaluate', {
-        expression: `JSON.stringify(window.__game ? {scenes: window.__game.scene.getScenes(true).map(s => s.sys.settings.key), textures: Object.fromEntries(Object.entries(window.__game.textures.list).map(([key, texture]) => [key, texture.getFrameNames().length]))} : null)`,
+        expression: `JSON.stringify(window.__game ? {scenes: window.__game.scene.getScenes(true).map(s => s.sys.settings.key), stage:window.__game.scene.keys.Stage?.def?.id, textures: Object.fromEntries(Object.entries(window.__game.textures.list).map(([key, texture]) => [key, texture.getFrameNames().length]))} : null)`,
         returnByValue: true,
       });
       state = JSON.parse(result.result.value ?? 'null');
-      if (state?.scenes.includes(scene)) break;
+      if (state?.scenes.includes(scene) && (!expectedStage || state.stage === expectedStage)) break;
       await sleep(100);
     }
-    if (!state?.scenes.includes(scene)) throw new Error(`${scene} did not become active`);
+    if (!state?.scenes.includes(scene) || (expectedStage && state.stage !== expectedStage)) throw new Error(`${scene} ${expectedStage ?? ''} did not become active`);
     const mismatches = manifest.filter((entry) => state.textures[entry.key] !== entry.frames);
     if (mismatches.length) throw new Error(`Texture layout mismatches: ${mismatches.map((e) => e.key).join(', ')}`);
-    const sourceAudit = await checkTextureSources(send, manifest, baseUrl, output, scene);
+    const sourceAudit = await checkTextureSources(send, manifest, baseUrl, output, scene, name);
     await sleep(300);
     const screenshot = await send('Page.captureScreenshot', { format: 'png' });
-    await writeFile(join(output, `browser-assets-${scene.toLowerCase()}.png`), Buffer.from(screenshot.data, 'base64'));
-    scenes.push({ scene, verifiedTextures: manifest.length, ...sourceAudit });
+    await writeFile(join(output, `browser-assets-${name}.png`), Buffer.from(screenshot.data, 'base64'));
+    scenes.push({ scene, ...(expectedStage ? {stage:expectedStage} : {}), verifiedTextures: manifest.length, ...sourceAudit });
   }
   const colorArg = process.argv.find(arg => arg.startsWith('--stage-colors='));
   const stageColors = colorArg ? await captureStageColors(send, output, colorArg.split('=')[1]) : undefined;
@@ -178,9 +180,10 @@ try {
   }
   const animationLoops = await checkAnimationLoops(send, root, output);
   const bossArt = await checkBossArt(send, output);
+  const raceArt = await checkRaceArt(send, output);
   const interactives = await checkStageInteractives(send, output);
   const bobWeaponArt = await checkBobWeaponArt(send, output);
-  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, interactives, bobWeaponArt, errors, warnings, failedRequests };
+  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, interactives, bobWeaponArt, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));

@@ -79,7 +79,8 @@ def catalog():
             ('null_cursor', [1, 2], (16, 16)), ('null_missing_tile', [3, 4], (16, 16))]),
     ]:
         for key, indices, size in items:
-            out.append(spec('bosses', key, 'bosses/' + source, count, 1, cells(0, indices), size))
+            out.append(spec('bosses', key, 'bosses/' + source, count, 1, cells(0, indices), size,
+                            anchor='bottom' if key == 'race_afterimage' else 'center'))
     for key, rectangle, size in [
         ('boss_tech_debt', (0, 0, .66, 1), (256, 192)),
         ('tech_debt_core_portrait', (.66, 0, 1, 1), (48, 48)),

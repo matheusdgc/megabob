@@ -9,7 +9,7 @@ export async function checkBobWeaponArt(send, output) {
       const {WEAPONS}=await import('/src/data/weapons.ts');
       const {poseSheet}=await import('/src/systems/bobPose.ts');
       const game=window.__game;
-      for(const key of ['ArtAnimationCheck','ArtBossCheck','ArtPresentationCheck','ArtInteractiveCheck']) {
+      for(const key of ['ArtAnimationCheck','ArtBossCheck','ArtRaceCheck','ArtPresentationCheck','ArtInteractiveCheck']) {
         if(game.scene.keys[key]) game.scene.remove(key);
       }
       for(const scene of game.scene.getScenes(true)) {

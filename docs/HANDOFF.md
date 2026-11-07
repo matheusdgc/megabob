@@ -79,6 +79,8 @@ Validação da revisão visual atual: testes TypeScript e 21 testes Python passa
 
 ## Problemas conhecidos
 
+- **Revisão visual de Race Condition concluída:** quadros, lâminas e clones conferidos em 3.600 passos fixos normais/fúria. Corrigida a ancoragem do clone (15 px acima do chão) e acrescentado contorno claro de 1 px para separar a silhueta do cenário vermelho. Todos os 2.158 pixels internos foram preservados, sem reamostragem; quadro 96×80, opacidades, dano, colisões e tempos intactos. `tools/check-race-art.mjs`, `tools/review_race_art.py`, comparação `art/exports/megabob-race-clones.png` e relatório `race-art-review.json`. Smoke test também confere o carregamento de Race Condition e suas plataformas móveis. Isso não substitui uma partida completa.
+
 - **Gamepad:** está mapeado, mas não foi testado com um controle de verdade.
 - **Tiles:** mapa de teste usa os tiles reais de T1. Montagem visual das quatro fases e integração do parallax entram nas tarefas de fases.
 - **Escalada numa parede só:** funciona, mas é lenta (`WALL_LOCK_FRAMES` = 8). Se o usuário reclamar, um valor de 5 ou 6 deve resolver.

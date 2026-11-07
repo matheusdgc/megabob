@@ -3,13 +3,27 @@ import unittest
 
 from PIL import Image, ImageDraw
 
-from art import clean, grid_regions, pack, periodic, background_quantize, quantize, align_top_frames, readable_logo
+from art import clean, grid_regions, pack, periodic, background_quantize, quantize, align_top_frames, readable_logo, race_clone_outline
 from stage_art import extend_view, quiet_legacy_layer
 from sprites import pixels
 from art_catalog import catalog
 
 
 class ArtProcessingTests(unittest.TestCase):
+    def test_race_clone_outline_preserves_original_pixels_and_binary_edges(self):
+        source = Image.new('RGBA', (7, 7))
+        source.putpixel((3, 3), (117, 14, 19, 255))
+        source.putpixel((3, 4), (218, 30, 40, 255))
+        before = source.tobytes()
+        result = race_clone_outline(source)
+        self.assertEqual(result.size, source.size)
+        self.assertEqual(source.tobytes(), before)
+        self.assertEqual(result.getpixel((3, 3)), source.getpixel((3, 3)))
+        self.assertEqual(result.getpixel((3, 4)), source.getpixel((3, 4)))
+        self.assertEqual(result.getpixel((2, 2)), (166, 200, 255, 255))
+        self.assertEqual(result.getpixel((1, 1)), (0, 0, 0, 0))
+        self.assertLessEqual(set(pixels(result.getchannel('A'))), {0, 255})
+
     def test_readable_logo_keeps_antialiased_edges_inside_its_existing_frame(self):
         image = Image.new('RGBA', (80, 40))
         ImageDraw.Draw(image).polygon([(5, 35), (30, 3), (74, 35)], fill=(15, 98, 254, 255))

@@ -1,4 +1,4 @@
-"""Boss asset inventory and pose contacts; only Memory Leak has runtime AI today."""
+"""Boss asset inventory and pose contacts; runtime review coverage is recorded separately."""
 import hashlib
 import json
 from pathlib import Path
@@ -55,8 +55,8 @@ def run():
         raise RuntimeError('Boss review changed production PNGs')
     report = dict(sheets=len(entries), frames=sum(e['frames'] for e in entries), binaryAlpha=True,
                   paletteColors=29, emptyFrames=0, productionPngsUnchanged=True,
-                  runtimeBoss='memoryLeak', pendingRuntime=['raceCondition', 'nullPointer', 'techDebt'],
-                  note='Other boss sheets are reviewed poses, not evidence of implemented attacks.', entries=entries)
+                  runtimeBossesReviewed=['memoryLeak', 'raceCondition'], pendingRuntimeReview=['nullPointer', 'techDebt'],
+                  note='Pose contacts alone are not evidence of implemented attacks.', entries=entries)
     (OUT / 'boss-art-review.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     print(f"{len(entries)} boss assets / {report['frames']} frames checked; 4 pose contacts and Memory Leak idle exported.")
 

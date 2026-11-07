@@ -2,7 +2,7 @@
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-export async function checkTextureSources(send, manifest, baseUrl, output, sceneName) {
+export async function checkTextureSources(send, manifest, baseUrl, output, sceneName, reportName = sceneName.toLowerCase()) {
   const response = await send('Runtime.evaluate', {
     expression: `(async () => {
       const manifest = ${JSON.stringify(manifest)}, base = ${JSON.stringify(baseUrl + '/')};
@@ -87,6 +87,7 @@ export async function checkTextureSources(send, manifest, baseUrl, output, scene
         // TileSprite renders through a generated canvas; displayTexture is its source pattern.
         stage.parallax.forEach((layer,i)=>bind('parallax:'+i,layer.displayTexture.key,stage.def.parallax[i]));
         bind('terrain',stage.layer.tileset[0].name,stage.def.tileset);
+        for(const mover of stage.movers ?? []) bind('movingPlatform',mover.texture.key,'moving_platform');
         if(stage.goo) bind('risingGoo',stage.goo.displayTexture.key,stage.def.tileset);
       }
       return {textures:rows.sort((a,b)=>a.key.localeCompare(b.key)),bindings,placeholderDetected,alteredImageDetected};
@@ -98,7 +99,7 @@ export async function checkTextureSources(send, manifest, baseUrl, output, scene
   if(!report.placeholderDetected || !report.alteredImageDetected || report.textures.length!==manifest.length) {
     throw new Error('Texture identity guard failed');
   }
-  await writeFile(join(output,'texture-sources-'+sceneName.toLowerCase()+'.json'),JSON.stringify(report,null,2)+'\n');
+  await writeFile(join(output,'texture-sources-'+reportName+'.json'),JSON.stringify(report,null,2)+'\n');
   return {verifiedPngSources:report.textures.length,activeBindingsVerified:report.bindings.length,
     placeholderControlDetected:true,alteredImageControlDetected:true};
 }

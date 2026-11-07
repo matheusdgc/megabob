@@ -121,6 +121,10 @@ Depois do smoke test, `py -3 tools/review_memory_palette.py` exporta `megabob-me
 
 ### Sprites e apresentação dos chefes
 
+Race Condition agora é conferido por `tools/check-race-art.mjs`: 1.800 passos fixos normais e 1.800 em fúria, quadros 0–5, dano 6, derrota 7, quatro rotações das lâminas, um/dois clones e colisões de 28×48 / 44×22. `race_afterimage` passou a ter ancoragem inferior: o desenho estava 15 px acima dos pés. O importador acrescenta contorno claro de um pixel, mantendo os 2.158 pixels internos originais, sem reamostragem, no mesmo quadro 96×80. Opacidades 0,35/0,75, dano e tempos permanecem iguais. `tools/review_race_art.py` confere os pixels contra `12f4020` e exporta `megabob-race-clones.png` / `race-art-review.json`. As capturas são inspeções estáticas, não uma partida completa.
+
+O smoke test também abre `?stage=raceCondition`, espera o identificador real da fase e verifica seus PNGs e as texturas das plataformas móveis. O relatório dedicado fica em `art/preview/texture-sources-race-condition.json`; Memory Leak continua sendo aberto por último para preservar o contexto dos demais helpers.
+
 `py -3 tools/review_bosses.py` verifica 20 assets / 57 quadros: tamanho, alpha binário, paleta e ausência de quadros vazios. Exporta `boss-{memory-leak,race-condition,null-pointer,tech-core}-review.png`, `megabob-memory-leak-idle.gif` e `boss-art-review.json` em `art/exports/`. Tech Debt parede/partes, retratos e projéteis também entram na auditoria técnica. As folhas de Race Condition, Null Pointer e Tech Debt são poses revisadas; suas mecânicas ainda dependem das respectivas tarefas.
 
 O Memory Leak implementado estava preso no quadro 0. `src/systems/memoryLeakArt.ts` agora seleciona idle, disparo, afundamento, emergência e dano a partir dos estados/timers existentes. A derrota continua usando a explosão e o ocultamento atuais. Bolhas/poças alternam seus dois quadros; ao reutilizar um projétil, textura e origem voltam para `memory_goo` e `(0.5,0.5)`, corrigindo a poça que reaparecia voando. Dimensões das hitboxes, ataques, tempos de luta e dano são preservados.

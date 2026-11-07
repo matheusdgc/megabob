@@ -134,6 +134,15 @@ def readable_logo(image, size, fit):
     return result
 
 
+def race_clone_outline(image):
+    """A one-pixel retro keyline: keep every original opaque pixel unchanged."""
+    result = Image.new('RGBA', image.size, (166, 200, 255, 255))
+    result.putalpha(image.getchannel('A').filter(ImageFilter.MaxFilter(3)))
+    result.alpha_composite(image)
+    result.putdata([p if p[3] else (0, 0, 0, 0) for p in pixels(result)])
+    return result
+
+
 def align_top_frames(sheet, size, indices):
     """Move a platform's visible surface onto its logical tile contact line, preserving pixels."""
     result = sheet.copy()
@@ -379,6 +388,8 @@ def run(group='all'):
             result = align_top_frames(result, item['size'], item['top_frames'])
         if item['key'] == 'tiles_memory_leak':
             result = memory_tiles(result)
+        if item['key'] == 'race_afterimage':
+            result = race_clone_outline(result)
         if item['key'] == 'tech_laser':
             result = periodic(result, 2)
         entry = save_asset(result, item['group'], item['key'], item['size'], source,
