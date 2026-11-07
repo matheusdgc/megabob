@@ -40,5 +40,5 @@ export class GameAudio {
 
 /** Queue the tracks a scene needs in its preload (already decoded ones are skipped). */
 export function loadMusic(scene: Phaser.Scene, ids: readonly MusicId[]): void {
-  for (const id of ids) if (!scene.cache.audio.exists(musicKey(id))) scene.load.audio(musicKey(id), MUSIC[id].file);
+  for (const id of ids) if (!scene.cache.audio.exists(musicKey(id))) scene.load.audio(musicKey(id), [...MUSIC[id].files]);
 }

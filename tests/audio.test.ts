@@ -62,7 +62,7 @@ describe('sound recipes', () => {
 describe('music manifest', () => {
   it('every track file exists and loops from inside the track', () => {
     for (const [id, m] of Object.entries(MUSIC)) {
-      expect(existsSync(`public/${m.file}`), id).toBe(true);
+      for (const f of m.files) expect(existsSync(`public/${f}`), id).toBe(true);
       expect(m.loopStart).toBeGreaterThanOrEqual(0);
     }
   });

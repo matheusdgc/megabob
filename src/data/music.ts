@@ -1,3 +1,5 @@
+import { MUSIC_FILES } from './musicFiles';
+
 /**
  * Soundtrack manifest (files from tools/music.py, choices in docs/soundtrack.md).
  * The player loops from `loopStart` to `loopEnd` (seconds; end defaults to the track's end)
@@ -16,26 +18,31 @@ export type MusicId =
   | 'credits';
 
 export interface MusicDef {
-  file: string;
+  /** Files of the track, best format first (the loader picks the first the browser plays). */
+  files: readonly string[];
   /** Loop region; `loop: false` plays once (credits). */
   loop: boolean;
   loopStart: number;
   loopEnd?: number;
 }
 
-const track = (file: string, loopStart = 0, loop = true): MusicDef => ({ file: `assets/music/${file}`, loop, loopStart });
+const track = (key: string, loopStart = 0, loop = true): MusicDef => {
+  const files = MUSIC_FILES[key];
+  if (!files) throw new Error(`music ${key}: run tools/music.py`);
+  return { files, loop, loopStart };
+};
 
 export const MUSIC: Record<MusicId, MusicDef> = {
-  title: track('title.mp3'),
-  select: track('select.ogg'),
-  memoryLeak: track('memory_leak.ogg', 4), // skips the fade-in on every loop
-  raceCondition: track('race_condition.ogg'),
-  nullPointer: track('null_pointer.mp3'),
-  boss: track('boss.ogg'),
-  fortress: track('fortress.mp3'),
-  techDebt1: track('tech_debt_1.mp3'),
-  techDebt2: track('tech_debt_2.ogg'),
-  credits: track('credits.mp3', 0, false),
+  title: track('title'),
+  select: track('select'),
+  memoryLeak: track('memory_leak', 4), // skips the fade-in on every loop
+  raceCondition: track('race_condition'),
+  nullPointer: track('null_pointer'),
+  boss: track('boss'),
+  fortress: track('fortress'),
+  techDebt1: track('tech_debt_1'),
+  techDebt2: track('tech_debt_2'),
+  credits: track('credits', 0, false),
 };
 
 /** Phaser cache key of a track. */
