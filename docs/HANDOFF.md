@@ -1,6 +1,6 @@
 # Handoff: estado do projeto
 
-> Atualizado em 07/11/2026, no fim da T15 (editor). Branch `dev`.
+> Atualizado em 07/11/2026: T16/T17 completed and verified after ai-memory retrieval. Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)
@@ -40,11 +40,11 @@ Validação da revisão visual atual: testes TypeScript e 21 testes Python passa
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
 - **Licenças da trilha:** o usuário pediu para ignorar por enquanto. Faltam as faixas 05, 07, 08 e 09 em `docs/soundtrack.md`.
 
-## Próximo passo: Checkpoints 3 e 4 com o usuário, depois T16 (upgrades) e a fortaleza
+## Next: T18/T19 - fortress and Tech Debt
 
 - **Checkpoint 3:** o usuário joga a Memory Leak de ponta a ponta e ganha o Garbage Collector. O caminho crítico foi provado por `tests/reach.test.ts`, e cada seção, os inimigos, o lodo e a luta foram conferidos no Edge, mas ninguém jogou a fase inteira com as mãos. Ajustes prováveis depois de jogar: velocidade do lodo (`MEMORY_LEAK_GOO.speed`, 24 px/s desde 07/11, a pedido do usuário) e o ritmo dos inimigos (`src/data/enemies.ts`).
 - **Checkpoint 4:** os 3 chefes vencíveis em qualquer ordem, o ciclo de fraquezas (ML ← Mutex, RC ← Null Pointer, NP ← Garbage Collector) e a fortaleza liberando com 3/3 na seleção. Falta o usuário jogar as 3 fases.
-- **T16:** upgrades (Update Terminal, tela de "upgrade instalado"); `save.armor` já existe e o Player já aplica `armor`.
+- **T16/T17 done:** four Update Terminals, installation overlay, autosave and armor effects. Tests and browser checks below.
 - **Falta jogar:** Race Condition (ritmo do chefe) e Null Pointer (tempo dos blocos, chefe) só foram conferidas por script.
 - **Ao criar telas:** use `uiText` (nunca `this.add.text`), `fadeIn`/`fadeTo` de `src/ui/text.ts` e `new GameInput(this, true)` em menus.
 - **Áudio, falta ouvir:** ninguém ouviu o mix. Balanço entre música e SFX (`DEFAULT_VOLUMES`, volumes em `src/data/sfx.ts`) e os loops precisam de ouvido humano. No Safari, o MP3 de reserva pode ter um respiro curto na emenda.
@@ -93,3 +93,28 @@ O navegador do Obscura bloqueia `localhost`. Funciona controlar o Edge em modo h
 ## Trilha sonora
 
 A seleção das 10 faixas está em `docs/soundtrack.md`, e os arquivos já foram renomeados no formato `uso__nome-original`. Eles ficam em `art/raw/soundtrack/`, **só na máquina do usuário** (fora do git). A conversão e o player entram na T11.
+
+## Resume from ai-memory: T16/T17 completed (07/11/2026)
+
+Recovered the interrupted T16/T17 work from disk and checked it against the latest
+ai-memory observations and commits. Recent user choices remain: Factory at Night
+for the title, four enemies per section, easier moving-platform timing and rising
+goo at 24 px/s.
+
+- Armor effects are centralized in `partEffects`. Player uses it for air dash,
+  damage reduction and buster charge. The visor reveals fake walls and numeric boss HP.
+- Four terminals are in the stages: F plating, K cannon, T boots, V visor.
+  Fake walls use ?, fixed extra-life pickups use *, fixed health pickups use +.
+- Installation pauses the stage, prevents pause-menu conflicts, shows UpgradeScene,
+  autosaves through commitSave and returns control without a stuck physics hold.
+  Collected terminals stay empty after reloading the page.
+- Optional-route tests prove boots, visor and plating accessible without armor.
+  The high cannon route requires the boots. The search is a geometry approximation;
+  enemy timing and a full human playthrough remain to be checked.
+- Validation: 518 passed tests, one intentionally skipped debug-map density check;
+  typecheck/build passed. `node tools/check-upgrades.mjs` verified all four actual
+  terminals, installation, resume, persistence after reload and no repeated collection
+  in an isolated Edge profile, with no console errors/warnings. It positions Bob at
+  terminals; it is not proof of a complete playthrough.
+- Special-weapon charging with Compiler Cannon is still pending; the third buster
+  charge level works. Next implementation task: T18/T19 fortress and final boss.

@@ -60,3 +60,16 @@ freeze, the health bar, the despawn when Bob dies).
   test plays the real Bob controller from the spawn to the boss door with 75% air control and
   no dash; if it fails, fix the map, not the test. It counts moving platforms along their whole
   path (Bob can wait for them), so their timing is checked by playing. Then play it in the browser.
+
+## Firmware Armor terminals and optional routes
+
+`V`, `K`, `F`, `T` place the visor, cannon, plating and boots. Their bottom-left
+cell must stand on safe ground. `?` draws a fake wall with no collision; the visor
+makes it translucent. `*` and `+` place permanent extra-life and health pickups.
+Each placed pickup can only be collected once per stage run.
+
+`tests/upgrades.test.ts` checks terminal uniqueness, stage ownership, save roundtrips
+and optional route reachability. The cannon route requires Turbo Boots; the other
+three parts must be reachable without armor. Run `node tools/check-upgrades.mjs`
+with the dev server running to verify installation and persistence in an isolated
+browser profile.

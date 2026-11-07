@@ -13,6 +13,7 @@ export const T = {
   vanish1: 7,
   vanish2: 8,
   thin: 9, // a thin wall: solid, stops shots except the Null Pointer
+  fake: 10, // looks like a wall, is not one: a hidden passage (the Debug Visor shows it)
 } as const;
 
 /** Phase group (0-2) of a vanishing block, or null for any other cell. */
@@ -53,6 +54,7 @@ const LEGEND: Record<string, number> = {
   '2': T.vanish1,
   '3': T.vanish2,
   '|': T.thin,
+  '?': T.fake,
   P: T.empty, // player spawn
 };
 
@@ -69,8 +71,25 @@ export const ENEMY_MARKERS = {
 } as const;
 export type EnemyKind = (typeof ENEMY_MARKERS)[keyof typeof ENEMY_MARKERS];
 
-/** Stage object markers (same tile rule as enemies). `B` is the bottom-left cell of the door. */
-export const OBJECT_MARKERS = { C: 'checkpoint', B: 'bossDoor' } as const;
+/**
+ * Stage object markers (same tile rule as enemies). `B` is the bottom-left cell of the door.
+ * Update Terminals: V Debug Visor, K Compiler Cannon, F Firewall Plating, T Turbo Boots.
+ * Placed items: * extra life, + large health.
+ */
+export const OBJECT_MARKERS = {
+  C: 'checkpoint',
+  B: 'bossDoor',
+  V: 'terminalHead',
+  K: 'terminalArm',
+  F: 'terminalBody',
+  T: 'terminalLegs',
+  '*': 'itemLife',
+  '+': 'itemHealth',
+} as const;
+
+/** The armor part of a terminal object, or null. */
+export const terminalPart = (kind: ObjectKind): 'head' | 'arm' | 'body' | 'legs' | null =>
+  kind === 'terminalHead' ? 'head' : kind === 'terminalArm' ? 'arm' : kind === 'terminalBody' ? 'body' : kind === 'terminalLegs' ? 'legs' : null;
 export type ObjectKind = (typeof OBJECT_MARKERS)[keyof typeof OBJECT_MARKERS];
 
 export interface MapObject {

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { Boss } from '../entities/Boss';
 import { drawMeter, METER_W } from './meter';
+import { type Label, uiText } from './text';
 
 const TOP = 14;
 const RIGHT_MARGIN = 10;
@@ -11,10 +12,13 @@ const RIGHT_MARGIN = 10;
  */
 export class BossHealthBar {
   private readonly g: Phaser.GameObjects.Graphics;
+  private readonly number?: Label;
   private shown = '';
 
-  constructor(scene: Phaser.Scene, _bossName: string) {
+  /** `visor`: the Debug Visor also shows the boss's health as a number. */
+  constructor(scene: Phaser.Scene, _bossName: string, visor = false) {
     this.g = scene.add.graphics().setScrollFactor(0).setDepth(91);
+    if (visor) this.number = uiText(scene, scene.cameras.main.width - RIGHT_MARGIN - METER_W / 2, TOP + 66, '', { color: '#ff832b', origin: 0.5 }).setScrollFactor(0).setDepth(91);
   }
 
   /** Call once per frame. */
@@ -26,6 +30,7 @@ export class BossHealthBar {
     if (key === this.shown) return;
     this.shown = key;
     const g = this.g.clear();
+    this.number?.setText(visible ? String(value) : '');
     if (!visible) return;
     const x = this.g.scene.cameras.main.width - RIGHT_MARGIN - METER_W;
     drawMeter(g, x, TOP, value, boss.maxHp, 0xff832b, 0xda1e28);
@@ -33,5 +38,6 @@ export class BossHealthBar {
 
   destroy(): void {
     this.g.destroy();
+    this.number?.destroy();
   }
 }

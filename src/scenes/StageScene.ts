@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { ARMOR_BITS, TILE } from '../data/assets';
 import { CONVEYOR_ANIM_FRAMES, CONVEYOR_SPEED } from '../data/tuning';
-import { MAX_LIVES, PICKUPS, rollDrop } from '../data/drops';
+import { MAX_LIVES, type PickupKind, PICKUPS, rollDrop } from '../data/drops';
 import { BossDoor } from '../entities/BossDoor';
 import type { Boss } from '../entities/Boss';
 import { createBoss } from '../entities/bosses';
@@ -9,6 +9,8 @@ import { Checkpoint } from '../entities/Checkpoint';
 import { Enemy, type EnemyWorld } from '../entities/Enemy';
 import { EnemyShot } from '../entities/EnemyShot';
 import { MovingPlatform } from '../entities/MovingPlatform';
+import { UpdateTerminal } from '../entities/UpdateTerminal';
+import { hasPart, installPart, partEffects } from '../systems/upgrades';
 import { loopAnim, playOnce } from '../entities/effects';
 import { Feedback } from '../entities/feedback';
 import { GameAudio, loadMusic } from '../audio';
@@ -18,7 +20,7 @@ import { Pickup } from '../entities/Pickup';
 import type { Projectile } from '../entities/Projectile';
 import { Player, type Special } from '../entities/Player';
 import { skinTiles, solidFrames } from '../stages/autotile';
-import { conveyorDir, conveyorUnder, isSolid, type MapEnemy, parseMap, T, vanishGroup } from '../stages/map';
+import { conveyorDir, conveyorUnder, isSolid, type MapEnemy, parseMap, T, terminalPart, vanishGroup } from '../stages/map';
 import { vanishSolid, vanishState } from '../systems/vanish';
 import { bossRoomIndex, DEFAULT_STAGE, type StageDef, type StageId, STAGES } from '../stages/stages';
 import { type Action, ActionState } from '../systems/actions';
@@ -30,7 +32,8 @@ import { grant, newArsenal, refill } from '../systems/weapons';
 import { BOSS_WEAPON, damageFor, freezeFrames, WEAPON_MAX_ENERGY, WEAPONS } from '../data/weapons';
 import { GcOrb } from '../entities/weapons/GarbageCollector';
 import type { PauseData } from './PauseScene';
-import { getSave } from './progress';
+import { commitSave, getSave } from './progress';
+import type { UpgradeData } from './UpgradeScene';
 import { fadeTo, UI, uiText } from '../ui/text';
 import { BossHealthBar } from '../ui/BossHealthBar';
 import { Hud } from '../ui/Hud';
@@ -81,6 +84,14 @@ export class StageScene extends Phaser.Scene {
   /** Conveyor tiles, animated on the logic tick. */
   private conveyors!: Phaser.Tilemaps.Tile[];
   private movers!: MovingPlatform[];
+  private terminals!: UpdateTerminal[];
+  private installing!: boolean;
+  /** Items placed in the map (respawn with their section, like enemies). */
+  private placedItems!: { kind: PickupKind; x: number; y: number }[];
+  /** Hidden-passage tiles (the Debug Visor shows them). */
+  private fakes!: Phaser.Tilemaps.Tile[];
+  /** Placed items already collected this run (they do not come back). */
+  private taken!: Set<string>;
   /** Vanishing-block tiles and their phase group. */
   private vanishing!: { tile: Phaser.Tilemaps.Tile; group: 0 | 1 | 2 }[];
   private ticks!: number;
@@ -137,6 +148,10 @@ export class StageScene extends Phaser.Scene {
     this.over = false;
     this.conveyors = [];
     this.movers = [];
+    this.terminals = [];
+    this.installing = false;
+    this.placedItems = [];
+    this.fakes = [];
     this.vanishing = [];
     this.ticks = 0;
   }
@@ -172,6 +187,10 @@ export class StageScene extends Phaser.Scene {
       if (t === T.platform) tile.setCollision(false, false, true, false);
       const g = vanishGroup(t);
       if (g !== null) this.vanishing.push({ tile, group: g });
+      if (t === T.fake) {
+        tile.setCollision(false, false, false, false);
+        this.fakes.push(tile);
+      }
       if (conveyorDir(t) !== 0) {
         this.conveyors.push(tile);
         tile.flipX = conveyorDir(t) < 0;
@@ -186,9 +205,13 @@ export class StageScene extends Phaser.Scene {
       this.gooBody = this.add.rectangle(room.x, gooTop(goo, 0) + TILE, room.w, room.h, GOO_COLOR).setOrigin(0).setDepth(5);
     }
 
+    const owned = getSave(this.registry).armor;
     for (const o of parsed.objects) {
+      const part = terminalPart(o.kind);
       if (o.kind === 'checkpoint') this.checkpoints.push(new Checkpoint(this, o.x, o.y));
-      else this.door = new BossDoor(this, o.x, o.y);
+      else if (o.kind === 'bossDoor') this.door = new BossDoor(this, o.x, o.y);
+      else if (part) this.terminals.push(new UpdateTerminal(this, o.x, o.y, part, hasPart(owned, part)));
+      else this.placedItems.push({ kind: o.kind === 'itemLife' ? 'life' : 'healthLarge', x: o.x + 8, y: o.y });
     }
 
     this.physics.world.setBounds(0, 0, parsed.cols * TILE, this.worldHeight);
@@ -217,6 +240,7 @@ export class StageScene extends Phaser.Scene {
     const save = getSave(this.registry);
     this.player.arsenal = newArsenal(save.weapons);
     this.player.armor = save.armor;
+    this.taken = new Set();
     this.player.applyWeaponTint();
     this.hud = new Hud(this);
 
@@ -283,6 +307,7 @@ export class StageScene extends Phaser.Scene {
       for (const e of RUN_EVENTS) this.events.off(e);
       this.fx.shutdown();
     });
+    this.showFakes();
     this.ready(true);
   }
 
@@ -297,7 +322,7 @@ export class StageScene extends Phaser.Scene {
       p.buster.charge = 0;
     }
     if (this.pauseLock > 0) this.pauseLock--;
-    else if (input.justPressed('pause') && !p.isDead && !this.door?.busy && !this.over) {
+    else if (input.justPressed('pause') && !p.isDead && !this.door?.busy && !this.over && !this.installing) {
       this.openPause();
       return;
     }
@@ -330,6 +355,12 @@ export class StageScene extends Phaser.Scene {
         if (c.check(box)) {
           this.respawnAt = { ...c.spot, section: this.section };
           this.sfx('checkpoint');
+        }
+      }
+      for (const term of this.terminals) {
+        if (!this.installing && term.touch(box)) {
+          this.install(term);
+          return;
         }
       }
       const doorWas = this.door?.state;
@@ -444,6 +475,48 @@ export class StageScene extends Phaser.Scene {
     }
   }
 
+  /** The Debug Visor shows hidden passages as faint walls. */
+  private showFakes(): void {
+    const visor = partEffects(this.player.armor).visor;
+    for (const t of this.fakes) t.setAlpha(visor ? 0.45 : 1);
+  }
+
+  /**
+   * An Update Terminal: the stage freezes while it installs, the "upgrade installed" screen
+   * shows, and the part is saved (a safe boundary: nothing is in motion).
+   */
+  private install(term: UpdateTerminal): void {
+    if (this.installing || this.player.isDead || this.over) return;
+    this.installing = true;
+    this.player.body.stop();
+    this.fx.hold('upgrade');
+    this.audio?.mixer.duck(-12);
+    this.sfx('checkpoint');
+    this.time.delayedCall(1100, () => {
+      term.done();
+      const saved = installPart(getSave(this.registry), term.part);
+      const armor = saved.armor;
+      commitSave(this.registry, saved);
+      this.player.armor = armor;
+      this.showFakes();
+      const data: UpgradeData = {
+        part: term.part,
+        armor,
+        onClose: () => {
+          this.audio?.mixer.unduck();
+          this.controls.destroy();
+          this.controls = new GameInput(this);
+          this.scene.resume();
+          this.installing = false;
+          this.pauseLock = 10;
+          this.fx.release('upgrade');
+        },
+      };
+      this.scene.pause();
+      this.scene.launch('Upgrade', data);
+    });
+  }
+
   /** Logical cell (`T`) at a world point; outside the map is empty. */
   private cellAt(x: number, y: number): number {
     return this.grid[Math.floor(y / TILE)]?.[Math.floor(x / TILE)] ?? T.empty;
@@ -472,6 +545,10 @@ export class StageScene extends Phaser.Scene {
         this.sfx(kind === 'block' ? 'throw' : kind === 'cursor' ? 'glitch' : 'clockShot');
       },
     };
+    for (const it of this.placedItems) {
+      if (sectionOf(this.sections, it.x, it.y) !== section || this.taken.has(`${it.x},${it.y}`)) continue;
+      this.pickups.add(new Pickup(this, it.x, it.y, it.kind, true).setData('spot', `${it.x},${it.y}`));
+    }
     for (const m of this.mapEnemies) {
       if (m.section !== section) continue;
       const e = createEnemy(m.kind, this, m.x, m.y, world);
@@ -513,6 +590,7 @@ export class StageScene extends Phaser.Scene {
       default:
         refill(this.player.arsenal, item.amount);
     }
+    if (item.placed) this.taken.add(item.getData('spot') as string);
     item.destroy();
     this.sfx('pickup');
   }
@@ -587,7 +665,7 @@ export class StageScene extends Phaser.Scene {
       if (!this.player.isDead && boss.phase === 'fight' && !boss.isFrozen && boss.isTangible) this.player.takeHit(boss.contactDamage, boss.body.center.x);
     }));
     boss.setArena(room.x, room.x + room.w);
-    this.bossHealthBar = new BossHealthBar(this, this.def.name);
+    this.bossHealthBar = new BossHealthBar(this, this.def.name, partEffects(this.player.armor).visor);
     boss.startIntro();
   }
 

@@ -26,6 +26,8 @@ export interface ReachOptions {
   airControl?: number;
   /** Allow dash and dash-jumps (base Bob has them; the critical path should not need them). */
   dash?: boolean;
+  /** Bob wears the Turbo Boots: one air dash per jump (implies dash). */
+  airDash?: boolean;
 }
 
 interface Box {
@@ -168,16 +170,16 @@ export class ReachSim {
    * Plays `script` from a standing spot until Bob stands still again. Returns where he ended
    * (null if he died or never landed) and whether he touched the boss door on the way.
    */
-  play(from: Spot, script: Script, onFrame?: (feet: Spot) => void): { spot: Spot | null; door: boolean } {
+  play(from: Spot, script: Script, onFrame?: (feet: Spot) => void, goal?: Spot): { spot: Spot | null; door: boolean } {
     const b: Box = { x: from.x - BOB_BODY_W / 2, y: from.y - BOB_BODY_H, vx: 0, vy: 0, gravity: true, down: true, left: false, right: false };
-    const motion = newMotion();
+    const motion = newMotion(this.opts.airDash ? 1 : 0);
     const input = new ActionState();
     const air = this.opts.airControl ?? 1;
     let door = false;
     let grounded = 0;
     for (let f = 0; f < MAX_AIR_FRAMES; f++) {
       const held = new Set(script(f));
-      if (!this.opts.dash) held.delete('dash');
+      if (!this.opts.dash && !this.opts.airDash) held.delete('dash');
       input.update(held);
       const out = stepMotion(motion, input, { onGround: b.down, vy: b.vy, wallLeft: b.left, wallRight: b.right });
       b.vx = b.down ? out.vx + this.carry(b) : out.vx * air;
@@ -186,6 +188,8 @@ export class ReachSim {
       this.physics(b);
       onFrame?.({ x: b.x + BOB_BODY_W / 2, y: b.y + BOB_BODY_H });
       if (this.dead(b)) return { spot: null, door };
+      const feet = { x: b.x + BOB_BODY_W / 2, y: b.y + BOB_BODY_H };
+      if (goal && b.down && Math.abs(feet.x - goal.x) <= 16 && Math.abs(feet.y - goal.y) <= 2) return { spot: feet, door };
       if (this.atDoor(b)) door = true;
       // done once the script is over and Bob has stood still for a few frames
       grounded = b.down && held.size === 0 ? grounded + 1 : 0;
@@ -214,9 +218,17 @@ function moves(): Script[] {
     }
     list.push((f) => (f < 20 ? ['dash', d] : [])); // dash (only with opts.dash)
     list.push((f) => (f < 40 ? (f < 2 ? ['dash', d] : ['dash', 'jump', d]) : f < 200 ? [d] : [])); // dash-jump
+    // with the Turbo Boots: a dash-jump, then the dash released and pressed again in the air
+    for (const at of [14, 22, 30]) {
+      list.push((f) => (f < 2 ? ['dash', d] : f < at ? ['dash', 'jump', d] : f < at + 2 ? ['jump', d] : f < at + 24 ? ['dash', 'jump', d] : f < 200 ? [d] : []));
+      list.push((f) => (f < at ? ['jump', d] : f < at + 24 ? ['dash', 'jump', d] : f < 200 ? [d] : []));
+    }
   }
   return list;
 }
+
+/** Did the search stand Bob within a tile of `goal` (a feet position)? */
+export const reached = (r: ReachResult, goal: Spot): boolean => r.spots.some((s) => Math.abs(s.x - goal.x) <= 16 && Math.abs(s.y - goal.y) <= 2);
 
 /** Spots keyed to a 4 px grid, so the search does not revisit near-identical spots. */
 const key = (s: Spot) => `${Math.round(s.x / 4)},${Math.round(s.y)}`;
@@ -229,17 +241,17 @@ export interface ReachResult {
 }
 
 /** Breadth-first search over standing spots, from the map's spawn. */
-export function reachable(map: ParsedMap, opts: ReachOptions = {}): ReachResult {
+export function reachable(map: ParsedMap, opts: ReachOptions = {}, goal?: Spot): ReachResult {
   const sim = new ReachSim(map, opts);
   const scripts = moves();
   const first = sim.play(map.spawn, () => []).spot ?? map.spawn;
   const seen = new Map<string, Spot>([[key(first), first]]);
   const queue: Spot[] = [first];
   let door = false;
-  while (queue.length && !door) {
+  while (queue.length && !(goal ? reached({ door, spots: [...seen.values()] }, goal) : door)) {
     const s = queue.shift()!;
     for (const script of scripts) {
-      const r = sim.play(s, script);
+      const r = sim.play(s, script, undefined, goal);
       if (r.door) door = true;
       if (r.spot && !seen.has(key(r.spot))) {
         seen.set(key(r.spot), r.spot);

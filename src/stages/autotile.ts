@@ -71,11 +71,14 @@ export function skinTiles(tiles: readonly (readonly number[])[], skin: TileSkin)
   return tiles.map((row, r) =>
     row.map((t, c) => {
       switch (t) {
+        case T.fake:
         case T.solid: {
-          const up = !isSolid(at(r - 1, c));
-          const down = !isSolid(at(r + 1, c));
-          const left = !isSolid(at(r, c - 1));
-          const right = !isSolid(at(r, c + 1));
+          // a fake wall looks like the wall it hides in
+          const wall = (t2: number) => isSolid(t2) || t2 === T.fake;
+          const up = !wall(at(r - 1, c));
+          const down = !wall(at(r + 1, c));
+          const left = !wall(at(r, c - 1));
+          const right = !wall(at(r, c + 1));
           if (left && right) return skin.column;
           if (up) return left ? skin.topLeft : right ? skin.topRight : skin.top;
           if (down && left) return skin.bottomLeft;

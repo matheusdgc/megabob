@@ -1,8 +1,6 @@
 import Phaser from 'phaser';
-import { ARMOR_BITS, BOB_FRAME, type BobAnim, bobKey, type FxKey } from '../data/assets';
+import { BOB_FRAME, type BobAnim, bobKey, type FxKey } from '../data/assets';
 import {
-  AIR_DASHES,
-  AIR_DASHES_BOOTS,
   BLINK_FRAMES,
   BOB_BODY_H,
   BOB_BODY_W,
@@ -21,6 +19,7 @@ import { chargeLevel, newBuster, type ShotLevel, stepBuster } from '../systems/c
 import { type HitResult, hit, kill, newHealth, tickHealth } from '../systems/damage';
 import { cornerNudge, type SolidAt } from '../systems/corner';
 import { newMotion, startHurt, stepMotion } from '../systems/motion';
+import { partEffects } from '../systems/upgrades';
 import { type Arsenal, cycleWeapon, newArsenal, spend } from '../systems/weapons';
 import { SPECIALS_ON_SCREEN, WEAPONS } from '../data/weapons';
 import { GcOrb } from './weapons/GarbageCollector';
@@ -108,7 +107,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   /** Firewall Plating (armor body bit): half damage, shorter knockback. */
   private get plated(): boolean {
-    return (this.armorBits & ARMOR_BITS.body) !== 0;
+    return partEffects(this.armorBits).plated;
   }
 
   get isDead(): boolean {
@@ -165,7 +164,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   set armor(bits: number) {
     this.armorBits = bits;
-    this.motion.airDashes = bits & ARMOR_BITS.legs ? AIR_DASHES_BOOTS : AIR_DASHES;
+    this.motion.airDashes = partEffects(bits).airDashes;
   }
 
   /**
@@ -205,7 +204,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       if (dx !== 0) this.x += dx;
     }
 
-    const maxLevel = this.armorBits & ARMOR_BITS.arm ? 3 : 2;
+    const maxLevel = partEffects(this.armorBits).maxCharge;
     const hurt = this.motion.state === 'hurt';
     if (input.justPressed('nextWeapon')) this.switchWeapon(1);
     else if (input.justPressed('prevWeapon')) this.switchWeapon(-1);

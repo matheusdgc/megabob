@@ -6,6 +6,7 @@ import { OptionsScene } from './scenes/OptionsScene';
 import { PauseScene } from './scenes/PauseScene';
 import { StageSelectScene } from './scenes/StageSelectScene';
 import { TitleScene } from './scenes/TitleScene';
+import { UpgradeScene } from './scenes/UpgradeScene';
 import { StageScene } from './scenes/StageScene';
 import { WeaponGetScene } from './scenes/WeaponGetScene';
 import { integerZoom } from './systems/scaling';
@@ -41,7 +42,7 @@ const game = new Phaser.Game({
   // UI text is HTML over the canvas (src/ui/text.ts), so it stays sharp at any zoom
   dom: { createContainer: true },
   // list order is draw order: the pause menu sits above the stage it pauses
-  scene: [BootScene, TitleScene, StageSelectScene, StageScene, WeaponGetScene, PauseScene, OptionsScene, DebugScene],
+  scene: [BootScene, TitleScene, StageSelectScene, StageScene, WeaponGetScene, PauseScene, OptionsScene, UpgradeScene, DebugScene],
 });
 
 window.addEventListener('resize', () => game.scale.setZoom(zoomFor()));

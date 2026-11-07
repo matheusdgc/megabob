@@ -221,17 +221,17 @@ Blocos que somem e reaparecem, Void Eye e Dangling Ref, chefe com teleporte, set
 
 ## Fase 6: Armadura Firmware
 
-### T16: Sistema de upgrades [M]
+### T16: [DONE] Sistema de upgrades [M]
 Tabela de peças com testes, Update Terminal, tela de "upgrade instalado", efeitos (botas, placas, visor e canhão) e o sprite do Bob em camadas.
-- [ ] Testes: cada flag liga o efeito certo e o save guarda as peças
-- [ ] O sprite do Bob mostra só as peças coletadas, nos quadros certos (ou o plano B, se o alinhamento falhar)
+- [x] Testes: cada flag liga o efeito certo e o save guarda as peças
+- [x] O sprite do Bob mostra só as peças coletadas, nos quadros certos (ou o plano B, se o alinhamento falhar)
 
 **Verificar:** `npm test` e um mapa de teste com os 4 terminais · **Dep.:** T13
 **Arquivos:** `src/data/upgrades.ts`, `src/systems/upgrades.ts`, `src/entities/UpdateTerminal.ts`, `src/entities/Player.ts`, `tests/upgrades.test.ts`
 
-### T17: Peças nas fases [S]
+### T17: [DONE] Peças nas fases [S]
 Colocar os 4 terminais conforme o spec, com o Compiler Cannon atrás do vão que exige dash no ar, e as passagens escondidas que o Debug Visor revela.
-- [ ] As 4 peças podem ser coletadas, e o Compiler Cannon é inalcançável sem as Turbo Boots
+- [x] As 4 peças podem ser coletadas, e o Compiler Cannon é inalcançável sem as Turbo Boots
 
 **Verificar:** buscar as 4 peças · **Dep.:** T14, T15, T16
 **Arquivos:** `src/stages/{memoryLeak,raceCondition,nullPointer}.ts`
