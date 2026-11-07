@@ -36,6 +36,12 @@ describe.each(Object.values(STAGES))('stage $id', (def) => {
     expect(parsed.objects.filter((o) => o.kind === 'bossDoor')).toHaveLength(1);
   });
 
+  // the user's rule: every part of a stage keeps Bob busy (the dev test map is exempt)
+  it.skipIf(def.id === 'test')('has at least 4 enemies in every section before the boss room', () => {
+    const counts = sections.map((_, i) => parsed.enemies.filter((e) => sectionOf(sections, e.x, e.y) === i).length);
+    counts.forEach((n, i) => i !== room && expect(n, `section ${i}`).toBeGreaterThanOrEqual(4));
+  });
+
   it('has a boss that gives a weapon', () => {
     expect(BOSS_WEAPON[def.boss]).toBeDefined();
   });

@@ -1,14 +1,14 @@
 import Phaser from 'phaser';
-import { MOVER_COLS, type MoverDef, moverBounds, slide } from '../systems/movers';
+import { MOVER_COLS, type MoverDef, moverBounds, type MoverState, stepMover } from '../systems/movers';
 
 const TILE = 16;
 
 /**
- * A platform that slides back and forth. Its body is dynamic but immovable, so Arcade carries
+ * A platform that slides back and forth, resting a moment at each end. Its body is dynamic but immovable, so Arcade carries
  * whoever stands on it (body friction); it is solid only from above, like the one-way tiles.
  */
 export class MovingPlatform extends Phaser.Physics.Arcade.Image {
-  private dir: 1 | -1;
+  private glide: MoverState;
   private readonly min: number;
   private readonly max: number;
   declare body: Phaser.Physics.Arcade.Body;
@@ -21,7 +21,7 @@ export class MovingPlatform extends Phaser.Physics.Arcade.Image {
     super(scene, def.startAtEnd ? max : min, def.row * TILE, 'moving_platform');
     this.min = min;
     this.max = max;
-    this.dir = def.startAtEnd ? -1 : 1;
+    this.glide = { x: this.x, dir: def.startAtEnd ? -1 : 1, wait: 0 };
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setOrigin(0, 0).setDepth(-0.2);
@@ -33,10 +33,9 @@ export class MovingPlatform extends Phaser.Physics.Arcade.Image {
     this.body.checkCollision.right = false;
   }
 
-  /** One fixed logic step: the velocity that slides it toward the next end. */
+  /** One fixed logic step: the velocity that slides it toward the next end (0 while resting). */
   step(): void {
-    const next = slide(this.x, this.dir, this.min, this.max, this.def.speed / 60);
-    this.dir = next.dir;
-    this.body.setVelocityX((next.x - this.x) * 60);
+    this.glide = stepMover({ ...this.glide, x: this.x }, this.min, this.max, this.def.speed / 60, this.def.dwell);
+    this.body.setVelocityX((this.glide.x - this.x) * 60);
   }
 }

@@ -12,6 +12,26 @@ export interface MoverDef {
   speed: number;
   cols?: number;
   startAtEnd?: boolean;
+  /** Frames it rests at each end before turning back (time to step on or off). */
+  dwell?: number;
+}
+
+/** Default rest at each end: long enough to board without pixel-perfect timing. */
+export const MOVER_DWELL = 45;
+
+export interface MoverState {
+  x: number;
+  dir: 1 | -1;
+  /** Frames left resting at an end. */
+  wait: number;
+}
+
+/** One frame of a mover: slide toward the next end, rest there, turn back. */
+export function stepMover(s: MoverState, min: number, max: number, step: number, dwell = MOVER_DWELL): MoverState {
+  if (s.wait > 0) return { ...s, wait: s.wait - 1 };
+  const next = slide(s.x, s.dir, min, max, step);
+  const arrived = next.dir !== s.dir;
+  return { x: next.x, dir: next.dir, wait: arrived ? dwell : 0 };
 }
 
 export const MOVER_COLS = 3;
