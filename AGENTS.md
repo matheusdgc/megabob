@@ -11,7 +11,7 @@ Jogo de plataforma e ação em 16 bits estrelado pelo IBM Bob (Phaser 3 + TypeSc
 
 ## Skills de game dev (pack `gamedev@awesome-gamedev-agent-skills`)
 
-Pack instalado em `~/.agents/plugins/cache/awesome-gamedev-agent-skills/gamedev/<versão>/`. O ponto de entrada é o `router` (skill `gamedev:router`). Se a sessão não listar as skills, leia os `SKILL.md` direto do disco. Motor detectado: **Phaser 3.90**. Leia antes de cada tarefa:
+O ponto de entrada do pack é o `router`. Motor detectado: **Phaser 3.90**. Leia antes de cada tarefa:
 
 | Tarefa | Skills do pack |
 |---|---|
@@ -66,11 +66,11 @@ Toda tarefa só fecha com `npm test`, `npm run typecheck` e `npm run build` pass
 
 ## Memória do projeto (ai-memory)
 
-O servidor ai-memory roda num container Docker (`ai-memory`) em `http://127.0.0.1:49374`. O ambiente de desenvolvimento (inclusive a extensão dentro do IBM Bob) usa pelo plugin `ai-memory@ai-memory`, já ativado em `~/.agents/settings.json`.
+O servidor ai-memory roda num container Docker (`ai-memory`) em `http://127.0.0.1:49374`.
 
 - **Escopo deste projeto:** `workspace: "default"`, `project: "matheusdgc-megabob"`. Com `matheusdgc` como workspace, o servidor responde "not found".
-- **Se as ferramentas `memory_*` não aparecerem:** o Docker provavelmente subiu depois da sessão, e o plugin falhou com "Connection closed". Com o Docker aberto, rode `/mcp`, escolha `plugin:ai-memory:ai-memory` e clique em **Reconnect**. Se não houver `/mcp`, abra uma sessão nova.
-- **Último recurso (HTTP direto):** `POST http://127.0.0.1:49374/mcp` com os cabeçalhos `Content-Type: application/json` e `Accept: application/json, text/event-stream`, e um corpo JSON-RPC `tools/call`, passando o escopo acima em toda chamada. O wrapper de CLI `ai-memory` falha no Git Bash por causa do caminho de montagem do Docker.
+- **Se a memória não responder:** confira se o Docker está aberto e reconecte a ferramenta.
+- **HTTP direto:** `POST http://127.0.0.1:49374/mcp` com os cabeçalhos `Content-Type: application/json` e `Accept: application/json, text/event-stream`, e um corpo JSON-RPC `tools/call`, passando o escopo acima em toda chamada. O wrapper de CLI `ai-memory` falha no Git Bash por causa do caminho de montagem do Docker.
 - **Ao começar:** chame `memory_handoff_list` (ou aceite o handoff que o hook já mostrou). Ao encerrar, registre um handoff com `memory_handoff_begin`. O estado oficial continua sendo `docs/HANDOFF.md`, e o handoff do ai-memory só espelha esse arquivo.
 
 ## Testando no navegador
