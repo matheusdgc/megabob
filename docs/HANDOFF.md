@@ -17,6 +17,8 @@
 
 ## Feito (tudo commitado no `dev`)
 
+- **README de apresentação:** reescrito com link público para jogar em destaque e logo original clicável no topo, história do workshop/desafio de três dias, fases, controles, execução local e índice da documentação. Créditos existentes preservados; sem emojis. Links locais e imagens conferidos. Typecheck e build passaram; inspeção do build local no Edge percorreu título, seleção, gameplay e pausa com 275 recursos, sem erros/avisos/falhas de rede (`release/readme-build-smoke.json`), sem reempacotar o ZIP de release. A suíte teve 707 testes aprovados, 2 ignorados e 1 falha no limite `rollDrop(0.58)` em `tests/enemies.test.ts`; alterações de drops/teste e Tech Debt já estavam no diretório antes desta tarefa e ficaram fora do commit de documentação.
+
 | Tarefa | O que entrega |
 |---|---|
 | T1 | Vite 8 + Phaser 3.90 + TS 7 + Vitest 5, tela com escala inteira (hoje 480×270) |
