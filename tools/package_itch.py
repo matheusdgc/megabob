@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import sys
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
@@ -11,21 +12,16 @@ BUILD = ROOT / "dist"
 OUTPUT = ROOT / "release"
 
 
-def _patch_index(html: str) -> str:
-    """Remove type="module" and crossorigin from <script> tags.
-
-    itch.io embeds the game inside a sandboxed <iframe> that lacks the
-    Cross-Origin-Opener-Policy / Cross-Origin-Embedder-Policy headers
-    required for ES modules with crossorigin. Stripping those two
-    attributes makes the browser load the bundle as a classic script,
-    which works inside the sandbox.
-    """
-    import re
-    patched = re.sub(r'\s+type="module"', "", html)
-    patched = re.sub(r'\s+crossorigin(?:="[^"]*")?', "", patched)
-    if patched == html:
-        print("WARNING: index.html had no type=\"module\" attribute — check the build.")
-    return patched
+def verify():
+    """Make sure the archive is exactly the build used by the browser smoke test."""
+    files = {path.relative_to(BUILD).as_posix(): path for path in BUILD.rglob("*") if path.is_file()}
+    with ZipFile(OUTPUT / "megabob-html5.zip") as bundle:
+        if "index.html" not in files or set(bundle.namelist()) != files.keys():
+            raise SystemExit("Archive inventory differs from dist/. Run npm run package:itch.")
+        for name, path in files.items():
+            if bundle.read(name) != path.read_bytes():
+                raise SystemExit(f"Archive differs from dist/: {name}. Run npm run package:itch.")
+    print("Archive contents match dist/.")
 
 
 def main():
@@ -40,26 +36,14 @@ def main():
         if len(name) > 240 or path.stat().st_size > 200_000_000:
             raise SystemExit(f"File exceeds itch.io HTML5 limits: {name}")
 
-    # Read index.html once so we can patch it without modifying dist/
-    index_html = _patch_index((BUILD / "index.html").read_text(encoding="utf-8"))
-
     OUTPUT.mkdir(exist_ok=True)
     archive = OUTPUT / "megabob-html5.zip"
     with ZipFile(archive, "w", compression=ZIP_DEFLATED, compresslevel=6) as bundle:
         for path in files:
-            arcname = path.relative_to(BUILD).as_posix()
-            if arcname == "index.html":
-                bundle.writestr(arcname, index_html)
-            else:
-                bundle.write(path, arcname)
+            bundle.write(path, path.relative_to(BUILD).as_posix())
     with ZipFile(archive) as bundle:
         if "index.html" not in bundle.namelist() or bundle.testzip() is not None:
             raise SystemExit("Archive verification failed.")
-        # Verify the patch landed in the zip
-        zipped_html = bundle.read("index.html").decode("utf-8")
-        if 'type="module"' in zipped_html or "crossorigin" in zipped_html:
-            raise SystemExit('Patch failed: index.html in zip still has type="module" or crossorigin.')
-    print("✔ index.html patched: type=\"module\" and crossorigin removed.")
 
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     (OUTPUT / "megabob-html5.zip.sha256").write_text(
@@ -80,4 +64,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if sys.argv[1:] == ["--verify"]:
+        verify()
+    else:
+        main()
