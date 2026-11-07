@@ -60,13 +60,13 @@ export class WeaponGetScene extends Phaser.Scene {
       onComplete: () => (def.tint === 0xffffff ? bob.clearTint() : bob.setTint(def.tint)),
     });
 
-    uiText(this, w / 2 - 40, h / 2 - 36, 'WEAPON GET', { size: 16, color: '#4589ff' }).setOrigin(0);
+    uiText(this, w / 2 - 40, h / 2 - 36, 'ARMA NOVA', { size: 16, color: '#4589ff' }).setOrigin(0);
     this.add.image(w / 2 - 40, h / 2 - 4, def.icon).setOrigin(0, 0.5);
     uiText(this, w / 2 - 18, h / 2 - 4, def.name, { size: 12, color: Phaser.Display.Color.IntegerToColor(def.color).rgba });
     this.controls = new GameInput(this, true);
     const keys = this.controls.bindings;
-    uiText(this, w / 2 - 40, h / 2 + 18, `${actionKeys(keys, 'prevWeapon')}  /  ${actionKeys(keys, 'nextWeapon')}   switch weapons`, { color: '#a8a8a8' }).setOrigin(0);
-    const prompt = uiText(this, w / 2, h / 2 + 48, `PRESS ${keyLabel(keys.keys.jump[0] ?? 'SPACE')}`, { origin: 0.5 }).setVisible(false);
+    uiText(this, w / 2 - 40, h / 2 + 18, `${actionKeys(keys, 'prevWeapon')}  /  ${actionKeys(keys, 'nextWeapon')}   trocar de arma`, { color: '#a8a8a8' }).setOrigin(0);
+    const prompt = uiText(this, w / 2, h / 2 + 48, `APERTE ${keyLabel(keys.keys.jump[0] ?? 'SPACE')}`, { origin: 0.5 }).setVisible(false);
 
     GameAudio.of(this.game)?.sfx.jingle('weaponGet');
     this.time.delayedCall(MIN_MS, () => {

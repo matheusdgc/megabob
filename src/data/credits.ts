@@ -48,7 +48,7 @@ export function wrapPath(path: string, max = MAX_LINE): string[] {
 
 /** One track in the roll: title, author, license; CC-BY also gets its source and license link. */
 function trackLines(c: TrackCredit): string[] {
-  const lines = [`"${c.title}"`, `by ${c.author}`, c.license];
+  const lines = [`"${c.title}"`, `por ${c.author}`, c.license];
   if (c.license === 'CC-BY 4.0') lines.push(...wrapPath(c.source), ...wrapPath('creativecommons.org/licenses/by/4.0/'));
   return [...lines, ' ']; // a blank line between tracks
 }
@@ -57,12 +57,12 @@ export type CreditBlock = readonly [string, ...string[]];
 
 /** The credits, top to bottom (a heading in caps, then its lines). */
 export const CREDITS: readonly CreditBlock[] = [
-  ['MEGABOB', 'A 16-bit platformer', 'starring IBM Bob'],
-  ['GAME DESIGN & CODE', 'Matheus D. Gomes'],
-  ['ART', 'Sprites, tiles and scenery', 'generated with ChatGPT', 'and processed for the game'],
-  ['MUSIC', ...ROLL_ORDER.flatMap((id) => trackLines(MUSIC_CREDITS[id])), 'All tracks re-encoded,', 'loudness-matched and looped', 'for the game'],
-  ['SOUND EFFECTS', 'Synthesized in code'],
-  ['ENGINE', 'Phaser 3'],
-  ['THE BUGS', 'Memory Leak', 'Race Condition', 'Null Pointer', 'Tech Debt'],
-  ['THANK YOU', 'for playing'],
+  ['MEGABOB', 'Um jogo de plataforma 16 bits', 'estrelado pelo IBM Bob'],
+  ['DESIGN E CÓDIGO', 'Matheus D. Gomes'],
+  ['ARTE', 'Sprites, tiles e cenários', 'gerados com o ChatGPT', 'e tratados para o jogo'],
+  ['MÚSICA', ...ROLL_ORDER.flatMap((id) => trackLines(MUSIC_CREDITS[id])), 'Todas as faixas recodificadas,', 'com volume igualado e em loop', 'para o jogo'],
+  ['EFEITOS SONOROS', 'Sintetizados no código'],
+  ['MOTOR', 'Phaser 3'],
+  ['OS BUGS', 'Memory Leak', 'Race Condition', 'Null Pointer', 'Tech Debt'],
+  ['OBRIGADO', 'por jogar'],
 ];

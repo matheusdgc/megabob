@@ -26,16 +26,16 @@ export interface OptionsData {
 }
 
 const ACTION_NAMES: Record<Action, string> = {
-  left: 'MOVE LEFT',
-  right: 'MOVE RIGHT',
-  up: 'UP',
-  down: 'DOWN',
-  jump: 'JUMP',
-  shoot: 'SHOOT',
+  left: 'MOVER À ESQUERDA',
+  right: 'MOVER À DIREITA',
+  up: 'CIMA',
+  down: 'BAIXO',
+  jump: 'PULAR',
+  shoot: 'ATIRAR',
   dash: 'DASH',
-  prevWeapon: 'PREVIOUS WEAPON',
-  nextWeapon: 'NEXT WEAPON',
-  pause: 'PAUSE / MENU',
+  prevWeapon: 'ARMA ANTERIOR',
+  nextWeapon: 'PRÓXIMA ARMA',
+  pause: 'PAUSA / MENU',
 };
 
 type Row =
@@ -54,7 +54,7 @@ const COLS: { device: Device; slot: number; x: number }[] = [
 const NAME_X = 52;
 const TOP = 46;
 const STEP = 12.5;
-const PAD_NAMES = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'BACK', 'START', 'L3', 'R3', 'D-UP', 'D-DOWN', 'D-LEFT', 'D-RIGHT', 'HOME'];
+const PAD_NAMES = ['A', 'B', 'X', 'Y', 'LB', 'RB', 'LT', 'RT', 'BACK', 'START', 'L3', 'R3', 'D-↑', 'D-↓', 'D-←', 'D-→', 'HOME'];
 
 /**
  * Options (gamedev input-systems skill): every action's two keys and pad button, rebound by
@@ -87,9 +87,9 @@ export class OptionsScene extends Phaser.Scene {
     this.bindings = normalizeBindings(getSave(this.registry).bindings ?? DEFAULT_BINDINGS);
     this.rows = [
       ...ACTIONS.map((action): Row => ({ kind: 'action', action })),
-      { kind: 'volume', bus: 'master', name: 'MASTER VOLUME' },
-      { kind: 'volume', bus: 'music', name: 'MUSIC' },
-      { kind: 'volume', bus: 'sfx', name: 'SOUND EFFECTS' },
+      { kind: 'volume', bus: 'master', name: 'VOLUME GERAL' },
+      { kind: 'volume', bus: 'music', name: 'MÚSICA' },
+      { kind: 'volume', bus: 'sfx', name: 'EFEITOS SONOROS' },
       { kind: 'shake' },
       { kind: 'reset' },
       { kind: 'back' },
@@ -105,10 +105,10 @@ export class OptionsScene extends Phaser.Scene {
   create(): void {
     this.add.rectangle(240, 135, 480, 270, 0x000000, 0.75);
     this.add.rectangle(240, 135, 440, 252, 0x262626).setStrokeStyle(2, 0x0f62fe);
-    uiText(this, NAME_X - 12, 22, 'OPTIONS', { size: 12 });
-    uiText(this, COLS[0]!.x, 34, 'KEY', { color: UI.accent, origin: 0.5 });
-    uiText(this, COLS[1]!.x, 34, 'KEY 2', { color: UI.accent, origin: 0.5 });
-    uiText(this, COLS[2]!.x, 34, 'GAMEPAD', { color: UI.accent, origin: 0.5 });
+    uiText(this, NAME_X - 12, 22, 'OPÇÕES', { size: 12 });
+    uiText(this, COLS[0]!.x, 34, 'TECLA', { color: UI.accent, origin: 0.5 });
+    uiText(this, COLS[1]!.x, 34, 'TECLA 2', { color: UI.accent, origin: 0.5 });
+    uiText(this, COLS[2]!.x, 34, 'CONTROLE', { color: UI.accent, origin: 0.5 });
     this.pointer = this.add.rectangle(0, 0, 70, 11, 0x0f62fe, 0.45);
     this.rows.forEach((r, i) => {
       const y = TOP + i * STEP + (i >= ACTIONS.length ? 4 : 0);
@@ -127,11 +127,11 @@ export class OptionsScene extends Phaser.Scene {
       case 'volume':
         return r.name;
       case 'shake':
-        return 'SCREEN SHAKE & FLASH';
+        return 'TREMOR E FLASH';
       case 'reset':
-        return 'RESET CONTROLS';
+        return 'RESTAURAR CONTROLES';
       case 'back':
-        return 'BACK';
+        return 'VOLTAR';
     }
   }
 
@@ -158,7 +158,7 @@ export class OptionsScene extends Phaser.Scene {
         const v = vol[r.bus];
         cells[1]!.setText(`< ${'|'.repeat(Math.round(v * 10)).padEnd(10, '.')} >`).setColor(focus ? UI.text : UI.dim);
       } else if (r.kind === 'shake') {
-        cells[1]!.setText(getSave(this.registry).reduceMotion ? '< OFF >' : '< ON >').setColor(focus ? UI.text : UI.dim);
+        cells[1]!.setText(getSave(this.registry).reduceMotion ? '< NÃO >' : '< SIM >').setColor(focus ? UI.text : UI.dim);
       }
     });
     const r = this.rows[this.row]!;
@@ -170,9 +170,9 @@ export class OptionsScene extends Phaser.Scene {
   }
 
   private hint(r: Row): string {
-    if (r.kind === 'action') return 'ENTER: CHANGE     ESC: BACK';
-    if (r.kind === 'volume' || r.kind === 'shake') return '← →: CHANGE     ESC: BACK';
-    return 'ENTER: OK     ESC: BACK';
+    if (r.kind === 'action') return 'ENTER: TROCAR     ESC: VOLTAR';
+    if (r.kind === 'volume' || r.kind === 'shake') return '← →: AJUSTAR     ESC: VOLTAR';
+    return 'ENTER: OK     ESC: VOLTAR';
   }
 
   update(): void {
@@ -207,14 +207,14 @@ export class OptionsScene extends Phaser.Scene {
       case 'action': {
         const c = COLS[this.col]!;
         if (isLocked(c.device, r.action, c.slot)) {
-          this.say('ESC ALWAYS PAUSES - USE KEY 2', UI.warn);
+          this.say('ESC SEMPRE PAUSA - USE A TECLA 2', UI.warn);
           return;
         }
         const pad = this.input.gamepad?.pad1;
         const held = new Set<number>(pad?.connected ? pad.buttons.map((b, i) => (b.pressed ? i : -1)).filter((i) => i >= 0) : []);
         this.capture = { action: r.action, device: c.device, slot: c.slot, padHeld: held };
         this.refresh();
-        this.say(c.device === 'keys' ? `PRESS A KEY FOR ${ACTION_NAMES[r.action]}  (ESC CANCELS)` : `PRESS A PAD BUTTON FOR ${ACTION_NAMES[r.action]}  (ESC CANCELS)`, UI.warn);
+        this.say(c.device === 'keys' ? `APERTE UMA TECLA PARA ${ACTION_NAMES[r.action]}  (ESC CANCELA)` : `APERTE UM BOTÃO DO CONTROLE PARA ${ACTION_NAMES[r.action]}  (ESC CANCELA)`, UI.warn);
         return;
       }
       case 'shake':
@@ -223,7 +223,7 @@ export class OptionsScene extends Phaser.Scene {
       case 'reset':
         this.bindings = defaultBindings();
         this.saveBindings();
-        this.say('CONTROLS RESET', UI.accent);
+        this.say('CONTROLES RESTAURADOS', UI.accent);
         return;
       case 'back':
         this.close();
@@ -238,10 +238,10 @@ export class OptionsScene extends Phaser.Scene {
     const c = this.capture;
     if (!c) return;
     const name = keyNameFor(e.keyCode, e.location, Phaser.Input.Keyboard.KeyCodes as unknown as Record<string, number>);
-    if (name === 'ESC') return this.endCapture('CANCELLED');
+    if (name === 'ESC') return this.endCapture('CANCELADO');
     if (c.device !== 'keys') return; // waiting for a pad button
-    if (!name) return this.endCapture('THAT KEY IS NOT SUPPORTED');
-    if (isReserved(name)) return this.endCapture(`${keyLabel(name)} IS RESERVED`);
+    if (!name) return this.endCapture('ESSA TECLA NÃO É ACEITA');
+    if (isReserved(name)) return this.endCapture(`${keyLabel(name)} É RESERVADA`);
     this.assign(c.action, 'keys', c.slot, name);
   }
 
@@ -261,11 +261,11 @@ export class OptionsScene extends Phaser.Scene {
     const next = rebind(this.bindings, device, action, slot, input);
     const label = device === 'keys' ? keyLabel(String(input)) : (PAD_NAMES[input as number] ?? `B${input}`);
     if (JSON.stringify(next) === JSON.stringify(this.bindings) && other) {
-      return this.endCapture(`${label} IS ${ACTION_NAMES[other]}'S ONLY INPUT`);
+      return this.endCapture(`${label} É O ÚNICO COMANDO DE ${ACTION_NAMES[other]}`);
     }
     this.bindings = next;
     this.saveBindings();
-    this.endCapture(other ? `${label} SWAPPED WITH ${ACTION_NAMES[other]}` : `${ACTION_NAMES[action]}: ${label}`, UI.accent);
+    this.endCapture(other ? `${label} TROCADO COM ${ACTION_NAMES[other]}` : `${ACTION_NAMES[action]}: ${label}`, UI.accent);
   }
 
   private endCapture(msg: string, color: string = UI.warn): void {

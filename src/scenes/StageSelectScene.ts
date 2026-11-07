@@ -26,15 +26,15 @@ const NAME: Record<Slot, string> = {
   memoryLeak: 'MEMORY LEAK',
   raceCondition: 'RACE CONDITION',
   nullPointer: 'NULL POINTER',
-  techDebt: 'TECH DEBT FORTRESS',
+  techDebt: 'FORTALEZA TECH DEBT',
 };
 
 /** The boss presentation after picking a stage (boss_intro_panel). */
 const INTRO: Record<Slot, { heading: string; caption: string }> = {
-  memoryLeak: { heading: 'BUG DETECTED', caption: 'IT NEVER LETS GO OF ANYTHING' },
-  raceCondition: { heading: 'BUG DETECTED', caption: 'ALWAYS ONE STEP AHEAD OF ITSELF' },
-  nullPointer: { heading: 'BUG DETECTED', caption: 'POINTS AT NOTHING. HITS ANYWAY' },
-  techDebt: { heading: 'FINAL BUG', caption: 'EVERY SHORTCUT EVER TAKEN' },
+  memoryLeak: { heading: 'BUG DETECTADO', caption: 'NUNCA SOLTA NADA DO QUE PEGA' },
+  raceCondition: { heading: 'BUG DETECTADO', caption: 'SEMPRE UM PASSO À FRENTE DE SI MESMO' },
+  nullPointer: { heading: 'BUG DETECTADO', caption: 'APONTA PARA O NADA. E ACERTA' },
+  techDebt: { heading: 'BUG FINAL', caption: 'TODO ATALHO QUE ALGUÉM JÁ TOMOU' },
 };
 /** Panel and its contents, from art/exports/presentation-layout.json (panel-relative px). */
 const PANEL = { w: 416, h: 112, portrait: [16, 8], text: 136, heading: 22, name: 48, caption: 82 } as const;
@@ -42,9 +42,9 @@ const INTRO_MS = 1600;
 
 const NOTE: Record<SlotState, string> = {
   open: '',
-  cleared: 'CLEARED\nPLAY AGAIN FOR MISSING PARTS',
-  locked: 'LOCKED\nBEAT THE THREE BUGS FIRST',
-  soon: 'UNDER CONSTRUCTION',
+  cleared: 'CONCLUÍDA\nJOGUE DE NOVO PELAS PEÇAS',
+  locked: 'TRANCADA\nVENÇA OS TRÊS BUGS ANTES',
+  soon: 'EM CONSTRUÇÃO',
 };
 
 const DIRS: Dir[] = ['up', 'down', 'left', 'right'];

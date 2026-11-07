@@ -121,12 +121,12 @@ export class RecordsScene extends Phaser.Scene {
     const run = getSave(this.registry).run;
     const r = SCORE_RULES;
     const secs = runSeconds(run);
-    this.text(240, 34, 'RUN COMPLETE', { size: 16, color: UI.accent, origin: 0.5 });
+    this.text(240, 34, 'JOGO ZERADO', { size: 16, color: UI.accent, origin: 0.5 });
     const rows: [string, string, string][] = [
-      ['CLEAR BONUS', '', `${r.base}`],
-      ['ENEMIES', `${run.kills}`, `+${run.kills * r.perKill}`],
-      ['DEATHS', `${run.deaths}`, `-${run.deaths * r.perDeath}`],
-      ['TIME', formatTime(secs), `-${secs * r.perSecond}`],
+      ['BÔNUS POR ZERAR', '', `${r.base}`],
+      ['INIMIGOS', `${run.kills}`, `+${run.kills * r.perKill}`],
+      ['MORTES', `${run.deaths}`, `-${run.deaths * r.perDeath}`],
+      ['TEMPO', formatTime(secs), `-${secs * r.perSecond}`],
     ];
     rows.forEach(([what, n, pts], i) => {
       const y = 66 + i * 14;
@@ -134,32 +134,32 @@ export class RecordsScene extends Phaser.Scene {
       this.text(290, y, n, { origin: 1 });
       this.text(340, y, pts, { origin: 1 });
     });
-    this.text(150, 128, 'SCORE', { size: 12, color: UI.warn });
+    this.text(150, 128, 'PONTOS', { size: 12, color: UI.warn });
     this.text(340, 128, `${scoreOf(run)}`, { size: 12, color: UI.warn, origin: 1 });
 
     const board = loadBoard(storage());
     const entry = entryOf('BOB', run, new Date());
     if (!run.ranked) {
-      this.text(240, 164, 'This run started before the records existed,', { color: UI.dim, origin: 0.5 });
-      this.text(240, 176, 'or was already recorded: it is not ranked.', { color: UI.dim, origin: 0.5 });
-      this.hint(`${this.confirmKeys()}  RECORDS`);
+      this.text(240, 164, 'Esta partida começou antes dos recordes,', { color: UI.dim, origin: 0.5 });
+      this.text(240, 176, 'ou já foi registrada: não entra no quadro.', { color: UI.dim, origin: 0.5 });
+      this.hint(`${this.confirmKeys()}  RECORDES`);
     } else if (qualifies(board, entry)) {
       this.showEntry();
     } else {
       this.unrank();
-      this.text(240, 170, 'Not in the top 10 this time.', { color: UI.dim, origin: 0.5 });
-      this.hint(`${this.confirmKeys()}  RECORDS`);
+      this.text(240, 170, 'Desta vez não entrou no top 10.', { color: UI.dim, origin: 0.5 });
+      this.hint(`${this.confirmKeys()}  RECORDES`);
     }
   }
 
   /** The name slots under the result. */
   private showEntry(): void {
     this.mode = 'entry';
-    this.text(240, 160, 'NEW RECORD!  ENTER YOUR NAME', { color: UI.accent, origin: 0.5 });
+    this.text(240, 160, 'NOVO RECORDE!  DIGITE SEU NOME', { color: UI.accent, origin: 0.5 });
     for (let i = 0; i <= END; i++) {
-      this.slots.push(this.text(SLOT_X + i * 14 + (i === END ? 10 : 0), 184, i === END ? 'END' : '_', { size: 12, origin: 0.5 }));
+      this.slots.push(this.text(SLOT_X + i * 14 + (i === END ? 10 : 0), 184, i === END ? 'FIM' : '_', { size: 12, origin: 0.5 }));
     }
-    this.hint('TYPE IT, OR UP/DOWN LETTER  LEFT/RIGHT MOVE    ENTER  DONE');
+    this.hint('DIGITE, OU CIMA/BAIXO LETRA  ESQ./DIR. MOVER    ENTER  PRONTO');
     this.drawSlots();
   }
 
@@ -175,20 +175,20 @@ export class RecordsScene extends Phaser.Scene {
     this.mode = 'board';
     this.clear();
     const board = loadBoard(storage());
-    this.text(240, 34, 'RECORDS', { size: 16, color: UI.accent, origin: 0.5 });
+    this.text(240, 34, 'RECORDES', { size: 16, color: UI.accent, origin: 0.5 });
     const head = { color: UI.dim };
-    this.text(COL.name, 60, 'NAME', head);
-    this.text(COL.score, 60, 'SCORE', { ...head, origin: 1 });
-    this.text(COL.time, 60, 'TIME', { ...head, origin: 1 });
-    this.text(COL.deaths, 60, 'DEATHS', { ...head, origin: 1 });
-    this.text(COL.kills, 60, 'ENEMIES', { ...head, origin: 1 });
-    if (board.length === 0) this.text(240, ROW0 + 2 * ROW, 'No one has beaten the bugs yet.', { color: UI.dim, origin: 0.5 });
+    this.text(COL.name, 60, 'NOME', head);
+    this.text(COL.score, 60, 'PONTOS', { ...head, origin: 1 });
+    this.text(COL.time, 60, 'TEMPO', { ...head, origin: 1 });
+    this.text(COL.deaths, 60, 'MORTES', { ...head, origin: 1 });
+    this.text(COL.kills, 60, 'INIMIGOS', { ...head, origin: 1 });
+    if (board.length === 0) this.text(240, ROW0 + 2 * ROW, 'Ninguém venceu os bugs ainda.', { color: UI.dim, origin: 0.5 });
     board.forEach((e, i) => this.row(e, i));
-    this.text(240, 212, `${SCORE_RULES.base} + ${SCORE_RULES.perKill} per enemy - ${SCORE_RULES.perDeath} per death - ${SCORE_RULES.perSecond} per second`, {
+    this.text(240, 212, `${SCORE_RULES.base} + ${SCORE_RULES.perKill} por inimigo - ${SCORE_RULES.perDeath} por morte - ${SCORE_RULES.perSecond} por segundo`, {
       color: UI.dim,
       origin: 0.5,
     });
-    this.hint(`${this.confirmKeys()}  ${this.opts.result ? 'TITLE' : 'BACK'}`);
+    this.hint(`${this.confirmKeys()}  ${this.opts.result ? 'TÍTULO' : 'VOLTAR'}`);
   }
 
   private row(e: ScoreEntry, i: number): void {

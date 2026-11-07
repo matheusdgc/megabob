@@ -54,7 +54,7 @@ export class TitleScene extends Phaser.Scene {
     this.add.rectangle(240, 258, 480, 16, 0x000000, 0.6);
     this.controls = new GameInput(this, true);
     const keys = this.controls.bindings;
-    uiText(this, 240, 258, `${actionKeys(keys, 'jump')} / ENTER  SELECT     ARROWS  MOVE     M  MUTE`, { color: UI.dim, origin: 0.5 });
+    uiText(this, 240, 258, `${actionKeys(keys, 'jump')} / ENTER  CONFIRMAR     SETAS  MOVER     M  SEM SOM`, { color: UI.dim, origin: 0.5 });
     this.pointer = uiText(this, 0, 0, '>', { color: UI.warn });
     this.mainMenu(this.cursor);
     GameAudio.of(this.game)?.music.play('title', 400);
@@ -65,13 +65,13 @@ export class TitleScene extends Phaser.Scene {
     const save = getSave(this.registry);
     this.confirming = false;
     const more = [
-      { label: 'RECORDS', run: () => this.records() },
-      { label: 'OPTIONS', run: () => this.options() },
+      { label: 'RECORDES', run: () => this.records() },
+      { label: 'OPÇÕES', run: () => this.options() },
     ];
     this.show(
       hasProgress(save)
-        ? [{ label: 'CONTINUE', run: () => this.start() }, { label: 'NEW GAME', run: () => this.askErase() }, ...more]
-        : [{ label: 'START', run: () => this.start() }, ...more],
+        ? [{ label: 'CONTINUAR', run: () => this.start() }, { label: 'NOVO JOGO', run: () => this.askErase() }, ...more]
+        : [{ label: 'COMEÇAR', run: () => this.start() }, ...more],
       cursor,
     );
   }
@@ -95,9 +95,9 @@ export class TitleScene extends Phaser.Scene {
     this.confirming = true;
     this.show(
       [
-        { label: 'ERASE SAVE: NO', run: () => this.mainMenu() },
+        { label: 'APAGAR PROGRESSO: NÃO', run: () => this.mainMenu() },
         {
-          label: 'ERASE SAVE: YES',
+          label: 'APAGAR PROGRESSO: SIM',
           run: () => {
             // settings are not progress: rebound keys and volume survive a new game
             const { bindings, volume } = getSave(this.registry);

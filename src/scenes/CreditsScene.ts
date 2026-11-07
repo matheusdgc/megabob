@@ -37,8 +37,8 @@ export class CreditsScene extends Phaser.Scene {
   create(): void {
     this.add.image(0, 0, 'ending_background').setOrigin(0);
     this.add.image(240, 16, 'title_logo_night').setOrigin(0.5, 0);
-    uiText(this, CLIP.x + CLIP.w / 2, 78, 'SYSTEM STABLE', { size: 13, color: UI.accent, origin: 0.5 });
-    uiText(this, CLIP.x + CLIP.w / 2, 100, 'Every bug fixed.', { size: 12, origin: 0.5 });
+    uiText(this, CLIP.x + CLIP.w / 2, 78, 'SISTEMA ESTÁVEL', { size: 13, color: UI.accent, origin: 0.5 });
+    uiText(this, CLIP.x + CLIP.w / 2, 100, 'Todos os bugs corrigidos.', { size: 12, origin: 0.5 });
 
     // the roll: an HTML window that clips a tall list sliding up
     const box = document.createElement('div');

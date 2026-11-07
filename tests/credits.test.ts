@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CREDITS, MAX_LINE, MUSIC_CREDITS, wrapPath } from '../src/data/credits';
 import { MUSIC } from '../src/data/music';
 
-const musicBlock = () => CREDITS.find(([head]) => head === 'MUSIC')!.slice(1);
+const musicBlock = () => CREDITS.find(([head]) => head === 'MÚSICA')!.slice(1);
 
 describe('credits', () => {
   it('credit every track of the manifest: author, source and license', () => {
@@ -18,7 +18,7 @@ describe('credits', () => {
     for (const c of Object.values(MUSIC_CREDITS)) {
       const at = lines.indexOf(`"${c.title}"`);
       expect(at, c.title).toBeGreaterThanOrEqual(0);
-      expect(lines[at + 1]).toBe(`by ${c.author}`);
+      expect(lines[at + 1]).toBe(`por ${c.author}`);
       expect(lines[at + 2]).toBe(c.license);
     }
   });
@@ -29,7 +29,7 @@ describe('credits', () => {
       expect(text).toContain(c.source);
       expect(text).toContain('creativecommons.org/licenses/by/4.0/');
     }
-    expect(text).toContain('re-encoded'); // CC-BY asks to say the work was changed
+    expect(text).toContain('recodificadas'); // CC-BY asks to say the work was changed
   });
 
   it('fit every line in the roll window', () => {

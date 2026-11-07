@@ -128,7 +128,7 @@ export function keyNameFor(code: number, location: number, codes: Readonly<Recor
 }
 
 const KEY_LABELS: Record<string, string> = {
-  SPACE: 'SPACE',
+  SPACE: 'ESPAÇO',
   COMMA: ',',
   PERIOD: '.',
   ESC: 'ESC',

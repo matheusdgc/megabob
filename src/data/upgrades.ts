@@ -15,10 +15,10 @@ export interface PartDef {
 }
 
 export const PARTS: Record<PartId, PartDef> = {
-  head: { bit: 1, name: 'DEBUG VISOR', effect: 'Reveals hidden passages\nand shows boss health.', icon: 'armor_head', stage: 'nullPointer' },
-  arm: { bit: 2, name: 'COMPILER CANNON', effect: 'Charge the buster\nto a third level.', icon: 'armor_arm', stage: 'memoryLeak' },
-  body: { bit: 4, name: 'FIREWALL PLATING', effect: 'Halves the damage you take\nand shortens the knockback.', icon: 'armor_body', stage: 'memoryLeak' },
-  legs: { bit: 8, name: 'TURBO BOOTS', effect: 'One dash in the air\non every jump.', icon: 'armor_legs', stage: 'raceCondition' },
+  head: { bit: 1, name: 'VISOR DE DEBUG', effect: 'Revela passagens ocultas\ne mostra a vida do chefe.', icon: 'armor_head', stage: 'nullPointer' },
+  arm: { bit: 2, name: 'CANHÃO COMPILADOR', effect: 'Carrega o buster\naté um terceiro nível.', icon: 'armor_arm', stage: 'memoryLeak' },
+  body: { bit: 4, name: 'BLINDAGEM FIREWALL', effect: 'Corta o dano pela metade\ne encurta o recuo.', icon: 'armor_body', stage: 'memoryLeak' },
+  legs: { bit: 8, name: 'BOTAS TURBO', effect: 'Um dash no ar\na cada pulo.', icon: 'armor_legs', stage: 'raceCondition' },
 };
 
 export const PART_ORDER: readonly PartId[] = ['head', 'arm', 'body', 'legs'];

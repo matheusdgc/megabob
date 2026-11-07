@@ -20,11 +20,11 @@ const ROW_Y = [112, 140, 168, 196, 214, 230];
 const ICON_X = 106;
 const TEXT_X = 122;
 const CURSOR_X = 86;
-const ARMOR: { key: string; bit: number; name: string; at: [number, number] }[] = [
-  { key: 'armor_head', bit: ARMOR_BITS.head, name: 'DEBUG VISOR', at: [288, 118] },
-  { key: 'armor_arm', bit: ARMOR_BITS.arm, name: 'COMPILER CANNON', at: [360, 118] },
-  { key: 'armor_body', bit: ARMOR_BITS.body, name: 'FIREWALL PLATING', at: [288, 178] },
-  { key: 'armor_legs', bit: ARMOR_BITS.legs, name: 'TURBO BOOTS', at: [360, 178] },
+const ARMOR: { key: string; bit: number; name: string; short: string; at: [number, number] }[] = [
+  { key: 'armor_head', bit: ARMOR_BITS.head, name: 'VISOR DE DEBUG', short: 'VISOR', at: [288, 118] },
+  { key: 'armor_arm', bit: ARMOR_BITS.arm, name: 'CANHÃO COMPILADOR', short: 'CANHÃO', at: [360, 118] },
+  { key: 'armor_body', bit: ARMOR_BITS.body, name: 'BLINDAGEM FIREWALL', short: 'BLINDAGEM', at: [288, 178] },
+  { key: 'armor_legs', bit: ARMOR_BITS.legs, name: 'BOTAS TURBO', short: 'BOTAS', at: [360, 178] },
 ];
 
 /**
@@ -56,9 +56,9 @@ export class PauseScene extends Phaser.Scene {
   create(): void {
     const { arsenal, armor } = this.opts;
     this.add.image(PANEL.x, PANEL.y, 'pause_panel_wide').setOrigin(0);
-    uiText(this, PANEL.x + 16, PANEL.y + 22, 'PAUSE', { size: 12 });
-    uiText(this, CURSOR_X, 92, 'WEAPONS', { color: UI.accent });
-    uiText(this, 272, 92, 'ARMOR', { color: UI.accent });
+    uiText(this, PANEL.x + 16, PANEL.y + 22, 'PAUSA', { size: 12 });
+    uiText(this, CURSOR_X, 92, 'ARMAS', { color: UI.accent });
+    uiText(this, 272, 92, 'ARMADURA', { color: UI.accent });
 
     // all four weapons are listed; the ones not won yet stay dark and unselectable
     WEAPON_ORDER.forEach((w, i) => {
@@ -69,17 +69,17 @@ export class PauseScene extends Phaser.Scene {
       const energy = w === 'buster' ? '' : `  ${String(arsenal.energy[w] ?? 0).padStart(2)}/${WEAPON_MAX_ENERGY}`;
       uiText(this, TEXT_X, y, has ? def.name + energy : '- - - - -', { color: has ? UI.text : UI.dim });
     });
-    uiText(this, TEXT_X, ROW_Y[4]!, 'OPTIONS');
-    uiText(this, TEXT_X, ROW_Y[5]!, 'EXIT STAGE');
+    uiText(this, TEXT_X, ROW_Y[4]!, 'OPÇÕES');
+    uiText(this, TEXT_X, ROW_Y[5]!, 'SAIR DA FASE');
 
     let found = 0;
     for (const a of ARMOR) {
       const has = (armor & a.bit) !== 0;
       if (has) found++;
       this.add.image(...a.at, a.key, has ? 0 : 1).setScale(2);
-      uiText(this, a.at[0], a.at[1] + 22, has ? a.name.split(' ')[1]! : '???', { origin: 0.5, color: has ? UI.text : UI.dim });
+      uiText(this, a.at[0], a.at[1] + 22, has ? a.short : '???', { origin: 0.5, color: has ? UI.text : UI.dim });
     }
-    uiText(this, 324, 222, `PARTS ${found}/4`, { origin: 0.5 });
+    uiText(this, 324, 222, `PEÇAS ${found}/4`, { origin: 0.5 });
 
     this.pointer = uiText(this, CURSOR_X, 0, '>', { color: UI.warn });
     this.controls = new GameInput(this, true);

@@ -52,7 +52,7 @@ export async function checkTitleNavigation(send, evaluate, sleep) {
   const baseline=await state();
   const options=[],selection=[];
   for(let cycle=0;cycle<2;cycle++) {
-    const menu=await evaluate(`(() => {const s=window.__game.scene.getScene('Title');return {cursor:s.cursor,count:s.items.length,options:s.items.findIndex(i=>i.label==='OPTIONS')};})()`);
+    const menu=await evaluate(`(() => {const s=window.__game.scene.getScene('Title');return {cursor:s.cursor,count:s.items.length,options:s.items.findIndex(i=>i.label==='OPÇÕES')};})()`);
     require(menu.options>=0,'Options item missing',menu);
     for(let i=0;i<(menu.options-menu.cursor+menu.count)%menu.count;i++) await press('ArrowDown','ArrowDown',40);
     await press('Enter','Enter',13);

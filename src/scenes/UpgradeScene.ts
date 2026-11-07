@@ -41,18 +41,18 @@ export class UpgradeScene extends Phaser.Scene {
     this.add.rectangle(240, 135, 480, 270, 0x000000, 0.6);
     this.add.image(240, 135, 'reward_panel');
     fadeIn(this);
-    uiText(this, 290, 66, 'UPGRADE INSTALLED', { color: UI.accent, origin: 0.5 });
+    uiText(this, 290, 66, 'MELHORIA INSTALADA', { color: UI.accent, origin: 0.5 });
     uiText(this, 194, 98, def.name, { size: 12 });
     this.add.image(194, 122, def.icon, 0).setOrigin(0, 0.5).setScale(2);
     uiText(this, 194, 156, def.effect, { color: UI.text });
-    uiText(this, 290, 212, 'FIRMWARE UPDATED', { color: UI.accent, origin: 0.5 });
+    uiText(this, 290, 212, 'FIRMWARE ATUALIZADO', { color: UI.accent, origin: 0.5 });
     const bob = this.add.sprite(112, 182, bobKey('victory', this.opts.armor), 1).setOrigin(0.5, 1).setScale(2);
     if (!this.registry.get('reduceMotion')) {
       this.tweens.add({ targets: bob, y: 178, duration: 400, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' });
     }
     GameAudio.of(this.game)?.sfx.jingle('weaponGet');
     this.controls = new GameInput(this, true);
-    const prompt = uiText(this, 290, 226, `PRESS ${keyLabel(this.controls.bindings.keys.jump[0] ?? 'SPACE')}`, { color: UI.dim, origin: 0.5 }).setVisible(false);
+    const prompt = uiText(this, 290, 226, `APERTE ${keyLabel(this.controls.bindings.keys.jump[0] ?? 'SPACE')}`, { color: UI.dim, origin: 0.5 }).setVisible(false);
     this.time.delayedCall(MIN_MS, () => {
       this.ready = true;
       prompt.setVisible(true);

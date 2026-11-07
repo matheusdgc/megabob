@@ -85,4 +85,4 @@ O servidor ai-memory roda num container Docker (`ai-memory`) em `http://127.0.0.
 - **Sempre:** conteúdo original. Nunca use sprites, música, nomes ou layouts de Mega Man ou de qualquer outro jogo. Não descaracterize o Bob em relação à referência.
 - **Pergunte antes:** de adicionar dependências além de Phaser, Vite, TypeScript e Vitest (por exemplo, não instalamos `@types/node`; use `tests/node-shim.d.ts`), de mudar a resolução ou os controles, de cortar escopo, e de publicar o jogo ou dar push.
 - **Versões:** Phaser **3.90**, propositalmente, e não o 4. TypeScript 7 strict com `noUncheckedIndexedAccess`.
-- **Idioma:** responda ao usuário em português quando ele escrever em português. Código e commits ficam em inglês.
+- **Idioma:** responda ao usuário em português quando ele escrever em português. Código e commits ficam em inglês. **Todo texto que o jogador vê é em português (pt-BR)**, a pedido do usuário; nomes dos chefes e das armas (Memory Leak, Garbage Collector...) e o Buster ficam como termos de programação.

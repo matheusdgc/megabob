@@ -769,7 +769,7 @@ export class StageScene extends Phaser.Scene {
     this.events.emit('gameOver');
     this.fx.hold('gameOver');
     const cam = this.cameras.main;
-    uiText(this, cam.width / 2, cam.height / 2, 'GAME OVER', { size: 16, color: UI.danger, origin: 0.5 }).setScrollFactor(0).setDepth(100);
+    uiText(this, cam.width / 2, cam.height / 2, 'FIM DE JOGO', { size: 16, color: UI.danger, origin: 0.5 }).setScrollFactor(0).setDepth(100);
     const len = this.audio?.sfx.jingle('gameOver') ?? 2;
     this.time.delayedCall(Math.max(2500, len * 1000 + 500), () => fadeTo(this, 'StageSelect'));
   }
@@ -782,7 +782,7 @@ export class StageScene extends Phaser.Scene {
     this.fx.hold('ready');
     this.audio?.music.stop();
     const cam = this.cameras.main;
-    const word = uiText(this, cam.width / 2, cam.height / 2 - 16, 'READY', { size: 12, origin: 0.5 }).setScrollFactor(0).setDepth(100);
+    const word = uiText(this, cam.width / 2, cam.height / 2 - 16, 'PRONTO', { size: 12, origin: 0.5 }).setScrollFactor(0).setDepth(100);
     const ms = first ? Math.max(1400, (this.audio?.sfx.jingle('stageStart') ?? 0) * 1000) : 1000;
     // measure the boss tracks now, one per frame, so their entrance never hitches (T22)
     if (first) {
