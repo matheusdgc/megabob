@@ -1,0 +1,18 @@
+Use case: stylized-concept. Assets for the original 16-bit SIDE-SCROLLING platformer Megabob. Match the approved Bob reference's crisp pixel clusters, limited flat shading and readable hard-edged shapes; do NOT draw Bob, characters, enemies, bosses or weapons.
+Authentic SNES/Mega Drive pixel art, compact square pixels and dark local-color outlines, at most four shades per ramp, light from above/top-left. STRICT ORTHOGONAL 2D SIDE-VIEW platformer tiles, not isometric, not 3D perspective. No antialiasing, gradients, soft lighting, cast shadows, bloom/glow halos, blur, dithering noise, realistic textures, typography, labels, tile numbers, grid lines, borders, watermark or UI.
+Color lights/glowing hazards use crisp flat bright pixels. Use only the stage's specified palette. Objects must read at the specified small logical game resolution before enlargement.
+
+Create a TILESET with square 16x16-LOGICAL-PIXEL tiles arranged on an INVISIBLE regular SIX-COLUMN by FOUR-ROW grid. EXACTLY ONE EMPTY TILE WIDTH (16 logical pixels) of spacing between all adjacent tile cells both horizontally and vertically, plus empty outer margins. Each occupied tile fits entirely inside its own 16x16 square; same pixel scale across all cells. No decorative cell frames or grid drawn.
+The 20 BASE cells, in reading order:
+ROW 1: C1 ground TOP EDGE; C2 ground FILL; C3 LEFT exposed side edge; C4 RIGHT exposed side edge; C5 OUTER TOP-LEFT corner; C6 OUTER TOP-RIGHT corner.
+ROW 2: C1 OUTER BOTTOM-LEFT corner; C2 OUTER BOTTOM-RIGHT corner; C3 INNER TOP-LEFT concave corner; C4 INNER TOP-RIGHT concave corner; C5 INNER BOTTOM-LEFT concave corner; C6 INNER BOTTOM-RIGHT concave corner.
+ROW 3: C1 thin ONE-WAY PLATFORM left cap; C2 same platform repeatable MIDDLE; C3 same platform right cap; C4 repeatable SOLID WALL COLUMN segment; C5 stage-specific DEADLY HAZARD; C6 darker LOW-CONTRAST NON-SOLID background wall tile.
+ROW 4: C1 decorative PROP 1; C2 decorative PROP 2; C3-C6 reserved for the stated stage-specific extras or remain EMPTY.
+Platform left/middle/right share an exact height and top surface so they can join. Ground edge/fill/corners use a consistent material and pattern so they can join into terrain. Exposed edges and concave/convex corners must be visually distinct. Do NOT draw complete level scenes, assembled terrain rooms, giant props or characters.
+BACKGROUND: OPAQUE FLAT MAGENTA #FF00FF outside tile/object silhouettes and in every empty spacer or unused cell. White/light object areas stay opaque. No magenta inside solid intended terrain.
+THEME: HIGH-SPEED DATA BUS: circuit-board floors, orange data lanes, conveyor belts, giant clock mechanisms, conductor rails. Dark industrial electronics with red/orange traces.
+PALETTE: red/orange #750E13 #DA1E28 #FF832B, yellow #F1C21B, neutrals #161616 #393939 #6F6F6F #A8A8A8 #E0E0E0. Backgrounds muted dark burgundy/charcoal, sparing orange/yellow accents.
+HAZARD: ELECTRIC RAIL: dark conductor bed and crisp yellow-orange contact sparks, within one tile
+PROPS: PROP 1 small clock mechanism without numbers; PROP 2 compact circuit/data-bus coupler, each fitting one tile
+EXTRA CELLS: ROW 4 C3 and C4 contain TWO CONVEYOR TILE ANIMATION FRAMES at the same size and height: same metal belt frame, chevron/tread pattern shifted horizontally between phases. ROW 4 C5-C6 EMPTY MAGENTA.
+First reference is pixel STYLE only. Second reference is the stage's material/color motif only; do NOT draw its boss or any character.

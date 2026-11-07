@@ -1,0 +1,11 @@
+Use case: stylized-concept. UI art for the original 16-bit side-scrolling platformer Megabob.
+Authentic SNES/Mega Drive-era PIXEL ART, deliberate hard square pixel clusters, compact readable forms, dark #161616 outline about one logical pixel thick, limited flat shading (max four shades per ramp), top-left light. No antialiasing, gradients, soft shadows, blur, bloom/glow halos, dithering noise, photorealism, smooth vector art or 3D rendering. Do not copy the logo or UI of any existing game.
+Main palette: IBM blue #001D6C #0043CE #0F62FE #4589FF #A6C8FF, neutrals #161616 #393939 #6F6F6F #A8A8A8 #E0E0E0 #FFFFFF. Teal #004144 #007D79 #08BDBA #9EF0F0, yellow #F1C21B and purple #31135E #6929C4 #A56EFF #E8DAFF only where specified.
+No labels, captions, numbering, watermark, grid, explanatory text or unrequested words. Logo is the ONLY asset that may contain a word. All other UI text is added by game code.
+
+SPECIFIC ASSET U1_logo:
+Create the TITLE LOGO for the game.
+Text VERBATIM: "MEGABOB". Exactly SEVEN uppercase letters, in this order: M E G A B O B, without spaces in the rendered word. No other words, initials, trademark marks, slogan or symbols that resemble extra letters.
+One strong original WORDMARK in bold chunky metallic IBM-BLUE pixel letters (#0F62FE #4589FF #A6C8FF), dark #161616 outline, crisp WHITE top-left highlight edge. Slight forward perspective/slant and shallow dark-blue pixel extrusion, not photoreal 3D. Keep every letter distinctly readable, especially the G, the O and the two Bs. Custom compact block letterforms, do not imitate Mega Man / Rockman or any existing game's logo.
+A SMALL pixel-circuit motif integrated into one or two letter edges or a short connection below, subordinate to the word. No giant lightning bolt, swoosh, emblem, mascot or unrelated decorations. Bob reference is COLOR/PIXEL STYLE ONLY; do not draw Bob or his helmet.
+Composition: ONE centered wordmark on a WIDE landscape canvas with generous empty margins on all sides, no clipping. OPAQUE FLAT MAGENTA #FF00FF background everywhere outside the logo for later removal, no texture, smoke, halo, shadows or scene.

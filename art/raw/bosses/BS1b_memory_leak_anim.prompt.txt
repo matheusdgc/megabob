@@ -1,0 +1,16 @@
+Use case: stylized-concept. Asset for the original 16-bit side-scrolling platformer Megabob.
+Match the attached references' compact readable pixel-art craft: hard square pixels and deliberate clusters, dark #161616 outline approximately one logical pixel thick, limited flat color ramps (maximum four shades per ramp), top-left light, SNES/Mega Drive-era look. Designs should read clearly at the specified logical game size before enlargement. No antialiasing, gradients, blur, soft shadows, bloom, glow halos, dithering, noise or 3D rendering. Bright indicators/energy use flat pale pixel clusters, never soft glow.
+One horizontal row of equally sized cells unless explicitly specified otherwise. Same boss design, scale, camera and anchors in all frames, consistent ground baseline for grounded poses; airborne/partial poses remain anchored within their cells. Generous empty gutters, full silhouettes uncropped, no overlap between cells. All boss body poses FACE LEFT, toward the player, unless a specific front-facing exception is given.
+Opaque flat MAGENTA #FF00FF background outside the sprites; white/highlight areas inside objects stay opaque. No scenery, floor, cast shadow, grid, borders, captions, labels, numbers, readable text, watermark or unrequested props/effects. All designs original; do not copy any existing game character or hero armor.
+
+SPECIFIC SHEET BS1b_memory_leak_anim:
+Use the concept reference as authoritative MEMORY LEAK identity: same hunched server chassis, RAM spines, cracked eye visor, two goo arms and LEGLESS teal puddle lower body. EXACTLY EIGHT frames in ONE row, all facing LEFT:
+1 IDLE A, hunched with a few solid goo drips;
+2 IDLE B, body bobs down slightly, drips shift;
+3 SHOOT, arm thrust LEFT, goo ball forming in palm;
+4 SINK A, chassis halfway sinking into its puddle;
+5 SINK B, almost completely a flattened puddle with only small server/RAM remnants visible;
+6 EMERGE, body rising from puddle with both arms up;
+7 HURT, recoil with an OPAQUE WHITE hit-flash across the boss, preserve readable dark outline and shape;
+8 DEFEATED, chassis melting apart into teal puddle with RAM sticks falling nearby.
+Same palette/scale and base anchor. Do not give it legs. No extra boss, loose projectile, glow, beam or explosion.

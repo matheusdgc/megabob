@@ -1,0 +1,13 @@
+Use case: stylized-concept. Asset for the original 16-bit side-scrolling platformer Megabob.
+Match the attached references' compact readable pixel-art craft: hard square pixels and deliberate clusters, dark #161616 outline approximately one logical pixel thick, limited flat color ramps (maximum four shades per ramp), top-left light, SNES/Mega Drive-era look. Designs should read clearly at the specified logical game size before enlargement. No antialiasing, gradients, blur, soft shadows, bloom, glow halos, dithering, noise or 3D rendering. Bright indicators/energy use flat pale pixel clusters, never soft glow.
+One horizontal row of equally sized cells unless explicitly specified otherwise. Same boss design, scale, camera and anchors in all frames, consistent ground baseline for grounded poses; airborne/partial poses remain anchored within their cells. Generous empty gutters, full silhouettes uncropped, no overlap between cells. All boss body poses FACE LEFT, toward the player, unless a specific front-facing exception is given.
+Opaque flat MAGENTA #FF00FF background outside the sprites; white/highlight areas inside objects stay opaque. No scenery, floor, cast shadow, grid, borders, captions, labels, numbers, readable text, watermark or unrequested props/effects. All designs original; do not copy any existing game character or hero armor.
+
+SPECIFIC SHEET BS1c_memory_leak_extras:
+MEMORY LEAK extras matching the concept exactly. EXACTLY FIVE cells in ONE row:
+1 square 48x48-logical-style PORTRAIT, tightly composed head/upper server body with cracked visor, teal eyes and RAM spines. No portrait frame or background panel.
+2 small TEAL GOO BALL projectile phase A;
+3 same goo ball phase B wobbling, same volume and scale;
+4 flat TEAL GOO PUDDLE phase A with small bubbles;
+5 same puddle phase B, bubbles shifted.
+Projectile ball and puddle are MUCH smaller than the portrait, roughly 12-24 logical pixels. No complete boss bodies in cells 2-5, no extra faces on projectiles, no glow or trajectories. Teal ramp and neutrals.

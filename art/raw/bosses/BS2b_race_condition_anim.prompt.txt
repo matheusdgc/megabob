@@ -1,0 +1,16 @@
+Use case: stylized-concept. Asset for the original 16-bit side-scrolling platformer Megabob.
+Match the attached references' compact readable pixel-art craft: hard square pixels and deliberate clusters, dark #161616 outline approximately one logical pixel thick, limited flat color ramps (maximum four shades per ramp), top-left light, SNES/Mega Drive-era look. Designs should read clearly at the specified logical game size before enlargement. No antialiasing, gradients, blur, soft shadows, bloom, glow halos, dithering, noise or 3D rendering. Bright indicators/energy use flat pale pixel clusters, never soft glow.
+One horizontal row of equally sized cells unless explicitly specified otherwise. Same boss design, scale, camera and anchors in all frames, consistent ground baseline for grounded poses; airborne/partial poses remain anchored within their cells. Generous empty gutters, full silhouettes uncropped, no overlap between cells. All boss body poses FACE LEFT, toward the player, unless a specific front-facing exception is given.
+Opaque flat MAGENTA #FF00FF background outside the sprites; white/highlight areas inside objects stay opaque. No scenery, floor, cast shadow, grid, borders, captions, labels, numbers, readable text, watermark or unrequested props/effects. All designs original; do not copy any existing game character or hero armor.
+
+SPECIFIC SHEET BS2b_race_condition_anim:
+Same RACE CONDITION robot as concept, red/orange/yellow, chest stopwatch, two clock-hand forearm blades, back exhausts. EXACTLY EIGHT frames in ONE row facing LEFT:
+1 IDLE A, poised impatiently on toes;
+2 IDLE B, slightly lower bounce and opposite toe emphasis;
+3 DASH START, deeply crouched sprinter launch;
+4 DASH, very low horizontal lunge LEFT, suggest speed through pose and one dark-red hard-pixel offset outline ONLY;
+5 SPLIT, boss separating into TWO partially OVERLAPPING copies WITHIN THIS SINGLE CELL, same-scale copies offset slightly, one dark-red and one full color;
+6 THROW, one arm flinging a clock-hand blade LEFT, clear follow-through, no separately flying projectile;
+7 HURT, recoil RIGHT;
+8 DEFEATED, stopwatch cracked/shattering, robot crumples with few square sparks.
+Keep EXACTLY eight cells despite the two overlapping copies in cell 5. Leave enough room in that cell. No soft blur, ghost transparency, long trails, scene, projectile or extra frame.

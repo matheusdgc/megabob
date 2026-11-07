@@ -1,0 +1,17 @@
+Use case: stylized-concept. Asset for the original 16-bit side-scrolling platformer Megabob.
+Match the attached references' compact readable pixel-art craft: hard square pixels and deliberate clusters, dark #161616 outline approximately one logical pixel thick, limited flat color ramps (maximum four shades per ramp), top-left light, SNES/Mega Drive-era look. Designs should read clearly at the specified logical game size before enlargement. No antialiasing, gradients, blur, soft shadows, bloom, glow halos, dithering, noise or 3D rendering. Bright indicators/energy use flat pale pixel clusters, never soft glow.
+One horizontal row of equally sized cells unless explicitly specified otherwise. Same boss design, scale, camera and anchors in all frames, consistent ground baseline for grounded poses; airborne/partial poses remain anchored within their cells. Generous empty gutters, full silhouettes uncropped, no overlap between cells. All boss body poses FACE LEFT, toward the player, unless a specific front-facing exception is given.
+Opaque flat MAGENTA #FF00FF background outside the sprites; white/highlight areas inside objects stay opaque. No scenery, floor, cast shadow, grid, borders, captions, labels, numbers, readable text, watermark or unrequested props/effects. All designs original; do not copy any existing game character or hero armor.
+
+SPECIFIC SHEET BS4b_tech_debt_parts:
+Tech Debt PHASE-1 animated overlays, matching the EXACT parts and palette in its concept. Draw ONLY isolated PARTS, not the full wall boss. EXACTLY EIGHT cells in ONE row:
+1 CRT FACE MODULE normal angry green pixel face in its beige bezel;
+2 SAME CRT face module with WHITE HIT FLASH on face, same bezel size and anchor;
+3 one CABINET DRAWER module CLOSED;
+4 SAME drawer module OPEN, sliding outward to shoot, same scale and anchor;
+5 one TAPE REEL module rotational phase A;
+6 SAME tape reel rotational phase B, spokes visibly rotated, same scale;
+7 a SMALL beige PUNCHED-CARD projectile with dark holes, much smaller than face/drawer;
+8 the SAME CRT FACE MODULE as cells 1-2, now cracked/broken, broken green face.
+Repeated part pairs must match dimensions so they can be overlaid later. Keep modules recognizable as cropped equipment from the concept, not standalone complete bosses. No montage of whole mainframes, no extra frames, labels, beams or scenery.
+All these PARTS are FRONT-FACING, exactly matching their installed orientation in the front-facing wall-machine. The generic left-facing rule applies to characters, not these overlays.
