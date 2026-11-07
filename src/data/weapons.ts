@@ -36,13 +36,16 @@ export const BOSS_WEAPON: Partial<Record<BossId, WeaponId>> = {
 
 /** Weakness cycle: Memory Leak -> Mutex Lock, Race Condition -> Null Pointer, Null Pointer -> Garbage Collector. */
 export const WEAKNESS: Record<BossId, { weapon: WeaponId; multiplier: number }> = {
-  memoryLeak: { weapon: 'mutexLock', multiplier: 3 },
-  raceCondition: { weapon: 'nullPointer', multiplier: 3 },
-  nullPointer: { weapon: 'garbageCollector', multiplier: 3 },
+  memoryLeak: { weapon: 'mutexLock', multiplier: 2 },
+  raceCondition: { weapon: 'nullPointer', multiplier: 2 },
+  nullPointer: { weapon: 'garbageCollector', multiplier: 2 },
   techDebt: { weapon: 'buster', multiplier: 1 },
 };
 
-/** Damage a hit from `weapon` deals to `boss`: tripled by its weakness. */
+/**
+ * Damage a hit from `weapon` deals to `boss`: doubled by its weakness. (T22: tripled, the weakness
+ * killed a boss in under 2 s even with perfect aim; doubled it still takes a quarter of the time.)
+ */
 export function damageFor(boss: BossId, weapon: WeaponId, base: number): number {
   const w = WEAKNESS[boss];
   return w.weapon === weapon ? base * w.multiplier : base;

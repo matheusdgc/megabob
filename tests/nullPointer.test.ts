@@ -73,7 +73,7 @@ describe('Null Pointer boss', () => {
   const run = (b: ReturnType<typeof newNullBoss>, n: number, hp = 1) => Array.from({ length: n }, () => stepNull(b, sense(hp)));
 
   it('is weak to the Garbage Collector', () => {
-    expect(damageFor('nullPointer', 'garbageCollector', 2)).toBe(6);
+    expect(damageFor('nullPointer', 'garbageCollector', 2)).toBe(4);
   });
 
   it('teleports: glitches out untouchable, hides, reappears at another spot, then fans cursors at Bob', () => {

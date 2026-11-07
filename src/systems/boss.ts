@@ -16,8 +16,11 @@ export interface BossState {
 
 /** Frames for the health-bar intro fill animation. */
 export const BOSS_INTRO_FRAMES = 60;
-/** I-frame window after a hit. */
-export const BOSS_INVULN_FRAMES = 20;
+/**
+ * I-frame window after a hit. It sets the pace of a fight: 28 buster hits take at least 14 s.
+ * (T22: 20 frames let perfect play beat a boss in 12 s; see docs/HANDOFF.md.)
+ */
+export const BOSS_INVULN_FRAMES = 30;
 /** Hit-flash duration. */
 export const BOSS_FLASH_FRAMES = 3;
 

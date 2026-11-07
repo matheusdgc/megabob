@@ -3,10 +3,10 @@ import { BOSS_WEAPON, damageFor, WEAPON_MAX_ENERGY, WEAPONS } from '../src/data/
 import { cycleWeapon, equip, grant, newArsenal, refill, spend } from '../src/systems/weapons';
 
 describe('weaknesses', () => {
-  it('the weakness weapon deals 3x', () => {
-    expect(damageFor('memoryLeak', 'mutexLock', 2)).toBe(6);
-    expect(damageFor('raceCondition', 'nullPointer', 2)).toBe(6);
-    expect(damageFor('nullPointer', 'garbageCollector', 2)).toBe(6);
+  it('the weakness weapon deals 2x', () => {
+    expect(damageFor('memoryLeak', 'mutexLock', 2)).toBe(4);
+    expect(damageFor('raceCondition', 'nullPointer', 2)).toBe(4);
+    expect(damageFor('nullPointer', 'garbageCollector', 2)).toBe(4);
   });
 
   it('other weapons deal their base damage', () => {
@@ -18,7 +18,7 @@ describe('weaknesses', () => {
   it('the cycle closes: every stage boss is weak to another stage boss weapon', () => {
     for (const [, weapon] of Object.entries(BOSS_WEAPON)) {
       const victims = (['memoryLeak', 'raceCondition', 'nullPointer'] as const).filter(
-        (b) => damageFor(b, weapon!, 1) === 3,
+        (b) => damageFor(b, weapon!, 1) > 1,
       );
       expect(victims).toHaveLength(1);
     }
@@ -99,10 +99,10 @@ describe('Mutex Lock', () => {
     expect(MUTEX_BOSS_IMMUNE_FRAMES).toBeGreaterThan(freezeFrames(true));
   });
 
-  it('is the Memory Leak weakness, and Race Condition takes 3x from the Null Pointer', async () => {
+  it('is the Memory Leak weakness, and Race Condition takes 2x from the Null Pointer', async () => {
     const { damageFor, WEAPONS } = await import('../src/data/weapons');
-    expect(damageFor('memoryLeak', 'mutexLock', WEAPONS.mutexLock.damage)).toBe(3 * WEAPONS.mutexLock.damage);
-    expect(damageFor('raceCondition', 'nullPointer', 2)).toBe(6);
+    expect(damageFor('memoryLeak', 'mutexLock', WEAPONS.mutexLock.damage)).toBe(2 * WEAPONS.mutexLock.damage);
+    expect(damageFor('raceCondition', 'nullPointer', 2)).toBe(4);
     expect(damageFor('raceCondition', 'buster', 2)).toBe(2);
   });
 });
