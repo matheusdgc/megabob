@@ -54,6 +54,8 @@ freeze, the health bar, the despawn when Bob dies).
 - Size gaps and steps by Bob's jump: about 53 px (3.3 tiles) high and 63 px far. Mandatory
   jumps stay well inside that; edge-of-reach jumps are for optional paths.
 - Teach each hazard alone where failing is cheap (near a checkpoint), then combine it.
+- **A breather before the climax:** health in the last section and no enemy in the last 6 tiles
+  before the boss door (`tests/stages.test.ts`). Swinging claws stand at least 5 tiles apart.
 - **At least 4 enemies in every section before the boss room** (the user's rule, enforced by
   `tests/stages.test.ts`). Keep them over solid ground where a hit would knock Bob into a pit.
 - `tests/stages.test.ts` and `tests/reach.test.ts` run for every entry automatically. The reach

@@ -241,16 +241,16 @@ Colocar os 4 terminais conforme o spec, com o Compiler Cannon atrás do vão que
 
 ## Fase 7: Final
 
-### T18: Fortaleza e Tech Debt fase 1 [M]
+### ✅ T18: Fortaleza e Tech Debt fase 1 [M]
 A fase da fortaleza (Legacy Turret e Deprecated Bot com escudo), o chefe como mainframe parede (gavetas, cartões perfurados, invocação de bots) e o CRT como ponto fraco.
-- [ ] Dá para terminar a fortaleza até o fim da fase 1 do chefe
+- [x] Dá para terminar a fortaleza até o fim da fase 1 do chefe (caminho crítico em teste; fases do chefe conferidas no navegador)
 
 **Verificar:** uma partida completa · **Dep.:** T17
 **Arquivos:** `src/stages/techDebt.ts`, `src/entities/enemies/{LegacyTurret,DeprecatedBot}.ts`, `src/entities/bosses/TechDebt.ts`
 
-### T19: Tech Debt fase 2 e créditos [M]
+### ✅ T19: Tech Debt fase 2 e créditos [M]
 O núcleo voador com laser de CRT e os "patches" (ataques rápidos dos 3 chefes), a explosão final e a cena de créditos.
-- [ ] Vencer a fase 2 leva aos créditos, e o save marca o jogo como zerado
+- [x] Vencer a fase 2 leva aos créditos, e o save marca o jogo como zerado
 
 **Verificar:** uma partida completa · **Dep.:** T18
 **Arquivos:** `src/entities/bosses/TechDebtCore.ts`, `src/scenes/CreditsScene.ts`

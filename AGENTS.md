@@ -27,6 +27,7 @@ Regras que o pack reforça e que já valem aqui:
 - **Medidas do Bob dimensionam o mapa.** O pulo alcança cerca de 53 px de altura (3,3 tiles) e 63 px de distância parado no chão (cerca de 4 tiles), medidos no jogo. Vãos obrigatórios devem ter no máximo uns 70% disso. Os vãos no limite ficam para caminhos opcionais.
 - **Toda fase precisa de um caminho crítico jogável do início ao chefe**, verificado em teste e no navegador, sem teletransporte. O teste já existe: `tests/reach.test.ts` roda o controle real do Bob (`src/systems/reach.ts`) em cada fase de `STAGES`, com 75% do controle aéreo e sem dash.
 - **Pelo menos 4 inimigos em cada seção de cada fase** (fora a sala do chefe), regra do usuário verificada por `tests/stages.test.ts`. Inimigos sobre chão firme onde um golpe jogaria o Bob num poço.
+- **Descanso antes do chefe:** saúde na última seção e nenhum inimigo nos 6 tiles antes da porta (teste em `tests/stages.test.ts`).
 - **Retorno proporcional ao evento:** congelamento, tremor e flash vêm da tabela `FEEDBACK` (`src/data/tuning.ts`), por `this.fx.play(evento)`. Ações rotineiras não tremem a tela.
 
 ## Comandos
