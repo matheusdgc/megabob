@@ -1,0 +1,47 @@
+{
+  "generator": "Built-in image_gen",
+  "page": "https://matheusdgc.itch.io/megabob",
+  "style": "Original 16-bit cyberpunk server city",
+  "pixelScale": 2,
+  "sharedPaletteColors": 256,
+  "sourceHashes": {
+    "city-wide-generated.png": "4e3c729c5093ca7fb31fd20704aba84f823d50f9a39501e41335fd9d24ea08f7",
+    "city-portrait-generated.png": "8ba630aeafbf8b620192ff8ce0d264d00b9b2741c800e5b5b15bbc559cf9694e"
+  },
+  "files": [
+    {
+      "file": "megabob-itch-background-wide.png",
+      "role": "Background / fundo externo recomendado",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 386277,
+      "colors": 252,
+      "sha256": "8b0e4084253638e0677ab7ce8873179e5bef3d3051c14a35092247261ae3c8a7"
+    },
+    {
+      "file": "megabob-itch-embed-bg.png",
+      "role": "Embed BG / antes de iniciar o jogo",
+      "width": 960,
+      "height": 540,
+      "bytes": 33355,
+      "colors": 76,
+      "sha256": "6343ae38c430a44e5c60cd9a258d3cc6f7be19f53b724c562193a5982eee432a"
+    },
+    {
+      "file": "megabob-itch-background-portrait.png",
+      "role": "Background / alternativa vertical",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 390557,
+      "colors": 252,
+      "sha256": "36b21d6f7e53973d4a4195bf32f88e392d8312d0ba2bb6a97fac322e2e06ceb8"
+    }
+  ],
+  "embedCrop": [
+    480,
+    0,
+    1440,
+    540
+  ],
+  "note": "Embed BG is a quiet center crop, not a second architectural frame; portrait is an external-background alternative."
+}
