@@ -54,3 +54,50 @@ export function normalizeGain(l: Loudness, targetDb = MUSIC_TARGET_DB, ceilingDb
 
 /** Frequency of a MIDI note (69 = A4 = 440 Hz). */
 export const noteFreq = (midi: number): number => 440 * 2 ** ((midi - 69) / 12);
+
+/** How far a loop start may move to land on a zero crossing, seconds. */
+export const LOOP_START_SNAP_S = 0.01;
+/** How far back from the requested end the loop end may move to match the start, seconds. */
+export const LOOP_END_SEARCH_S = 0.03;
+/** Samples compared at the seam (value and slope). */
+const MATCH = 4;
+
+/**
+ * Index of the rising zero crossing (d[i-1] < 0 <= d[i]) nearest to `at`, within `max` samples
+ * either way; `at` itself when there is none.
+ */
+export function zeroCrossingNear(d: Float32Array, at: number, max: number): number {
+  for (let k = 0; k <= max; k++) {
+    for (const i of [at + k, at - k]) {
+      if (i > 0 && i < d.length && d[i - 1]! < 0 && d[i]! >= 0) return i;
+    }
+  }
+  return at;
+}
+
+/**
+ * Click-free loop points. The start moves onto a rising zero crossing of the mid channel; the
+ * end moves back (at most LOOP_END_SEARCH_S) to where the next few samples repeat the ones at
+ * the start, in every channel, so jumping from the end to the start continues the waveform
+ * instead of stepping (a step is an audible click; a zero crossing alone is not enough under
+ * a held bass note). Seconds in, seconds out; `end` defaults to the track's end.
+ */
+export function snapLoop(channels: readonly Float32Array[], sampleRate: number, start: number, end?: number): { start: number; end: number } {
+  const len = channels[0]?.length ?? 0;
+  const mid = new Float32Array(len);
+  for (const ch of channels) for (let i = 0; i < len; i++) mid[i]! += ch[i]!;
+  const s = zeroCrossingNear(mid, Math.round(start * sampleRate), Math.round(LOOP_START_SNAP_S * sampleRate));
+  const last = Math.min(len - MATCH, Math.round((end ?? len / sampleRate) * sampleRate));
+  const first = Math.max(s + MATCH, last - Math.round(LOOP_END_SEARCH_S * sampleRate));
+  let best = last;
+  let bestErr = Infinity;
+  for (let e = last; e >= first; e--) {
+    let err = 0;
+    for (const ch of channels) for (let k = 0; k < MATCH; k++) err += (ch[e + k]! - ch[s + k]!) ** 2;
+    if (err < bestErr) {
+      bestErr = err;
+      best = e;
+    }
+  }
+  return { start: s / sampleRate, end: best / sampleRate };
+}

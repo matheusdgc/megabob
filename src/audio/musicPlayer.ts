@@ -1,6 +1,6 @@
 import type Phaser from 'phaser';
 import { MUSIC, type MusicId, musicKey } from '../data/music';
-import { measure, normalizeGain } from '../systems/audioMath';
+import { measure, normalizeGain, snapLoop } from '../systems/audioMath';
 import type { Mixer } from './mixer';
 
 interface Playing {
@@ -12,11 +12,13 @@ interface Playing {
 /**
  * One music track at a time. Loops on the decoded samples (AudioBufferSourceNode loopStart /
  * loopEnd), so there is no gap at the seam; switching tracks crossfades over `fadeMs` (0 = cut).
- * Each track's loudness is measured once and matched (normalizeGain).
+ * Each track is measured once: its loudness is matched (normalizeGain) and its loop points are
+ * moved onto zero crossings (snapLoop), so the seam does not click.
  */
 export class MusicPlayer {
   private current?: Playing;
-  private readonly gains = new Map<MusicId, number>();
+  /** Per track, measured once: loudness gain and click-free loop points. */
+  private readonly tuned = new Map<MusicId, { gain: number; start: number; end: number }>();
 
   constructor(
     private readonly mixer: Mixer,
@@ -41,11 +43,12 @@ export class MusicPlayer {
     const def = MUSIC[id];
     const src = ctx.createBufferSource();
     src.buffer = buffer;
+    const tune = this.tune(id, buffer);
     src.loop = def.loop;
-    src.loopStart = def.loopStart;
-    src.loopEnd = def.loopEnd ?? buffer.duration;
+    src.loopStart = tune.start;
+    src.loopEnd = tune.end;
     const gain = ctx.createGain();
-    const level = this.levelOf(id, buffer);
+    const level = tune.gain;
     const t = ctx.currentTime;
     gain.gain.setValueAtTime(fadeMs > 0 ? 0 : level, t);
     if (fadeMs > 0) gain.gain.linearRampToValueAtTime(level, t + fadeMs / 1000);
@@ -70,13 +73,14 @@ export class MusicPlayer {
     c.src.stop(end + 0.02);
   }
 
-  private levelOf(id: MusicId, buffer: AudioBuffer): number {
-    let g = this.gains.get(id);
-    if (g === undefined) {
+  private tune(id: MusicId, buffer: AudioBuffer): { gain: number; start: number; end: number } {
+    let t = this.tuned.get(id);
+    if (!t) {
       const channels = Array.from({ length: buffer.numberOfChannels }, (_, i) => buffer.getChannelData(i));
-      g = normalizeGain(measure(channels));
-      this.gains.set(id, g);
+      const def = MUSIC[id];
+      t = { gain: normalizeGain(measure(channels)), ...snapLoop(channels, buffer.sampleRate, def.loopStart, def.loopEnd) };
+      this.tuned.set(id, t);
     }
-    return g;
+    return t;
   }
 }
