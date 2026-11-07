@@ -16,7 +16,9 @@ Categorias disponíveis: `fx`, `enemies`, `bosses`, `icons`, `tiles`, `bg` e `ui
 - Jogo: 123 strips/imagens em `public/assets/`, cada PNG acompanhado de atlas JSON para ferramentas externas. O Phaser usa os tamanhos de quadro do manifesto de spritesheets.
 - Registro: `public/assets/art-manifest.json` e `src/data/processedArt.ts`, ambos gerados. `src/data/assets.ts` conserva as chaves anteriores e inclui os novos registros.
 - Revisão: contatos, repetições de fundos e `art_report.json` em `art/preview/`, fora do Git. O relatório distingue fontes processadas, conceitos de referência e fontes do pipeline anterior do Bob.
-- Logo: `art/exports/megabob-logo.png`, recortada com transparência e resolução da fonte; `public/assets/ui/title_logo.png`, versão 224×48 para o jogo. A versão atual tem lettering MEGABOB com faixas azuis inspiradas na referência IBM. A anterior está preservada em `art/raw/ui/U1_logo-original.png`.
+- Logo: `art/exports/megabob-logo.png`, recortada com transparência e resolução da fonte; `public/assets/ui/title_logo.png`, versão 224×48 para o jogo. A versão atual foi recriada com `imagegen` a pedido do usuário, com contornos suaves, letras abertas e faixas azuis inspiradas na referência IBM. Fonte intacta em `art/raw/ui/U1_logo_readable.png`, prompt integral ao lado e no export. A versão pixelada está preservada em `art/raw/ui/U1_logo.png` e `art/exports/megabob-logo-pixel.png`; a primeira logo continua em `art/raw/ui/U1_logo-original.png`.
+
+**Exceção explícita da logo:** `readable_logo` reduz com Lanczos, conserva a rampa azul e alpha intermediário, sem quantizar nem aplicar a limpeza binária dos sprites. Isso atende ao pedido de menos pixelização. As chaves e os quadros 224×48 continuam compatíveis com as cenas existentes; os demais assets mantêm seu processamento pixel art.
 
 ## Composição do título em 480×270
 
@@ -27,7 +29,7 @@ A fonte adicional `art/raw/ui/U2_title_bg_wide.png` foi gerada com `imagegen`, u
 | Fundo panorâmico | `title_background_wide`, 480×270 | `(0, 0)`, origem superior esquerda, escala 1 |
 | Logo sobre o céu | `title_logo_night`, 224×48 | `(16, 8)`, origem superior esquerda, escala 2 |
 
-`title_logo_night` deriva da mesma fonte da logo: azuis/neutros, remoção de pixels isolados e contorno claro de 1 px para separar as letras do céu. A versão original fica intacta. A margem interna evita cortar o contorno.
+`title_logo_night` deriva da mesma fonte suave da logo, com contorno claro já desenhado para separar as letras do céu. O encaixe 220×44 dentro do quadro 224×48 preserva as margens. O antigo contorno pixelado e a quantização não são aplicados à nova logo.
 
 `py -3 tools/art.py ui` também monta `art/exports/megabob-title-preview.png` (480×270) e a ampliação nearest-neighbor `art/preview/title_wide_2x.png`. O prompt do fundo está em `art/exports/megabob-title-wide.prompt.txt`. A prévia é uma composição de arte; a cena, os textos e a navegação do menu ficam para T13.
 

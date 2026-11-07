@@ -17,7 +17,7 @@ Revisão de movimento concluída por `tools/review_animations.py`: 145 strips e 
 
 Comparações animadas em `art/exports/megabob-{idle,run,shoot}-review.gif`; relatório `art/exports/bob-animation-review.json`. Contatos por pose e screenshots do Phaser em `art/preview/`. As poses por estado não receberam tempos fictícios de animação.
 
-Título panorâmico: fundo 480×270 recomposto em 16:9 com `imagegen`, mantendo a fonte U2 original, e variante `title_logo_night` com contorno claro. Prévia em `art/exports/megabob-title-preview.png`; layouts e arquivos em `docs/art-pipeline.md`.
+Título panorâmico: fundo 480×270 recomposto em 16:9 com `imagegen`, mantendo a fonte U2 original. Logo recriada a pedido do usuário com letras mais legíveis e contornos suaves (`U1_logo_readable.png`), mantendo as versões anteriores. `readable_logo` conserva a rampa azul/alpha intermediário e reduz com Lanczos: exceção explícita às regras de pixel art. As duas variantes continuam em 224×48. Prévia em `art/exports/megabob-title-preview.png`; layouts e arquivos em `docs/art-pipeline.md`.
 
 Seleção panorâmica: bordas de U3 recompostas sem deformar os retratos, cinco molduras 64×64, cadeado e foco separados. Os slots e o foco cabem no viewport e não se sobrepõem. Prévias bloqueada/liberada em `art/exports/megabob-stage-select-locked.png` e `megabob-stage-select-unlocked.png`; coordenadas em `art/exports/stage-select-layout.json`.
 

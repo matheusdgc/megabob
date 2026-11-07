@@ -120,8 +120,8 @@ def catalog():
                     [(0, 0), (2, 5), (2, 4), (2, 1)], (16, 16),
                     frame_fit={0: 'fill', 1: 'fill', 2: 'fill', 3: 'width'}, top_frames=[3]))
 
-    out.append(spec('ui', 'title_logo', 'ui/U1_logo', 1, 1, [(0, 0)], (224, 48)))
-    out.append(spec('ui', 'title_logo_night', 'ui/U1_logo', 1, 1, [(0, 0)], (224, 48), (220, 44)))
+    out.append(spec('ui', 'title_logo', 'ui/U1_logo_readable', 1, 1, [(0, 0)], (224, 48)))
+    out.append(spec('ui', 'title_logo_night', 'ui/U1_logo_readable', 1, 1, [(0, 0)], (224, 48), (220, 44)))
     out.append(spec('ui', 'title_background', 'ui/U2_title_bg', 1, 1, [(0, 0)],
                     (256, 224), opaque=True, stretch=True))
     out.append(spec('ui', 'title_background_wide', 'ui/U2_title_bg_wide', 1, 1, [(0, 0)],
@@ -143,6 +143,6 @@ def catalog():
 
 EXISTING_FX = {item[0] for _, _, _, animations in FX_SHEETS for item in animations} | {'fx_hit'}
 REFERENCE_ONLY = ['bob/B1_bob_sheet.png', 'bob_armor/A1_armor_sheet.png',
-                  'ui/U1_logo-original.png',
+                  'ui/U1_logo-original.png', 'ui/U1_logo.png',
                   'bosses/BS1a_memory_leak_sheet.png', 'bosses/BS2a_race_condition_sheet.png',
                   'bosses/BS3a_null_pointer_sheet.png']

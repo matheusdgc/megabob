@@ -140,5 +140,9 @@ Fortalecer a revisão de assets sem alterar a arte: conferir que as 268 texturas
 
 ## Perguntas em aberto
 
+### T21 — logo mais legível
+
+Recriar apenas o wordmark MEGABOB com a ferramenta integrada imagegen, mantendo azul e faixas IBM e abrindo as formas das letras. Preservar as fontes anteriores. Integrar a nova fonte nas duas chaves existentes de 224×48 com Lanczos e alpha suave, sem alterar cenas ou o processamento dos outros sprites. Conferir transparência, leitura reduzida, composição do título, testes, typecheck, build e console no navegador.
+
 - **Onde publicar** (GitHub Pages ou itch.io): só preciso saber na T23.
 - **Seu agente de sprites:** ele está seguindo a ordem de prioridade do `art-prompts.md` (B1-B8 → FX1/FX3/FX5 → E1/E2 → …)? Se estiver, o pipeline já consome os lotes nessa ordem.

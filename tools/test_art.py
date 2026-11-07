@@ -3,13 +3,22 @@ import unittest
 
 from PIL import Image, ImageDraw
 
-from art import clean, grid_regions, pack, periodic, background_quantize, quantize, align_top_frames
+from art import clean, grid_regions, pack, periodic, background_quantize, quantize, align_top_frames, readable_logo
 from stage_art import extend_view, quiet_legacy_layer
 from sprites import pixels
 from art_catalog import catalog
 
 
 class ArtProcessingTests(unittest.TestCase):
+    def test_readable_logo_keeps_antialiased_edges_inside_its_existing_frame(self):
+        image = Image.new('RGBA', (80, 40))
+        ImageDraw.Draw(image).polygon([(5, 35), (30, 3), (74, 35)], fill=(15, 98, 254, 255))
+        result = readable_logo(image, (32, 16), (28, 12))
+        self.assertEqual(result.size, (32, 16))
+        self.assertTrue(any(0 < alpha < 255 for alpha in pixels(result.getchannel('A'))))
+        self.assertIsNone(result.crop((0, 0, 32, 1)).getbbox())
+        self.assertEqual(image.getpixel((30, 3)), (15, 98, 254, 255))
+
     def test_legacy_background_reduces_brightness_without_changing_alpha(self):
         image = Image.new('RGBA', (3, 1))
         image.putdata([(239, 227, 194, 255), (66, 190, 101, 255), (0, 0, 0, 0)])

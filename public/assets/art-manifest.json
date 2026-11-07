@@ -2220,7 +2220,7 @@
     "frameWidth": 224,
     "frameHeight": 48,
     "frames": 1,
-    "source": "ui/U1_logo.png",
+    "source": "ui/U1_logo_readable.png",
     "emptyFrames": [],
     "sourceCells": [
       [
@@ -2236,7 +2236,7 @@
     "frameWidth": 224,
     "frameHeight": 48,
     "frames": 1,
-    "source": "ui/U1_logo.png",
+    "source": "ui/U1_logo_readable.png",
     "emptyFrames": [],
     "sourceCells": [
       [

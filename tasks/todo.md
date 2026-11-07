@@ -76,6 +76,7 @@ A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar 
 - [x] Revisar sprites dos quatro chefes e corrigir a apresentação visual do Memory Leak sem alterar os padrões de ataque.
 - [x] Conferir no Phaser a leitura e as transições dos checkpoints e da porta do chefe na nova composição, preservando sprites e regras existentes.
 - [x] Conferir a identidade dos PNGs carregados em Debug/Stage e os vínculos ativos da primeira fase, com controles negativos para placeholder e imagem alterada.
+- [x] Recriar a logo com contornos suaves e letras mais legíveis, preservar a versão pixelada e integrar as duas variantes 224×48 sem quantização.
 
 As fontes em `art/raw/` permanecem intactas durante a importação. A logo anterior foi preservada e foram acrescentados fundos panorâmicos de título e encerramento; total atual de 68 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 123 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
 

@@ -12,8 +12,8 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter
 
-from palette import nearest, PALETTE, _dist
-from sprites import frame_ranges, is_magenta, pixels, remove_specks
+from palette import nearest, _dist
+from sprites import frame_ranges, is_magenta, pixels
 from art_catalog import EXISTING_FX, REFERENCE_ONLY, catalog
 from ui_art import (
     stage_assets, stage_preview, STAGE_SLOTS, hud_assets, scene_preview, hud_preview,
@@ -118,6 +118,20 @@ def pack(regions, size, fit, empty=(), anchor='center', stretch=False, frame_fit
         y = 0 if anchor == 'top' else size[1] - small.height if anchor == 'bottom' else (size[1] - small.height) // 2
         sheet.alpha_composite(small, (i * size[0] + x, y))
     return sheet
+
+
+def readable_logo(image, size, fit):
+    """The title wordmark explicitly uses smooth alpha and its own blue ramp."""
+    box = image.getchannel('A').point(lambda a: 255 if a >= 8 else 0).getbbox()
+    if box is None:
+        raise ValueError('empty title logo')
+    crop = image.crop(box)
+    scale = min(fit[0] / crop.width, fit[1] / crop.height)
+    target = (max(1, round(crop.width * scale)), max(1, round(crop.height * scale)))
+    small = crop.resize(target, Image.Resampling.LANCZOS)
+    result = Image.new('RGBA', size)
+    result.alpha_composite(small, ((size[0] - small.width) // 2, (size[1] - small.height) // 2))
+    return result
 
 
 def align_top_frames(sheet, size, indices):
@@ -269,23 +283,6 @@ def hashes():
             for path in sorted(RAW.rglob('*.png'))}
 
 
-def night_logo(image):
-    """A one-pixel light keyline keeps the striped wordmark readable over navy skies."""
-    # The declared palette starts with six neutrals and five IBM blues. Avoid magenta
-    # background fringe mapping to purple in this blue-only logo variant.
-    allowed = PALETTE[:11]
-    colors = {rgb: min(allowed, key=lambda color: _dist(rgb, color))
-              for rgb in {pixel[:3] for pixel in pixels(image) if pixel[3]}}
-    result = image.copy()
-    result.putdata([(*colors[(r, g, b)], 255) if a else (0, 0, 0, 0)
-                    for r, g, b, a in pixels(image)])
-    remove_specks(result, 2)
-    outline = Image.new('RGBA', result.size, (166, 200, 255, 255))
-    outline.putalpha(result.getchannel('A').filter(ImageFilter.MaxFilter(3)))
-    outline.alpha_composite(result)
-    return outline
-
-
 def title_preview():
     """Art-only layout at the approved 480x270 viewport; menu text stays in game code."""
     exports = ROOT / 'art/exports'
@@ -332,12 +329,13 @@ def run(group='all'):
         source = item['source']
         if source not in cache:
             image = Image.open(RAW / source).convert('RGBA')
-            cache[source] = image if item.get('opaque') else clean(image)
+            cache[source] = image if item.get('opaque') or item['key'].startswith('title_logo') else clean(image)
         image = cache[source]
         if item['key'] == 'title_logo':
             exports = ROOT / 'art/exports'
             exports.mkdir(parents=True, exist_ok=True)
-            image.crop(image.getbbox()).save(exports / 'megabob-logo.png')
+            box = image.getchannel('A').point(lambda a: 255 if a >= 8 else 0).getbbox()
+            image.crop(box).save(exports / 'megabob-logo.png')
             prompt = (RAW / source).with_suffix('.prompt.txt')
             if prompt.exists():
                 (exports / 'megabob-logo.prompt.txt').write_text(prompt.read_text(encoding='utf-8'), encoding='utf-8')
@@ -349,14 +347,15 @@ def run(group='all'):
             if grid_key not in grids:
                 grids[grid_key] = grid_regions(image, item['cols'], item['rows'], item.get('mode', 'grid'))
             regions = [grids[grid_key][position] for position in item['selection']]
-        result = pack(regions, item['size'], item['fit'], item.get('empty', ()),
-                      item.get('anchor', 'center'), item.get('stretch', False), item.get('frame_fit'))
+        if item['key'].startswith('title_logo'):
+            result = readable_logo(image, item['size'], item['fit'])
+        else:
+            result = pack(regions, item['size'], item['fit'], item.get('empty', ()),
+                          item.get('anchor', 'center'), item.get('stretch', False), item.get('frame_fit'))
         if item.get('top_frames'):
             result = align_top_frames(result, item['size'], item['top_frames'])
         if item['key'] == 'tiles_memory_leak':
             result = memory_tiles(result)
-        if item['key'] == 'title_logo_night':
-            result = night_logo(result)
         if item['key'] == 'tech_laser':
             result = periodic(result, 2)
         entry = save_asset(result, item['group'], item['key'], item['size'], source,
