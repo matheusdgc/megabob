@@ -74,6 +74,7 @@ A cada lote novo em `art/raw/`, rodar o pipeline, revisar a prévia e registrar 
 - [x] Melhorar o contraste da Memory Leak: fundo menos saturado, superfícies jogáveis claras e lodo destacado, com comparações no jogo e fontes preservadas.
 - [x] Corrigir a composição rejeitada: restaurar todas as texturas de T1 e separar fundo/metal/perigos por paletas distintas, verificando os padrões originais quadro a quadro.
 - [x] Revisar sprites dos quatro chefes e corrigir a apresentação visual do Memory Leak sem alterar os padrões de ataque.
+- [x] Conferir no Phaser a leitura e as transições dos checkpoints e da porta do chefe na nova composição, preservando sprites e regras existentes.
 
 As fontes em `art/raw/` permanecem intactas durante a importação. A logo anterior foi preservada e foram acrescentados fundos panorâmicos de título e encerramento; total atual de 68 PNGs brutos. A implementação reaproveita Python/Pillow instalado, sem novas dependências. As 123 saídas ficam em `public/assets/`, com prévias e relatórios em `art/preview/`. Veja `docs/art-pipeline.md`.
 

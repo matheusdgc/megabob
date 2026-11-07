@@ -1,0 +1,34 @@
+{
+  "checkpoint": {
+    "away": false,
+    "activated": true,
+    "repeat": false,
+    "frames": [
+      0,
+      1
+    ],
+    "spotStable": true,
+    "aboveBackground": true
+  },
+  "door": {
+    "closedFrame": 0,
+    "halfFrame": 1,
+    "open": {
+      "state": "open",
+      "frame": 2,
+      "blocking": false
+    },
+    "shut": {
+      "state": "shut",
+      "frame": 0,
+      "blocking": true
+    },
+    "reset": {
+      "state": "closed",
+      "frame": 0,
+      "blocking": true
+    },
+    "shuts": 1,
+    "bodyStable": true
+  }
+}

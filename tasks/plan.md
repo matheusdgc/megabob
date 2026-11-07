@@ -103,6 +103,10 @@ O usuário rejeitou a simplificação visual: restaurar a textura inteira a part
 
 Preservar a nova composição e todas as texturas. Conferir área de checkpoint e lodo subindo, além dos enquadramentos já revisados. Reproduzir no Phaser a orientação incorreta do Memory Leak quando Bob está à sua direita e corrigir apenas o espelhamento visual, mantendo hitbox, posições, tiros, dano e tempos. Exportar uma galeria de contexto e a comparação dos dois sentidos; executar as verificações do projeto e atualizar o handoff.
 
+### T21 — leitura dos elementos interativos
+
+Conferir os estados reais dos checkpoints e da porta do chefe sobre a composição atual. Usar as classes existentes em uma cena descartável do Phaser para verificar off/on, fechado/meio/aberto, fechamento e reset, incluindo permanência das dimensões e do ponto de respawn. Exportar uma prancha com os estados nativos e registrar o resultado. Preservar os sprites, texturas, paleta e regras do jogo quando a inspeção não apontar um defeito.
+
 ## Paralelização
 
 - **A arte** já roda em paralelo (agente seu). Eu integro por lotes.

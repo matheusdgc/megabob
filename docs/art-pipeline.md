@@ -102,6 +102,12 @@ As paletas locais ficam em `memory_colors.py`, sem ampliar os candidatos da quan
 
 Comparações da versão rejeitada com a restauração: `art/exports/megabob-memory-contrast.png` e a versão `-gray.png`; captura nativa atual em `megabob-memory-palette.png`. O comando `node tools/check-assets.mjs http://127.0.0.1:5173 --stage-colors=after` captura entrada, plataformas, poço, checkpoint, sala do chefe e uma amostra estática do lodo em altura de inspeção; `before` registra a referência antes da alteração. As capturas ficam em `art/preview/memory-contrast-{before,after}/`; o script de revisão precisa delas para regenerar as comparações. A galeria `megabob-memory-context.png` mostra entrada, checkpoint, lodo e uma pose do chefe no cenário. São inspeções visuais, não uma partida completa.
 
+### Estados dos elementos interativos
+
+`tools/check-stage-interactives.mjs` usa as classes reais `Checkpoint` e `BossDoor` em uma cena descartável com as mesmas profundidades de fundo da fase. Confere ativação única do terminal, quadros off/on e ponto de respawn preservado. Na porta, confere quadros fechado/meio/aberto, bloqueio liberado somente quando aberta, fechamento com um único retorno `shut` e reset para fechado. As dimensões do corpo permanecem constantes. Não altera os componentes de produção.
+
+Depois do smoke test, `py -3 tools/review_memory_palette.py` exporta `megabob-memory-interactives.png`, o detalhe 2× `megabob-memory-interactives-detail.png` e `stage-interactives-review.json` em `art/exports/`. Os estados já têm leitura distinta na composição atual; sprites, paleta, texturas e regras foram mantidos. A prancha é uma inspeção dos componentes, sem substituir uma partida completa.
+
 ### Sprites e apresentação dos chefes
 
 `py -3 tools/review_bosses.py` verifica 20 assets / 57 quadros: tamanho, alpha binário, paleta e ausência de quadros vazios. Exporta `boss-{memory-leak,race-condition,null-pointer,tech-core}-review.png`, `megabob-memory-leak-idle.gif` e `boss-art-review.json` em `art/exports/`. Tech Debt parede/partes, retratos e projéteis também entram na auditoria técnica. As folhas de Race Condition, Null Pointer e Tech Debt são poses revisadas; suas mecânicas ainda dependem das respectivas tarefas.

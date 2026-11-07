@@ -85,6 +85,13 @@ def run():
         image = Image.open(preview / ('browser-boss-memory-leak-' + key + '.png')).convert('RGBA')
         facing.alpha_composite(image.resize((480, 270), Image.Resampling.NEAREST), (i * 480, 20))
     facing.save(export / 'megabob-memory-leak-facing.png')
+    interactives = Image.open(preview / 'browser-memory-interactives.png').convert('RGBA')
+    interactives = interactives.resize((480, 270), Image.Resampling.NEAREST)
+    interactives.save(export / 'megabob-memory-interactives.png')
+    interactives.crop((60, 174, 450, 256)).resize((780, 164), Image.Resampling.NEAREST).save(
+        export / 'megabob-memory-interactives-detail.png')
+    state_report = json.loads((preview / 'stage-interactives-report.json').read_text(encoding='utf-8'))
+    (export / 'stage-interactives-review.json').write_text(json.dumps(state_report, indent=2) + '\n', encoding='utf-8')
     print('7 textures / 30 regions preserve the original texture pattern and alpha; comparisons exported.')
 
 
