@@ -11,6 +11,7 @@ import { checkTextureSources } from './check-texture-sources.mjs';
 import { checkBobWeaponArt } from './check-bob-weapon-art.mjs';
 import { checkRaceArt } from './check-race-art.mjs';
 import { checkNullEnemyArt } from './check-null-enemy-art.mjs';
+import { captureNullContext } from './check-null-context.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -79,6 +80,7 @@ try {
       frameWidth: 48, frameHeight: height, frames: width / 48 });
   }
   const scenes = [];
+  let nullContext;
   for (const [query, scene, name] of [['?sprites', 'Debug', 'debug'], ['?stage=raceCondition', 'Stage', 'race-condition'], ['?stage=nullPointer', 'Stage', 'null-pointer'], ['?stage=memoryLeak', 'Stage', 'stage']]) {
     const expectedStage = new URLSearchParams(query).get('stage');
     await send('Page.navigate', { url: `${baseUrl}/${query}` });
@@ -100,6 +102,7 @@ try {
     const screenshot = await send('Page.captureScreenshot', { format: 'png' });
     await writeFile(join(output, `browser-assets-${name}.png`), Buffer.from(screenshot.data, 'base64'));
     scenes.push({ scene, ...(expectedStage ? {stage:expectedStage} : {}), verifiedTextures: manifest.length, ...sourceAudit });
+    if (expectedStage === 'nullPointer') nullContext = await captureNullContext(send, output);
   }
   const colorArg = process.argv.find(arg => arg.startsWith('--stage-colors='));
   const stageColors = colorArg ? await captureStageColors(send, output, colorArg.split('=')[1]) : undefined;
@@ -185,7 +188,7 @@ try {
   const nullEnemyArt = await checkNullEnemyArt(send, output);
   const interactives = await checkStageInteractives(send, output);
   const bobWeaponArt = await checkBobWeaponArt(send, output);
-  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, interactives, bobWeaponArt, errors, warnings, failedRequests };
+  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, nullContext, interactives, bobWeaponArt, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));

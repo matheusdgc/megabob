@@ -67,7 +67,24 @@ def run():
             source=sheets[key][column]
             canvas.alpha_composite(source.resize((source.width*3,source.height*3),Image.Resampling.NEAREST),(column*480+16,y))
     canvas.save(export/'megabob-null-enemy-contrast.png')
+    context=json.loads((ROOT/'art/preview/null-context-review.json').read_text(encoding='utf-8'))
+    if context['stage']!='nullPointer' or len(context['samples'])!=4:
+        raise ValueError('Expected four camera samples from the actual Null Pointer stage')
+    gallery=Image.new('RGBA',(960,632),INK)
+    ui_text(gallery,(12,8),'Null Pointer / contraste no mapa real / 16 bits',14)
+    ui_text(gallery,(12,30),'Inspecao estatica de camera; nao comprova percurso completo.',10)
+    labels=['Primeiro Void Eye','Garras sob teto baixo','Olhos entre paredes finas','Ponte de blocos temporarios']
+    for index,(sample,label) in enumerate(zip(context['samples'],labels)):
+        x,y=(index%2)*480,54+(index//2)*288
+        ui_text(gallery,(x+12,y),label,10)
+        capture=Image.open(ROOT/('art/preview/browser-null-context-'+sample['name']+'.png')).convert('RGBA')
+        if capture.size!=(960,540):
+            raise ValueError(sample['name']+': expected integer 2x canvas capture')
+        gallery.alpha_composite(capture.resize((480,270),Image.Resampling.NEAREST),(x,y+18))
+    gallery.save(export/'megabob-null-enemy-context.png')
+    (export/'null-enemy-context-review.json').write_text(json.dumps(context,indent=2)+'\n',encoding='utf-8')
     print('Null contrast: 9 frames, all original patterns/alpha preserved; 7 scenery PNGs unchanged.')
+    print('Real Null Pointer map: four static camera samples across three sections.')
 
 
 if __name__=='__main__':
