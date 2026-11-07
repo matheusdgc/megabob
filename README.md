@@ -43,6 +43,8 @@ npm run preview
 
 O build estático fica em `dist/`. O progresso é salvo neste navegador; mudar de navegador ou limpar seus dados não transfere o save.
 
+Para preparar o upload HTML5 no itch.io, execute `npm run package:itch`. O arquivo gerado é `release/megabob-html5.zip`; use embed de **960 × 540** e habilite tela cheia. Veja a [configuração e validação do deploy](docs/itchio.md).
+
 ## Controles padrão
 
 | Ação | Teclas |
