@@ -42,7 +42,7 @@ Validação da revisão visual atual: testes TypeScript e 21 testes Python passa
 
 ## Próximo passo: Checkpoints 3 e 4 com o usuário, depois T16 (upgrades) e a fortaleza
 
-- **Checkpoint 3:** o usuário joga a Memory Leak de ponta a ponta e ganha o Garbage Collector. O caminho crítico foi provado por `tests/reach.test.ts`, e cada seção, os inimigos, o lodo e a luta foram conferidos no Edge, mas ninguém jogou a fase inteira com as mãos. Ajustes prováveis depois de jogar: velocidade do lodo (`MEMORY_LEAK_GOO.speed`, 16 px/s) e o ritmo dos inimigos (`src/data/enemies.ts`).
+- **Checkpoint 3:** o usuário joga a Memory Leak de ponta a ponta e ganha o Garbage Collector. O caminho crítico foi provado por `tests/reach.test.ts`, e cada seção, os inimigos, o lodo e a luta foram conferidos no Edge, mas ninguém jogou a fase inteira com as mãos. Ajustes prováveis depois de jogar: velocidade do lodo (`MEMORY_LEAK_GOO.speed`, 24 px/s desde 07/11, a pedido do usuário) e o ritmo dos inimigos (`src/data/enemies.ts`).
 - **Checkpoint 4:** os 3 chefes vencíveis em qualquer ordem, o ciclo de fraquezas (ML ← Mutex, RC ← Null Pointer, NP ← Garbage Collector) e a fortaleza liberando com 3/3 na seleção. Falta o usuário jogar as 3 fases.
 - **T16:** upgrades (Update Terminal, tela de "upgrade instalado"); `save.armor` já existe e o Player já aplica `armor`.
 - **Falta jogar:** Race Condition (ritmo do chefe) e Null Pointer (tempo dos blocos, chefe) só foram conferidas por script.

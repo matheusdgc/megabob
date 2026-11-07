@@ -73,4 +73,4 @@ export const MEMORY_LEAK_SECTIONS = [
 ] as const;
 
 /** The shaft floods from the bottom of the map up to just under section C's floor. */
-export const MEMORY_LEAK_GOO: GooDef = { section: 1, fromRow: 51, toRow: 16, speed: 16, delayFrames: 90 };
+export const MEMORY_LEAK_GOO: GooDef = { section: 1, fromRow: 51, toRow: 16, speed: 24, delayFrames: 90 };
