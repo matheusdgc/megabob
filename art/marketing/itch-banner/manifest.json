@@ -1,0 +1,44 @@
+{
+  "generator": "Built-in image_gen for the scene plate; approved original logo composited with Pillow",
+  "sourceHashes": {
+    "art\\marketing\\itch-banner\\source\\banner-plate-generated.png": "355019e81b8f0b5227d33ef47698799675751b0c6a78974ff5ed1bab23a25260",
+    "art\\exports\\megabob-logo.png": "b2f91c22899dc6ed42d5720bd6483ea4770ed8d37932e7b7ef3c0013e30be790"
+  },
+  "sourceCrop": [
+    0,
+    80,
+    2172,
+    623
+  ],
+  "pixelMaster": [
+    480,
+    120
+  ],
+  "files": [
+    {
+      "file": "megabob-itch-banner.png",
+      "width": 960,
+      "height": 240,
+      "bytes": 181866,
+      "logoBox": [
+        210,
+        56,
+        750,
+        146
+      ]
+    },
+    {
+      "file": "megabob-itch-banner-2x.png",
+      "width": 1920,
+      "height": 480,
+      "bytes": 357133,
+      "logoBox": [
+        420,
+        112,
+        1500,
+        292
+      ]
+    }
+  ],
+  "style": "16-bit scene; readable smooth logo is the previously approved branding exception"
+}

@@ -30,7 +30,9 @@ O save é local ao navegador e à origem do iframe. Um save do localhost não é
 
 ## Arte do tema
 
-Fundos preparados para [a página do Megabob](https://matheusdgc.itch.io/megabob), em `art/marketing/itch-background/`:
+**Conjunto integrado recomendado:** `art/marketing/itch-theme/`. Substitua os três campos juntos: **Background** = `01-background.png` (1920×1080), **Banner** = `02-banner.png` (960×320), **Embed BG** = `03-embed-bg.png` (960×540). São recortes da mesma cena, com a logo MEGABOB aprovada no banner. Background centralizado, sem repetição, **Fixed desmarcado**; BG 2 com Alpha 0. Encaixe desktop preparado para coluna de 960 px e intervalo padrão de 20 px antes do embed. Guia, prévia, fonte e prompt em [README do tema integrado](../art/marketing/itch-theme/README.md). Reprodução: `py -3 tools/export_itch_theme.py`.
+
+Versões anteriores, mantidas como alternativas para [a página do Megabob](https://matheusdgc.itch.io/megabob), em `art/marketing/itch-background/` (não misturar com o conjunto integrado):
 
 - **Background:** `megabob-itch-background-wide.png` (1920×1080), centralizado, sem repetição e com Fixed marcado.
 - **Embed BG:** `megabob-itch-embed-bg.png` (960×540), recorte central discreto para não duplicar os prédios na área do jogo.
