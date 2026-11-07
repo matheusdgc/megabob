@@ -15,7 +15,7 @@ describe('parseMap', () => {
 
   it('rejects ragged rows, unknown characters and missing/duplicate spawns', () => {
     expect(() => parseMap(['#P#', '##'])).toThrow(/row 1/);
-    expect(() => parseMap(['#P?'])).toThrow(/unknown tile/);
+    expect(() => parseMap(['#P@'])).toThrow(/unknown tile/);
     expect(() => parseMap(['###'])).toThrow(/no P/);
     expect(() => parseMap(['PP'])).toThrow(/more than one P/);
   });
