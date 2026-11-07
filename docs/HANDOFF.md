@@ -1,6 +1,6 @@
 # Handoff: estado do projeto
 
-> Atualizado em 07/11/2026, no fim da T20 (editor). Branch `dev`.
+> Atualizado em 07/11/2026, no fim da T20 (ambiente de desenvolvimento). Branch `dev`.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
 
 ## Feito (tudo commitado no `dev`)

@@ -1,6 +1,7 @@
 {
   "name": "megabob",
   "private": true,
+  "description": "A 16-bit action platformer starring IBM Bob in a world of software bugs.",
   "version": "0.1.0",
   "type": "module",
   "scripts": {

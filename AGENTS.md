@@ -66,7 +66,7 @@ Toda tarefa só fecha com `npm test`, `npm run typecheck` e `npm run build` pass
 
 ## Memória do projeto (ai-memory)
 
-O servidor ai-memory roda num container Docker (`ai-memory`) em `http://127.0.0.1:49374`. O editor (inclusive a extensão dentro do IBM Bob) usa pelo plugin `ai-memory@ai-memory`, já ativado em `~/.agents/settings.json`.
+O servidor ai-memory roda num container Docker (`ai-memory`) em `http://127.0.0.1:49374`. O ambiente de desenvolvimento (inclusive a extensão dentro do IBM Bob) usa pelo plugin `ai-memory@ai-memory`, já ativado em `~/.agents/settings.json`.
 
 - **Escopo deste projeto:** `workspace: "default"`, `project: "matheusdgc-megabob"`. Com `matheusdgc` como workspace, o servidor responde "not found".
 - **Se as ferramentas `memory_*` não aparecerem:** o Docker provavelmente subiu depois da sessão, e o plugin falhou com "Connection closed". Com o Docker aberto, rode `/mcp`, escolha `plugin:ai-memory:ai-memory` e clique em **Reconnect**. Se não houver `/mcp`, abra uma sessão nova.

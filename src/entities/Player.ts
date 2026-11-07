@@ -92,6 +92,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, bobKey('idle'));
+    this.setName('ibm-bob'); // Stable mascot identity for scene inspection.
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setOrigin(0.5, 1);
