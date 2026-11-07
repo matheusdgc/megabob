@@ -26,14 +26,14 @@ export interface MusicDef {
   loopEnd?: number;
 }
 
-const track = (key: string, loopStart = 0, loop = true): MusicDef => {
+const track = (key: string, loopStart = 0, loop = true, loopEnd?: number): MusicDef => {
   const files = MUSIC_FILES[key];
   if (!files) throw new Error(`music ${key}: run tools/music.py`);
-  return { files, loop, loopStart };
+  return { files, loop, loopStart, ...(loopEnd !== undefined && { loopEnd }) };
 };
 
 export const MUSIC: Record<MusicId, MusicDef> = {
-  title: track('title'),
+  title: track('title', 19, true, 189), // skips its ~19 s intro; loops before the fade-out
   select: track('select'),
   memoryLeak: track('memory_leak', 4), // skips the fade-in on every loop
   raceCondition: track('race_condition'),

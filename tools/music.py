@@ -22,7 +22,7 @@ OUT = ROOT / 'public' / 'assets' / 'music'
 
 # game id -> source file (see docs/soundtrack.md)
 TRACKS = {
-    'title': '01_titulo__8Bit_Title_Screen.mp3',
+    'title': 'reserva_fortaleza__retro-bgm-chan-factory-at-night-516327.mp3',  # the user's pick (was 01_titulo)
     'select': '02_selecao_de_fases__Select_Mountain_120BPM.ogg',
     'memory_leak': '03_fase_memory_leak__Sewer_Nightclub.ogg',
     'race_condition': '04_fase_race_condition__Castle_Stage_180BPM.ogg',

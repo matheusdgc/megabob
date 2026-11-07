@@ -6,7 +6,7 @@ Fonte: `art/raw/soundtrack/` (14 faixas). Análise feita por script (duração, 
 
 | # | Uso | Faixa | Duração | Tom / BPM | Por quê | Tratamento |
 |---|---|---|---|---|---|---|
-| 1 | Título | `01_titulo__8Bit_Title_Screen.mp3` (JPool, "(Game-1) Theme") | 22 s | Ré menor · 175 | Curta e enérgica, sem fade. Serve bem como abertura em loop | loop inteiro |
+| 1 | Título | `reserva_fortaleza__retro-bgm-chan-factory-at-night-516327.mp3` (retro-bgm-chan, "Factory at Night") | 192 s | Lá# menor | **Escolha do usuário (07/11).** Industrial e grave, com intro de ~19 s e fade-out | loop de 19 s a 189 s (pula a intro e o fade-out) |
 | 2 | Seleção de fases | `02_selecao_de_fases__Select_Mountain_120BPM.ogg` (MintoDog) | 32 s | Sol menor · 120 | Tempo médio, emenda bem no loop | loop inteiro |
 | 3 | Fase Memory Leak | `03_fase_memory_leak__Sewer_Nightclub.ogg` (Section 31 - Tech) | 140 s | Dó maior · ~112 | A mais pesada nos graves (81% da energia abaixo de 200 Hz), com groove, e vai crescendo | começa em 0 s, loop a partir de ~4 s (pula o fade-in). Pico passa de 0 dB: reduzir o ganho |
 | 4 | Fase Race Condition | `04_fase_race_condition__Castle_Stage_180BPM.ogg` (MintoDog) | 72 s | Dó# menor · 180 | A mais rápida, com intensidade constante, e emenda bem no loop | loop inteiro |
@@ -24,7 +24,7 @@ Fonte: `art/raw/soundtrack/` (14 faixas). Análise feita por script (duração, 
 | Faixa | Observação | Uso possível |
 |---|---|---|
 | `reserva_creditos__Electronic_Chiptune_3.wav` | Você tinha escolhido para os créditos. É WAV de 23 MB, em loop, com tom pouco definido | volta para os créditos se a "Legends" não agradar de ouvido (converter para OGG) |
-| `reserva_fortaleza__retro-bgm-chan-factory-at-night-516327.mp3` | Industrial e grave, em Lá# menor, com intro de ~19 s e fade-out | alternativa para a Fortaleza ou a Memory Leak (loop de 19 s a 189 s) |
+| `01_titulo__8Bit_Title_Screen.mp3` (JPool, "(Game-1) Theme") | Era o título até 07/11; curta (22 s) e enérgica, sem fade | volta para o título se o usuário preferir |
 | `reserva_titulo__white_records-pixel-fight-8-bit-arcade-music-background-music-for-video-208775.mp3` | Fá maior, alto e animado, a mais "arcade" do lote | alternativa para o Título (loop de 0 a 58 s), se quiser uma abertura mais alegre |
 | `reserva_sem_uso__lightyeartraxx-kim-lightyear-angel-eyes-chiptune-edit-110226.mp3` | Ré menor, 220 s, versão chiptune de uma música (é um cover) | dispensável |
 
