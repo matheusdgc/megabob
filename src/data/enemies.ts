@@ -107,6 +107,8 @@ export const EYE_GLITCH_FRAMES = 10;
 export const EYE_GONE_FRAMES = 45;
 /** How far from home it may reappear, px. */
 export const EYE_HOP = 56;
+/** It never reappears closer than this to Bob, px (a contact hit needs a warning first). */
+export const EYE_SAFE = 48;
 export const CURSOR_SPEED = 140;
 export const CURSOR_DAMAGE = 3;
 

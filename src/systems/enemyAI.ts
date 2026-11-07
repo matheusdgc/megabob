@@ -14,6 +14,7 @@ import {
   EYE_GONE_FRAMES,
   EYE_HOP,
   EYE_IDLE_FRAMES,
+  EYE_SAFE,
   EYE_SIGHT,
   EYE_WIDE_FRAMES,
   RUNNER_BRAKE_FRAMES,
@@ -378,9 +379,12 @@ export interface Eye {
   /** Where it floats around (it reappears near here, never far). */
   homeX: number;
   homeY: number;
+  /** Where it is now (Bob's offset is measured from here). */
+  x: number;
+  y: number;
 }
 
-export const newEye = (x: number, y: number): Eye => ({ state: 'idle', frames: 0, homeX: x, homeY: y });
+export const newEye = (x: number, y: number): Eye => ({ state: 'idle', frames: 0, homeX: x, homeY: y, x, y });
 
 export interface EyeOut {
   /** Sheet frame: 0 idle, 1 eye wide (about to shoot), 2 glitching out, 3 gone. */
@@ -420,11 +424,33 @@ export function stepEye(e: Eye, bob: { dx: number; dy: number } | null, rand: ()
     case 'gone':
       if (e.frames >= EYE_GONE_FRAMES) {
         go('idle');
-        const a = rand() * Math.PI * 2;
-        return { frame: 0, solid: true, fire: false, moveTo: { x: e.homeX + Math.cos(a) * EYE_HOP, y: e.homeY + Math.sin(a) * EYE_HOP * 0.5 } };
+        const to = reappearSpot(e, bob ? { x: e.x + bob.dx, y: e.y + bob.dy } : null, rand());
+        e.x = to.x;
+        e.y = to.y;
+        return { frame: 0, solid: true, fire: false, moveTo: to };
       }
       return { frame: 3, solid: false, fire: false };
   }
+}
+
+/**
+ * Where a Void Eye reappears: on its hop circle around home, starting at a random angle and
+ * turning until the spot is at least EYE_SAFE from Bob (else the farthest spot tried).
+ */
+function reappearSpot(e: Eye, bob: { x: number; y: number } | null, r: number): { x: number; y: number } {
+  let best = { x: e.homeX, y: e.homeY };
+  let bestD = -1;
+  for (let i = 0; i < 8; i++) {
+    const a = (r + i / 8) * Math.PI * 2;
+    const p = { x: e.homeX + Math.cos(a) * EYE_HOP, y: e.homeY + Math.sin(a) * EYE_HOP * 0.5 };
+    const d = bob ? Math.hypot(p.x - bob.x, p.y - bob.y) : Infinity;
+    if (d >= EYE_SAFE) return p;
+    if (d > bestD) {
+      bestD = d;
+      best = p;
+    }
+  }
+  return best;
 }
 
 // ------------------------------------------------------------------ Dangling Ref

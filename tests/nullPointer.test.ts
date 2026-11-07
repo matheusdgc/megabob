@@ -39,6 +39,19 @@ describe('Void Eye', () => {
     expect(Math.hypot(hop.x - 100, (hop.y - 100) * 2)).toBeCloseTo(EYE_HOP);
   });
 
+  it('never reappears on top of Bob (no hit without a warning)', async () => {
+    const { EYE_SAFE } = await import('../src/data/enemies');
+    for (const a of [0, 0.25, 0.5, 0.75]) {
+      const e = newEye(100, 100);
+      e.state = 'gone';
+      e.frames = EYE_GONE_FRAMES;
+      // Bob right where the hop at this angle would land
+      const land = { x: 100 + Math.cos(a * Math.PI * 2) * EYE_HOP, y: 100 + Math.sin(a * Math.PI * 2) * EYE_HOP * 0.5 };
+      const out = stepEye(e, { dx: land.x - 100, dy: land.y - 100 }, () => a);
+      expect(Math.hypot(out.moveTo!.x - land.x, out.moveTo!.y - land.y)).toBeGreaterThanOrEqual(EYE_SAFE);
+    }
+  });
+
   it('stays idle while Bob is far', () => {
     const e = newEye(0, 0);
     for (let i = 0; i < 300; i++) expect(stepEye(e, { dx: 500, dy: 0 }, Math.random).fire).toBe(false);
