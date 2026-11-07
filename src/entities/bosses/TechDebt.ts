@@ -25,6 +25,7 @@ import { syncBodyTransform } from '../bodyTransform';
 import { CombatCue } from '../CombatCue';
 import { COMBAT_ART } from '../../data/tuning';
 import { chargeVelocity } from '../../systems/combatArt';
+import { hostileCursorPose } from '../../systems/projectileArt';
 
 /** Where things sit on the 256x192 wall sprite (its content: x 8-248, y 32-160). */
 const WALL = { w: 256, h: 192, contentLeft: 8, contentTop: 32, bottomPad: 32, crt: { x: 134, y: 91 }, reels: [{ x: 137, y: 45 }, { x: 211, y: 87 }] };
@@ -249,7 +250,8 @@ export class TechDebt extends Boss {
       for (const d of [-0.5, -0.25, 0, 0.25, 0.5]) {
         const vx = Math.cos(aim + d) * 150;
         const vy = Math.sin(aim + d) * 150;
-        this.fire('null_cursor', at.x, at.y, vx, vy, PATCH_DAMAGE).setRotation(Math.atan2(vy, vx) + (vx > 0 ? 0 : Math.PI)).setFlipX(vx > 0);
+        const pose = hostileCursorPose(vx,vy);
+        this.fire('null_cursor', at.x, at.y, vx, vy, PATCH_DAMAGE).setRotation(pose.rotation).setFlipX(pose.flipX);
       }
       this.scene.events.emit('bossSfx', 'nullPointer');
     }

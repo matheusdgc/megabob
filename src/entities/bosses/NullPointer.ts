@@ -16,6 +16,7 @@ import { loopAnim } from '../effects';
 import type { BobLocator } from './index';
 import { CombatCue } from '../CombatCue';
 import { COMBAT_ART } from '../../data/tuning';
+import { hostileCursorPose } from '../../systems/projectileArt';
 
 const BODY: [number, number] = [26, 56];
 const HURT_FRAME = 6;
@@ -111,7 +112,8 @@ export class NullPointer extends Boss {
 
   private fireCursor(vx: number, vy: number): void {
     const c = this.cursors.create(this.x + this.ai.facing * 12, this.y - 40, 'null_cursor', 0) as Phaser.Physics.Arcade.Sprite;
-    c.setDepth(2).setFlipX(vx > 0).setRotation(Math.atan2(vy, vx) + (vx > 0 ? 0 : Math.PI));
+    const pose = hostileCursorPose(vx,vy);
+    c.setDepth(2).setFlipX(pose.flipX).setRotation(pose.rotation);
     c.play(loopAnim(this.scene, 'null_cursor', [0, 1], 10));
     (c.body as Phaser.Physics.Arcade.Body).setSize(10, 10).setAllowGravity(false).setVelocity(vx, vy);
     this.scene.events.emit('bossSfx', 'nullPointer');

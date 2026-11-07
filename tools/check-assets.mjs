@@ -16,6 +16,7 @@ import { checkNullMotion } from './check-null-motion.mjs';
 import { checkCombatMotion } from './check-combat-motion.mjs';
 import { checkBossRoom } from './check-boss-rooms.mjs';
 import { checkBossLifecycle } from './check-boss-lifecycle.mjs';
+import { checkCursorDirections } from './check-cursor-directions.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -203,7 +204,9 @@ try {
   const bobWeaponArt = await checkBobWeaponArt(send, output);
   const combatMode=process.argv.find(arg=>arg.startsWith('--combat-review='))?.split('=')[1];
   const combatMotion=combatMode?await checkCombatMotion(send,output,combatMode,process.argv.includes('--combat-clips')):undefined;
-  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, nullMotion, nullContext, interactives, bobWeaponArt, combatMotion, bossRooms, bossLifecycle, errors, warnings, failedRequests };
+  const cursorMode=process.argv.find(arg=>arg.startsWith('--cursor-directions='))?.split('=')[1];
+  const cursorDirections=cursorMode?await checkCursorDirections(send,output,cursorMode):undefined;
+  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, raceArt, nullEnemyArt, nullMotion, nullContext, interactives, bobWeaponArt, combatMotion, bossRooms, bossLifecycle, cursorDirections, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));

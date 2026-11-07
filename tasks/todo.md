@@ -280,6 +280,7 @@ Trocar os placeholders que sobraram, calibrar hitboxes conforme os sprites reais
 - [x] Rever seis inimigos das fases 1/2 e os quatro chefes: corrigir transformações de corpo, lodo após derrota, origem/chegada do laser e projéteis reaproveitados; conferir estados normais/fúria, duas fases de Tech Debt, congelamento e descarte no Phaser.
 - [x] Conferir a integração dos quatro chefes na StageScene real: tiro de Bob, dano dos perigos, poças/chão, HUD e limpeza de ataques/minions após a derrota, com entrada direta para QA.
 - [x] Conferir Mutex, pausa/retomada, reinícios repetidos e morte de Bob nos quatro encontros; corrigir orientação do Memory Leak congelado e cancelamento dos efeitos da transformação do Tech Debt.
+- [x] Corrigir orientação dos cursores do Void Eye e unificar os três emissores hostis; validar oito direções, quadros e corpos originais no Phaser.
 - [ ] Nenhum placeholder visível no jogo
 **Verificar:** percorrer o jogo · **Dep.:** T4b
 

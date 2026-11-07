@@ -3,6 +3,7 @@ import { PHYSICS_FPS } from '../config';
 import { BLOCK_DAMAGE, BLOCK_GRAVITY, CARD_DAMAGE, CURSOR_DAMAGE, SPIKE_SHOT_DAMAGE } from '../data/enemies';
 import { NULL_ENEMY_ART } from '../data/tuning';
 import { loopAnim } from './effects';
+import { hostileCursorPose } from '../systems/projectileArt';
 
 const CULL_MARGIN = 32;
 
@@ -36,7 +37,11 @@ export class EnemyShot extends Phaser.Physics.Arcade.Sprite {
     this.body.setAllowGravity(def.gravity > 0);
     this.body.setGravityY(def.gravity);
     this.body.setVelocity(vx, vy);
-    if (kind === 'cursor') this.play(loopAnim(scene, def.key, [0, 1], PHYSICS_FPS / NULL_ENEMY_ART.cursorFrameTicks));
+    if (kind === 'cursor') {
+      const pose = hostileCursorPose(vx,vy);
+      this.setFlipX(pose.flipX).setRotation(pose.rotation);
+      this.play(loopAnim(scene, def.key, [0, 1], PHYSICS_FPS / NULL_ENEMY_ART.cursorFrameTicks));
+    }
   }
 
   override preUpdate(time: number, delta: number): void {

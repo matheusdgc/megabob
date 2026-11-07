@@ -1,0 +1,641 @@
+{
+  "baseline": "aaa47a1",
+  "sourceFaces": "left",
+  "samples": 24,
+  "maxErrorBefore": {
+    "voidEye": 180,
+    "nullPointer": 0,
+    "techDebt": 0
+  },
+  "maxErrorAfter": 0,
+  "rows": [
+    {
+      "emitter": "voidEye",
+      "direction": [
+        1,
+        0
+      ],
+      "position": [
+        44,
+        76
+      ],
+      "velocity": [
+        140,
+        0
+      ],
+      "flipX": true,
+      "rotation": 0,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "voidEye",
+      "direction": [
+        1,
+        1
+      ],
+      "position": [
+        100,
+        76
+      ],
+      "velocity": [
+        98.99494936611664,
+        98.99494936611664
+      ],
+      "flipX": true,
+      "rotation": 0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "voidEye",
+      "direction": [
+        0,
+        1
+      ],
+      "position": [
+        156,
+        76
+      ],
+      "velocity": [
+        0,
+        140
+      ],
+      "flipX": false,
+      "rotation": -1.5707963267948966,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "voidEye",
+      "direction": [
+        -1,
+        1
+      ],
+      "position": [
+        212,
+        76
+      ],
+      "velocity": [
+        -98.99494936611664,
+        98.99494936611664
+      ],
+      "flipX": false,
+      "rotation": -0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "voidEye",
+      "direction": [
+        -1,
+        0
+      ],
+      "position": [
+        268,
+        76
+      ],
+      "velocity": [
+        -140,
+        0
+      ],
+      "flipX": false,
+      "rotation": 0,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "voidEye",
+      "direction": [
+        -1,
+        -1
+      ],
+      "position": [
+        324,
+        76
+      ],
+      "velocity": [
+        -98.99494936611664,
+        -98.99494936611664
+      ],
+      "flipX": false,
+      "rotation": 0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "voidEye",
+      "direction": [
+        0,
+        -1
+      ],
+      "position": [
+        380,
+        76
+      ],
+      "velocity": [
+        0,
+        -140
+      ],
+      "flipX": false,
+      "rotation": 1.5707963267948966,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "voidEye",
+      "direction": [
+        1,
+        -1
+      ],
+      "position": [
+        436,
+        76
+      ],
+      "velocity": [
+        98.99494936611664,
+        -98.99494936611664
+      ],
+      "flipX": true,
+      "rotation": -0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "nullPointer",
+      "direction": [
+        1,
+        0
+      ],
+      "position": [
+        44,
+        148
+      ],
+      "velocity": [
+        140,
+        0
+      ],
+      "flipX": true,
+      "rotation": 0,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "nullPointer",
+      "direction": [
+        1,
+        1
+      ],
+      "position": [
+        100,
+        148
+      ],
+      "velocity": [
+        98.99494936611664,
+        98.99494936611664
+      ],
+      "flipX": true,
+      "rotation": 0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "nullPointer",
+      "direction": [
+        0,
+        1
+      ],
+      "position": [
+        156,
+        148
+      ],
+      "velocity": [
+        0,
+        140
+      ],
+      "flipX": false,
+      "rotation": -1.5707963267948966,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "nullPointer",
+      "direction": [
+        -1,
+        1
+      ],
+      "position": [
+        212,
+        148
+      ],
+      "velocity": [
+        -98.99494936611664,
+        98.99494936611664
+      ],
+      "flipX": false,
+      "rotation": -0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "nullPointer",
+      "direction": [
+        -1,
+        0
+      ],
+      "position": [
+        268,
+        148
+      ],
+      "velocity": [
+        -140,
+        0
+      ],
+      "flipX": false,
+      "rotation": 0,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "nullPointer",
+      "direction": [
+        -1,
+        -1
+      ],
+      "position": [
+        324,
+        148
+      ],
+      "velocity": [
+        -98.99494936611664,
+        -98.99494936611664
+      ],
+      "flipX": false,
+      "rotation": 0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "nullPointer",
+      "direction": [
+        0,
+        -1
+      ],
+      "position": [
+        380,
+        148
+      ],
+      "velocity": [
+        0,
+        -140
+      ],
+      "flipX": false,
+      "rotation": 1.5707963267948966,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "nullPointer",
+      "direction": [
+        1,
+        -1
+      ],
+      "position": [
+        436,
+        148
+      ],
+      "velocity": [
+        98.99494936611664,
+        -98.99494936611664
+      ],
+      "flipX": true,
+      "rotation": -0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        10,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "techDebt",
+      "direction": [
+        1,
+        0
+      ],
+      "position": [
+        44,
+        220
+      ],
+      "velocity": [
+        150,
+        0
+      ],
+      "flipX": true,
+      "rotation": 0,
+      "headingErrorDegrees": 0,
+      "body": [
+        12,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "techDebt",
+      "direction": [
+        1,
+        1
+      ],
+      "position": [
+        100,
+        220
+      ],
+      "velocity": [
+        106.06601717798213,
+        106.06601717798212
+      ],
+      "flipX": true,
+      "rotation": 0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        12,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "techDebt",
+      "direction": [
+        0,
+        1
+      ],
+      "position": [
+        156,
+        220
+      ],
+      "velocity": [
+        9.184850993605149e-15,
+        150
+      ],
+      "flipX": false,
+      "rotation": -1.5707963267948966,
+      "headingErrorDegrees": 0,
+      "body": [
+        12,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "techDebt",
+      "direction": [
+        -1,
+        1
+      ],
+      "position": [
+        212,
+        220
+      ],
+      "velocity": [
+        -106.06601717798212,
+        106.06601717798213
+      ],
+      "flipX": false,
+      "rotation": -0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        12,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "techDebt",
+      "direction": [
+        -1,
+        0
+      ],
+      "position": [
+        268,
+        220
+      ],
+      "velocity": [
+        -150,
+        1.8369701987210297e-14
+      ],
+      "flipX": false,
+      "rotation": 0,
+      "headingErrorDegrees": 0,
+      "body": [
+        12,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "techDebt",
+      "direction": [
+        -1,
+        -1
+      ],
+      "position": [
+        324,
+        220
+      ],
+      "velocity": [
+        -106.06601717798212,
+        -106.06601717798213
+      ],
+      "flipX": false,
+      "rotation": 0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        12,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "techDebt",
+      "direction": [
+        0,
+        -1
+      ],
+      "position": [
+        380,
+        220
+      ],
+      "velocity": [
+        9.184850993605149e-15,
+        -150
+      ],
+      "flipX": false,
+      "rotation": 1.5707963267948966,
+      "headingErrorDegrees": 0,
+      "body": [
+        12,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    },
+    {
+      "emitter": "techDebt",
+      "direction": [
+        1,
+        -1
+      ],
+      "position": [
+        436,
+        220
+      ],
+      "velocity": [
+        106.06601717798213,
+        -106.06601717798212
+      ],
+      "flipX": true,
+      "rotation": -0.7853981633974492,
+      "headingErrorDegrees": 0,
+      "body": [
+        12,
+        10
+      ],
+      "frames": [
+        0,
+        1
+      ]
+    }
+  ],
+  "productionPngsChanged": false,
+  "errors": [],
+  "warnings": [],
+  "failedRequests": []
+}
