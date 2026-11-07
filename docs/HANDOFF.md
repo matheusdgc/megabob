@@ -45,7 +45,7 @@ Validação da revisão visual atual: testes TypeScript e 24 testes Python passa
 
 - **Checkpoint 1:** aprovado pelo usuário em 06/11, sem ajustes em `src/data/tuning.ts`.
 - **Pedido novo:** uma tela de configuração para remapear teclas e botões. Virou a T13b em `tasks/todo.md`, depois da T13 (título, save e pausa), porque depende do save e dos menus.
-- **Arte bruta fora do git:** `art/raw/enemies/`, `fx/`, `bosses/`, `bg/`, `tiles/` e `ui/`. A geração do lote terminou; fontes preservadas durante a importação. Confirme com o usuário antes de commitar essas pastas. Os arquivos processados ficam em `public/assets/`.
+- **Arte bruta no git:** `art/raw/` (fontes PNG e prompts) entrou no repositório em 07/11, a pedido do usuário; só `art/raw/soundtrack/` continua fora (64 MB brutos). Os arquivos processados ficam em `public/assets/`.
 - **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
 
 ## Próximo passo: Checkpoint 5 (partida completa, do título aos créditos, jogada pelo usuário), depois fechar T21/T22 e a T23
