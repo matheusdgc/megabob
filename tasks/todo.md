@@ -293,5 +293,6 @@ Medir os fps no pior caso, ajustar vida e dano dos chefes, conferir os drops e c
 
 ### T23: Build e deploy [S]
 Build de produção, `base` do Vite correto para o host escolhido e deploy (GitHub Pages ou itch.io, **com o seu OK antes**).
+- [x] Pacote HTML5 para itch.io com `index.html` na raiz, verificação dos limites e instruções em `docs/itchio.md`
 - [ ] O link público abre e roda o jogo
 **Verificar:** abrir o link numa aba anônima · **Dep.:** T22

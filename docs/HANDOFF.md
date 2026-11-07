@@ -1,7 +1,15 @@
 # Handoff: estado do projeto
 
-> Atualizado em 07/11/2026, no fim da T20 (ambiente de desenvolvimento). Branch `dev`.
+> Atualizado em 07/11/2026: preparação da T23 para itch.io; integração final no `main` autorizada pelo usuário.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
+
+## Entrega HTML5 (T23)
+
+- `npm run package:itch` gera `release/megabob-html5.zip`, SHA-256 e relatório, com `index.html` na raiz. O ZIP fica fora do Git; o arquivo anterior `megabob.zip` não foi alterado.
+- `npm run check:release` verifica o build de produção em uma subpasta dentro de um iframe 960×540, com título, seleção, gameplay e pausa por teclado. Confere rede, console, dimensões e ausência do handle de debug; grava relatório e print em `release/`.
+- Testes: 708 passaram, 2 ignorados; typecheck e build passaram. O teste de iframe não apresentou erros nem recursos ausentes.
+- Upload: seguir `docs/itchio.md`, escolher HTML e marcar o ZIP como jogável no navegador. A página pública do itch.io ainda não foi criada/publicada nesta tarefa; falta o endereço de destino e a validação no host.
+- Permanecem pendentes a partida humana completa, a audição do mix e a medição de fps em hardware real.
 
 ## Feito (tudo commitado no `dev`)
 
@@ -46,12 +54,12 @@ Validação da revisão visual atual: testes TypeScript e 24 testes Python passa
 - **Checkpoint 1:** aprovado pelo usuário em 06/11, sem ajustes em `src/data/tuning.ts`.
 - **Pedido novo:** uma tela de configuração para remapear teclas e botões. Virou a T13b em `tasks/todo.md`, depois da T13 (título, save e pausa), porque depende do save e dos menus.
 - **Arte bruta no git:** `art/raw/` (fontes PNG e prompts) entrou no repositório em 07/11, a pedido do usuário; só `art/raw/soundtrack/` continua fora (64 MB brutos). Os arquivos processados ficam em `public/assets/`.
-- **Deploy:** falta escolher onde publicar (GitHub Pages ou itch.io). Só é necessário na T23.
+- **Deploy:** itch.io escolhido pelo usuário em 07/11. Pacote pronto; falta configurar a página de destino e validar o upload.
 
 ## Próximo passo: Checkpoint 5 (partida completa, do título aos créditos, jogada pelo usuário), depois fechar T21/T22 e a T23
 
 - **T22 depende da partida:** as medições e o balanceamento são estimativas (piloto automático, GPU não medida em headless). Jogando, confira o fps no F2 (modo dev) e quanto cada chefe leva; os números estão em `BOSS_INVULN_FRAMES` (`src/systems/boss.ts`) e `WEAKNESS` (`src/data/weapons.ts`).
-- **T23:** recomendado o itch.io (o build já usa caminho relativo; ver a conversa de 07/11). Publicar só com a confirmação do usuário.
+- **T23:** seguir `docs/itchio.md`. O usuário autorizou o envio ao `main` e a preparação do pacote; a publicação da página no itch.io ainda está pendente.
 
 - **Checkpoint 3:** o usuário joga a Memory Leak de ponta a ponta e ganha o Garbage Collector. O caminho crítico foi provado por `tests/reach.test.ts`, e cada seção, os inimigos, o lodo e a luta foram conferidos no Edge, mas ninguém jogou a fase inteira com as mãos. Ajustes prováveis depois de jogar: velocidade do lodo (`MEMORY_LEAK_GOO.speed`, 24 px/s desde 07/11, a pedido do usuário) e o ritmo dos inimigos (`src/data/enemies.ts`).
 - **Checkpoint 4:** os 3 chefes vencíveis em qualquer ordem, o ciclo de fraquezas (ML ← Mutex, RC ← Null Pointer, NP ← Garbage Collector) e a fortaleza liberando com 3/3 na seleção. Falta o usuário jogar as 3 fases.
