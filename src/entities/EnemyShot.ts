@@ -16,7 +16,7 @@ export const SHOTS = {
   // Void Eye's cursor: straight, aimed
   cursor: { key: 'null_cursor', size: 10, damage: CURSOR_DAMAGE, gravity: 0 },
   // Legacy Turret's punched card: straight, aimed
-  card: { key: 'tech_card', size: 8, damage: CARD_DAMAGE, gravity: 0 },
+  card: { key: 'punched_card', size: 8, damage: CARD_DAMAGE, gravity: 0 },
 } as const;
 
 export type ShotKind = keyof typeof SHOTS;

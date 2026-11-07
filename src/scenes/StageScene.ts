@@ -48,8 +48,8 @@ const pick = <A>(a: unknown, b: unknown, is: (o: unknown) => o is A): [A, unknow
 
 /** Camera looks this far above Bob's feet, so he sits slightly below screen center. */
 const CAMERA_LOOK_UP = 24;
-/** Body of the rising goo, under its surface tile (the hazard tile's deep teal). */
-const GOO_COLOR = 0x007d79;
+/** Body of the rising goo: the lower half of the hazard tile (deep goo and bubbles), repeated. */
+const GOO_BODY_ROWS = 8;
 /** How fast each parallax layer scrolls with the camera, far to near. */
 const PARALLAX_SPEED = [0.15, 0.35, 0.6];
 /** Camera pan between sections; the game freezes meanwhile, like the genre. */
@@ -110,7 +110,7 @@ export class StageScene extends Phaser.Scene {
   private parallax!: Phaser.GameObjects.TileSprite[];
   /** Rising goo: its sprite, and frames since Bob entered its section. */
   private goo?: Phaser.GameObjects.TileSprite;
-  private gooBody?: Phaser.GameObjects.Rectangle;
+  private gooBody?: Phaser.GameObjects.TileSprite;
   private gooFrames!: number;
 
   private sections!: Section[];
@@ -211,7 +211,13 @@ export class StageScene extends Phaser.Scene {
       const room = sectionsFromTiles(this.def.sections, TILE)[goo.section]!;
       // a churning surface (the hazard tile) over a flat body down past the section's bottom
       this.goo = this.add.tileSprite(room.x, gooTop(goo, 0), room.w, TILE, key, this.def.skin.hazard).setOrigin(0).setDepth(5);
-      this.gooBody = this.add.rectangle(room.x, gooTop(goo, 0) + TILE, room.w, room.h, GOO_COLOR).setOrigin(0).setDepth(5);
+      const tex = this.textures.get(key);
+      const body = `goo_body_${this.def.skin.hazard}`;
+      if (!tex.has(body)) {
+        const f = tex.get(this.def.skin.hazard);
+        tex.add(body, f.sourceIndex, f.cutX, f.cutY + TILE - GOO_BODY_ROWS, TILE, GOO_BODY_ROWS);
+      }
+      this.gooBody = this.add.tileSprite(room.x, gooTop(goo, 0) + TILE, room.w, room.h, key, body).setOrigin(0).setDepth(5);
     }
 
     const owned = getSave(this.registry).armor;
@@ -249,6 +255,7 @@ export class StageScene extends Phaser.Scene {
       this.audio?.music.stop();
       this.sfx('death');
     });
+    this.player.on('dust', (key: string, x: number, y: number, facing: 1 | -1) => playOnce(this, key, x, y, 20).setFlipX(facing < 0));
     this.player.on('landed', (x: number, y: number) => {
       playOnce(this, 'fx_land_dust', x, y - 8, 20);
       this.fx.play('land');
@@ -595,7 +602,7 @@ export class StageScene extends Phaser.Scene {
     if (!shot.active || !enemy.active) return;
     // a shield in front bounces basic shots; charged ones (level 2+) break through
     if (shot.level < 2 && enemy.blocks(shot.x)) {
-      playOnce(this, 'fx_hit', shot.x, shot.y, 20);
+      playOnce(this, 'fx_deflect', shot.x, shot.y, 20);
       this.sfx('shieldBlock');
       shot.disableBody(true, true);
       return;

@@ -1,24 +1,27 @@
-import Phaser from 'phaser';
+import type Phaser from 'phaser';
 import type { Boss } from '../entities/Boss';
-import { drawMeter, METER_W } from './meter';
+import { Meter, METER_H, METER_W } from './meter';
 import { type Label, uiText } from './text';
 
-const TOP = 14;
-const RIGHT_MARGIN = 10;
+const TOP = 10;
+const RIGHT_MARGIN = 8;
+/** Boss segments: the HUD art's three tones in boss orange. */
+const BOSS_COLOR = 0xff832b;
 
 /**
- * Boss health meter: vertical, top-right (mirroring Bob's on the left), in boss red.
- * Fills from 0 to max during the intro, then tracks live HP; hidden once the boss is dead.
+ * Boss health meter: the HUD meter art, top-right (mirroring Bob's on the left), in boss
+ * orange. Fills from 0 to max during the intro, then tracks live HP; hidden once the boss is dead.
  */
 export class BossHealthBar {
-  private readonly g: Phaser.GameObjects.Graphics;
+  private readonly meter: Meter;
   private readonly number?: Label;
   private shown = '';
 
   /** `visor`: the Debug Visor also shows the boss's health as a number. */
   constructor(scene: Phaser.Scene, _bossName: string, visor = false) {
-    this.g = scene.add.graphics().setScrollFactor(0).setDepth(91);
-    if (visor) this.number = uiText(scene, scene.cameras.main.width - RIGHT_MARGIN - METER_W / 2, TOP + 66, '', { color: '#ff832b', origin: 0.5 }).setScrollFactor(0).setDepth(91);
+    const x = scene.cameras.main.width - RIGHT_MARGIN - METER_W;
+    this.meter = new Meter(scene, x, TOP, { color: BOSS_COLOR }, 91);
+    if (visor) this.number = uiText(scene, x + METER_W / 2, TOP + METER_H + 8, '', { color: '#ff832b', origin: 0.5 }).setScrollFactor(0).setDepth(91);
   }
 
   /** Call once per frame. */
@@ -29,15 +32,13 @@ export class BossHealthBar {
     const key = `${visible}|${value}`;
     if (key === this.shown) return;
     this.shown = key;
-    const g = this.g.clear();
     this.number?.setText(visible ? String(value) : '');
-    if (!visible) return;
-    const x = this.g.scene.cameras.main.width - RIGHT_MARGIN - METER_W;
-    drawMeter(g, x, TOP, value, boss.maxHp, 0xff832b, 0xda1e28);
+    this.meter.setVisible(visible);
+    if (visible) this.meter.set(value, boss.maxHp);
   }
 
   destroy(): void {
-    this.g.destroy();
+    this.meter.destroy();
     this.number?.destroy();
   }
 }

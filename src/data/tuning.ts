@@ -139,3 +139,6 @@ export const SPECIAL_SHOTS = {
   /** Null Pointer: never travels; it appears ahead of the cannon and jumps in teleports. */
   nullPointer: { spawnAhead: 22, hopFrames: 6, hopPx: 24 },
 } as const;
+
+/** Sliding down a wall puffs wall dust every this many frames. */
+export const WALL_DUST_FRAMES = 8;

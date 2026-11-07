@@ -1,9 +1,12 @@
-import Phaser from 'phaser';
-import { drawMeter, METER_W, meterHeight } from './meter';
+import type Phaser from 'phaser';
+import { Meter, METER_H, METER_W } from './meter';
 import { type Label, uiText } from './text';
 
-const X = 10;
-const TOP = 14;
+/** Layout from art/exports/hud-pause-layout.json. */
+const X = 8;
+const TOP = 10;
+const GAP = 6;
+const LIFE_Y = TOP + METER_H + 30;
 
 export interface WeaponGauge {
   energy: number;
@@ -12,27 +15,40 @@ export interface WeaponGauge {
 }
 
 /**
- * Bob's HUD, top-left: health meter, the equipped special weapon's energy meter beside it,
- * and the lives counter. Fixed to the screen; redraws only when the values change.
+ * Bob's HUD, top-left: health meter, the equipped special weapon's energy meter beside it
+ * (in the weapon's color), and the lives counter under them (Bob's life icon and a count).
+ * Fixed to the screen; redraws only when the values change.
  */
 export class Hud {
-  private readonly g: Phaser.GameObjects.Graphics;
+  private readonly health: Meter;
+  private readonly energy: Meter;
+  private readonly icon: Phaser.GameObjects.Image;
   private readonly lives: Label;
-  private shown = '';
+  private shownLives = -1;
+  private shownWeapon: boolean | null = null;
 
   constructor(scene: Phaser.Scene) {
-    this.g = scene.add.graphics().setScrollFactor(0).setDepth(90);
-    this.lives = uiText(scene, X - 2, 0, '', { bg: '#161616' }).setOrigin(0).setScrollFactor(0).setDepth(90);
+    this.health = new Meter(scene, X, TOP, { texture: 'hud_segment_blue' }, 90);
+    this.energy = new Meter(scene, X + METER_W + GAP, TOP, { texture: 'hud_segment_yellow' }, 90);
+    this.icon = scene.add.image(X, LIFE_Y, 'bob_life').setOrigin(0).setScrollFactor(0).setDepth(90);
+    this.lives = uiText(scene, X + 19, LIFE_Y + 8, '', { bg: '#161616' }).setScrollFactor(0).setDepth(90);
   }
 
   update(hp: number, max: number, lives: number, weapon: WeaponGauge | null = null): void {
-    const key = `${hp}/${max}/${lives}/${weapon ? `${weapon.energy}/${weapon.color}` : '-'}`;
-    if (key === this.shown) return;
-    this.shown = key;
+    this.health.set(hp, max);
+    if (this.shownWeapon !== !!weapon) {
+      this.shownWeapon = !!weapon;
+      this.energy.setVisible(!!weapon);
+    }
+    if (weapon) this.energy.set(weapon.energy, weapon.max, { color: weapon.color });
+    if (lives !== this.shownLives) {
+      this.shownLives = lives;
+      this.lives.setText(`x${lives}`);
+    }
+  }
 
-    const g = this.g.clear();
-    drawMeter(g, X, TOP, hp, max, 0xa6c8ff);
-    if (weapon) drawMeter(g, X + METER_W + 6, TOP, weapon.energy, weapon.max, weapon.color);
-    this.lives.setText(`x${lives}`).setY(TOP + meterHeight(max) - 3);
+  /** For checks: the icon is drawn from the life art. */
+  get lifeIcon(): Phaser.GameObjects.Image {
+    return this.icon;
   }
 }

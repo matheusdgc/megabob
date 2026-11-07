@@ -12,6 +12,7 @@ import {
   MAX_FALL_SPEED,
   MAX_SHOTS,
   LAND_DUST_FRAMES,
+  WALL_DUST_FRAMES,
 } from '../data/tuning';
 import type { ActionState } from '../systems/actions';
 import { BOB_LOOPS, type BobPose, bobPose, poseSheet, shotOrigin } from '../systems/bobPose';
@@ -199,6 +200,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (now !== before || (now === 'jump' && this.motion.stateFrames === 0)) {
       if (now === 'jump') this.emit('sfx', 'jump');
       else if (now === 'dash' || now === 'airdash') this.emit('sfx', 'dash');
+      // a ground dash kicks up dust behind Bob's feet
+      if (now === 'dash') this.emit('dust', 'fx_dash_dust', this.x - this.motion.facing * 12, this.y - 8, this.motion.facing);
+    }
+    // sliding down a wall scrapes dust off it, at the hand against the wall
+    if (now === 'wall' && body.velocity.y > 0 && this.motion.stateFrames % WALL_DUST_FRAMES === 0) {
+      this.emit('dust', 'fx_wall_dust', this.x + this.motion.facing * 8, this.y - 12, this.motion.facing);
     }
     // a jump clipping a ceiling corner by a few px slides past it instead of stopping dead
     if (this.solidAt && body.velocity.y < 0) {

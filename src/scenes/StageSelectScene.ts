@@ -29,6 +29,17 @@ const NAME: Record<Slot, string> = {
   techDebt: 'TECH DEBT FORTRESS',
 };
 
+/** The boss presentation after picking a stage (boss_intro_panel). */
+const INTRO: Record<Slot, { heading: string; caption: string }> = {
+  memoryLeak: { heading: 'BUG DETECTED', caption: 'IT NEVER LETS GO OF ANYTHING' },
+  raceCondition: { heading: 'BUG DETECTED', caption: 'ALWAYS ONE STEP AHEAD OF ITSELF' },
+  nullPointer: { heading: 'BUG DETECTED', caption: 'POINTS AT NOTHING. HITS ANYWAY' },
+  techDebt: { heading: 'FINAL BUG', caption: 'EVERY SHORTCUT EVER TAKEN' },
+};
+/** Panel and its contents, from art/exports/presentation-layout.json (panel-relative px). */
+const PANEL = { w: 416, h: 112, portrait: [16, 8], text: 136, heading: 22, name: 48, caption: 82 } as const;
+const INTRO_MS = 1600;
+
 const NOTE: Record<SlotState, string> = {
   open: '',
   cleared: 'CLEARED\nPLAY AGAIN FOR MISSING PARTS',
@@ -129,6 +140,27 @@ export class StageSelectScene extends Phaser.Scene {
     this.leaving = true;
     audio?.sfx.play('checkpoint');
     audio?.music.stop(400);
-    fadeTo(this, 'Stage', { stage }, 500);
+    this.present(this.cursor);
+    this.time.delayedCall(INTRO_MS, () => fadeTo(this, 'Stage', { stage }, 500));
+  }
+
+  /** The chosen boss on the presentation panel: portrait at 2x, heading, name and a caption. */
+  private present(slot: Slot): void {
+    const x = 240 - PANEL.w / 2;
+    const y = 135 - PANEL.h / 2;
+    this.focus.setVisible(false).setActive(false);
+    this.label.setText('');
+    this.note.setText('');
+    const shade = this.add.rectangle(240, 135, 480, 270, 0x000000, 0.55);
+    const panel = this.add.image(x, y, 'boss_intro_panel').setOrigin(0);
+    const portrait = this.add.image(x + PANEL.portrait[0], y + PANEL.portrait[1], PORTRAIT[slot]).setOrigin(0).setScale(2);
+    const tx = x + PANEL.text;
+    uiText(this, tx, y + PANEL.heading + 5, INTRO[slot].heading, { color: UI.danger });
+    uiText(this, tx, y + PANEL.name + 10, NAME[slot], { size: 20 });
+    uiText(this, tx, y + PANEL.caption + 5, INTRO[slot].caption, { color: UI.dim });
+    for (const o of [shade, panel, portrait]) {
+      const alpha = o.alpha;
+      this.tweens.add({ targets: o, alpha: { from: 0, to: alpha }, duration: 150 });
+    }
   }
 }
