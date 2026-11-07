@@ -40,6 +40,8 @@ A fonte atual `art/raw/ui/U2_title_cyberpunk.png` foi gerada com a ferramenta in
 
 `node tools/check-title-menu.mjs` verifica os quadros reais do Bob, posição final da logo, alteração de pixels pelo brilho, composição estática com movimento reduzido e contagens estáveis após dois reinícios. Capturas e sequência para GIF ficam em `art/preview/`; resumo publicado em `art/exports/title-menu-review.json`.
 
+O helper `tools/check-title-navigation.mjs` também percorre duas vezes Título → Opções → Título e Título → Seleção → Título com eventos reais de teclado pelo DevTools. Confere que a animação pausa e os textos do título somem sob as opções, que o foco retorna ao item correto e que nenhum efeito do título sobrevive na seleção. Cada retorno conserva 12 objetos e seis listeners de update na composição atual. O teste respeita o frame sem teclas exigido para armar cada novo menu e o cursor preservado pelo fluxo existente. Nenhuma arte ou regra de navegação precisou mudar. A preferência do sistema reduz a decoração; a opção do jogo `SCREEN SHAKE & FLASH` mantém seu escopo existente de tremor/flash.
+
 ## Seleção de fases em 480×270
 
 `tools/ui_art.py` recompõe as peças de U3: preserva os cantos da moldura, redimensiona só as bordas e monta o interior com cinco slots quadrados. Retratos e texto não ficam gravados no fundo. O cadeado e o foco são texturas independentes.

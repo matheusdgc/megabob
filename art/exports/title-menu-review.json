@@ -54,6 +54,41 @@
       "listeners": 6
     }
   ],
+  "navigation": {
+    "input": "native DevTools keyboard events",
+    "options": [
+      {
+        "paused": true,
+        "labelsHidden": true,
+        "animationPaused": true,
+        "returnCursor": 1,
+        "children": 12,
+        "listeners": 6
+      },
+      {
+        "paused": true,
+        "labelsHidden": true,
+        "animationPaused": true,
+        "returnCursor": 1,
+        "children": 12,
+        "listeners": 6
+      }
+    ],
+    "selection": [
+      {
+        "departedDecorationCount": 0,
+        "returnDecorationCount": 3,
+        "children": 12,
+        "listeners": 6
+      },
+      {
+        "departedDecorationCount": 0,
+        "returnDecorationCount": 3,
+        "children": 12,
+        "listeners": 6
+      }
+    ]
+  },
   "errors": [],
   "warnings": [],
   "failedRequests": [],
@@ -67,5 +102,5 @@
     "sampling": "nearest-neighbor",
     "sha256": "7acd328ee76da8938979f7083678c70a0d932b2f109fce154ca2fa5eb1de082e"
   },
-  "scope": "Main-menu visual animation, reduced-motion preference and repeated scene shutdown; not a gameplay playthrough."
+  "scope": "Main-menu visual animation, operating-system reduced-motion preference, scene restart, and real keyboard round trips through Options and StageSelect. Not a gameplay playthrough or physical-gamepad check."
 }

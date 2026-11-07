@@ -146,6 +146,8 @@ Recriar apenas o wordmark MEGABOB com a ferramenta integrada imagegen, mantendo 
 
 A pedido do usuário, combinar as três direções de movimento: entrada suave/brilho da logo, Bob animado e ambiente discreto. Criar fonte cyberpunk mais detalhada sem Bob embutido, preservando o estilo 16 bits: 480×270, nearest-neighbor e 32 cores locais. Reutilizar o idle real e acrescentar chuva em pixels, com movimento reduzido e descarte no shutdown. Manter a integração na TitleScene limitada ao helper visual; não editar o fluxo de opções/save da outra sessão. Validar no navegador a composição, brilho nos pixels, quadros, preferência de movimento e dois reinícios; exportar GIF real e executar os checks do projeto.
 
+Complementar o QA com percursos reais por teclado Título → Opções → Título e Título → Seleção → Título, duas vezes cada. Conferir animação pausada sob opções, textos ocultos, foco restaurado, descarte na saída e contagens estáveis no retorno. Preservar arte e fluxo existentes quando os checks passarem.
+
 ## Perguntas em aberto
 
 - **Onde publicar** (GitHub Pages ou itch.io): só preciso saber na T23.

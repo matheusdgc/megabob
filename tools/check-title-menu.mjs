@@ -3,6 +3,7 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, readFile, writeFile, mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { checkTitleNavigation } from './check-title-navigation.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -127,6 +128,7 @@ try {
     await advance(3);
     restarts.push(await evaluate(`({children:window.__game.scene.getScene('Title').children.length,listeners:window.__game.scene.getScene('Title').events.listenerCount('update')})`));
   }
+  const navigation = await checkTitleNavigation(send, evaluate, sleep);
   // Capture the actual menu (including its HTML labels) for a shareable GIF.
   await send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'no-preference'}]});
   await sleep(300);
@@ -142,7 +144,7 @@ try {
   }
   await writeFile(join(output,'title-reduced-a.png'),Buffer.from(stillA.split(',')[1],'base64'));
   await writeFile(join(output,'title-reduced-b.png'),Buffer.from(stillB.split(',')[1],'base64'));
-  const report={initial,normal,shineSeen,shineAffectsPixels,preferenceState,reduced,reducedPixelsStable:stillA===stillB,restarts,errors,warnings,failedRequests};
+  const report={initial,normal,shineSeen,shineAffectsPixels,preferenceState,reduced,reducedPixelsStable:stillA===stillB,restarts,navigation,errors,warnings,failedRequests};
   await writeFile(join(output,'title-menu-review.json'),JSON.stringify(report,null,2)+'\n');
   if(!initial.menu.length||normal.frames.length<2||normal.bobY!==214||normal.logo.alpha!==1||normal.logo.y!==8||!shineSeen||!shineAffectsPixels||reduced.frames.join(',')!=='0'||reduced.shine!==0||stillA!==stillB||restarts.some(r=>r.children!==initial.children||r.listeners!==initial.listeners)||errors.length||warnings.length||failedRequests.length)throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));
