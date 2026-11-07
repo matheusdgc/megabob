@@ -72,6 +72,10 @@ As regras de movimento, combate e progresso ficam em `src/systems/`; as fases s�
 
 ## Créditos
 
-Design e código: **Matheus D. Gomes**. Personagem: **IBM Bob**.
+**Design e código:** [Matheus D. Gomes](https://github.com/matheusdgc), com o assistente de código **[IBM Bob](https://www.ibm.com/ibm/ibmbob.html)**.
+
+Todo o código-fonte — arquitetura, sistemas de jogo, lógica de física, máquinas de estado, IA dos inimigos e chefes, UI, áudio e testes — foi escrito exclusivamente pelo **IBM Bob** (IA da IBM). O ChatGPT/DALL-E foi utilizado apenas para a **geração das imagens** (sprites, tilesets, fundos e interface), que foram depois processadas pelo pipeline `tools/art.py`.
+
+**Personagem:** IBM Bob — propriedade da IBM Corporation, utilizado com permissão para este projeto.
 
 As músicas mantêm seus autores e licenças nos créditos do jogo e em [docs/soundtrack.md](docs/soundtrack.md). As licenças das dependências continuam pertencendo aos respectivos projetos.
