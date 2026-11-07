@@ -152,6 +152,10 @@ Complementar o QA com percursos reais por teclado Título → Opções → Títu
 
 Pedido explícito para menu e gameplay. Reutilizar as fontes aprovadas com rampas intermediárias locais (41 cores), conservando exatamente a máscara binária e os quadros 48×48 de todas as poses e armaduras. Amostrar o idle diretamente em 96×96 para o menu, exibindo a 1× na mesma área anterior; sem mudar colisões, escala de gameplay ou fps. Comparar os 594 quadros ao commit anterior, validar as 70 fontes preservadas, os ciclos/armaduras e o menu no Phaser; exportar antes/depois e relatórios, rodar testes/typecheck/build e registrar um commit.
 
+### T21 — cores por arma no Bob refinado
+
+Conferir o Player real com quatro armas, 16 armaduras e sete poses, verificando textura, direção, tint e restauração do Buster sem cor especial, com colisão estável. Montar composições de leitura sobre os quatro temas em cena descartável, reaproveitando os assets intactos. Manter a revisão de Memory Leak e deixar a integração ainda em andamento de Race Condition com a outra sessão. Exportar galeria/relatório, executar os checks e registrar a fatia.
+
 ## Perguntas em aberto
 
 - **Onde publicar** (GitHub Pages ou itch.io): só preciso saber na T23.

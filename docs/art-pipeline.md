@@ -141,6 +141,8 @@ No menu, `title_bob_idle` deriva diretamente da fonte B2 em três quadros 96×96
 
 `py -3 tools/review_bob_refinement.py` compara todos os PNGs de gameplay com o commit `397c487`: dimensões e cada byte de alpha devem permanecer idênticos. Confere também os hashes das 70 fontes PNG e a paleta local. Comparação visual `art/exports/megabob-bob-refinement.png`; dados e hashes em `bob-refinement-review.json`. `tools/review_animations.py` usa a nova paleta e continua verificando os 594 quadros e os ciclos das 16 armaduras.
 
+`tools/check-bob-weapon-art.mjs` confere o renderizador real do `Player` em 448 combinações: quatro cores de arma × 16 armaduras × sete poses (idle, corrida, tiro em corrida, dash, parede, dano e air dash/fallback). Verifica textura, orientação, persistência da cor, restauração do Buster sem tint e dimensões/offset da colisão. O helper cria uma cena descartável no navegador isolado e exporta 16 composições estáticas sobre os quatro temas; não percorre os mapas nem testa armas futuras. Galeria `art/exports/megabob-weapon-color-review.png` e relatório `bob-weapon-art-review.json`. As cores existentes permaneceram distinguíveis; nenhuma mudança adicional de sprite, paleta ou gameplay foi necessária. A revisão de Memory Leak também voltou a passar com o Bob refinado.
+
 Testes do enquadramento: `py -3 -m unittest discover -s tools -p test_bob_fit.py`. Para executar todos os testes Python, use `py -3 -m unittest discover -s tools -p 'test_*.py'`.
 
 ## Validação no jogo

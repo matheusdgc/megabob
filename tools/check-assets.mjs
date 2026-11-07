@@ -8,6 +8,7 @@ import { captureStageColors } from './check-stage-colors.mjs';
 import { checkBossArt } from './check-boss-art.mjs';
 import { checkStageInteractives } from './check-stage-interactives.mjs';
 import { checkTextureSources } from './check-texture-sources.mjs';
+import { checkBobWeaponArt } from './check-bob-weapon-art.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const baseUrl = (process.argv[2] ?? 'http://127.0.0.1:5173').replace(/\/$/, '');
@@ -178,7 +179,8 @@ try {
   const animationLoops = await checkAnimationLoops(send, root, output);
   const bossArt = await checkBossArt(send, output);
   const interactives = await checkStageInteractives(send, output);
-  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, interactives, errors, warnings, failedRequests };
+  const bobWeaponArt = await checkBobWeaponArt(send, output);
+  const report = { scenes, stageColors, presentations, endScreens, animationLoops, bossArt, interactives, bobWeaponArt, errors, warnings, failedRequests };
   await writeFile(join(output, 'browser-assets-report.json'), JSON.stringify(report, null, 2) + '\n');
   if (errors.length || warnings.length || failedRequests.length) throw new Error(JSON.stringify(report));
   console.log(JSON.stringify(report));
