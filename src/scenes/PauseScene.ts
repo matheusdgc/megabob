@@ -4,7 +4,8 @@ import { ARMOR_BITS } from '../data/assets';
 import { WEAPON_MAX_ENERGY, WEAPON_ORDER, WEAPONS, type WeaponId } from '../data/weapons';
 import { GameInput } from '../systems/input';
 import { type Arsenal, equip } from '../systems/weapons';
-import { type Label, UI, uiText } from '../ui/text';
+import { hideLabels, type Label, UI, uiText } from '../ui/text';
+import type { OptionsData } from './OptionsScene';
 
 export interface PauseData {
   arsenal: Arsenal;
@@ -15,7 +16,7 @@ export interface PauseData {
 
 /** Layout from art/exports/hud-pause-layout.json. */
 const PANEL = { x: 64, y: 31 };
-const ROW_Y = [112, 140, 168, 196, 224];
+const ROW_Y = [112, 140, 168, 196, 214, 230];
 const ICON_X = 106;
 const TEXT_X = 122;
 const CURSOR_X = 86;
@@ -34,8 +35,8 @@ const ARMOR: { key: string; bit: number; name: string; at: [number, number] }[] 
 export class PauseScene extends Phaser.Scene {
   private opts!: PauseData;
   private controls!: GameInput;
-  /** Selectable rows: the owned weapons, then EXIT STAGE. */
-  private rows!: (WeaponId | 'exit')[];
+  /** Selectable rows: the owned weapons, then OPTIONS and EXIT STAGE. */
+  private rows!: (WeaponId | 'options' | 'exit')[];
   private cursor!: number;
   private pointer!: Label;
   private closed!: boolean;
@@ -48,7 +49,7 @@ export class PauseScene extends Phaser.Scene {
     this.opts = data;
     this.closed = false;
     const owned = WEAPON_ORDER.filter((w) => w === 'buster' || data.arsenal.owned.includes(w));
-    this.rows = [...owned, 'exit'];
+    this.rows = [...owned, 'options', 'exit'];
     this.cursor = Math.max(0, this.rows.indexOf(data.arsenal.current));
   }
 
@@ -68,7 +69,8 @@ export class PauseScene extends Phaser.Scene {
       const energy = w === 'buster' ? '' : `  ${String(arsenal.energy[w] ?? 0).padStart(2)}/${WEAPON_MAX_ENERGY}`;
       uiText(this, TEXT_X, y, has ? def.name + energy : '- - - - -', { color: has ? UI.text : UI.dim });
     });
-    uiText(this, TEXT_X, ROW_Y[4]!, 'EXIT STAGE');
+    uiText(this, TEXT_X, ROW_Y[4]!, 'OPTIONS');
+    uiText(this, TEXT_X, ROW_Y[5]!, 'EXIT STAGE');
 
     let found = 0;
     for (const a of ARMOR) {
@@ -86,7 +88,7 @@ export class PauseScene extends Phaser.Scene {
 
   private place(): void {
     const row = this.rows[this.cursor]!;
-    const i = row === 'exit' ? 4 : WEAPON_ORDER.indexOf(row);
+    const i = row === 'options' ? 4 : row === 'exit' ? 5 : WEAPON_ORDER.indexOf(row);
     this.pointer.setY(ROW_Y[i]!);
   }
 
@@ -100,12 +102,28 @@ export class PauseScene extends Phaser.Scene {
       this.place();
     } else if (this.controls.confirm) {
       const row = this.rows[this.cursor]!;
+      if (row === 'options') return this.options();
       if (row !== 'exit') equip(this.opts.arsenal, row);
       this.close(row === 'exit');
     } else if (this.controls.back) {
       this.close(false); // pause again (or back): resume with the weapon already equipped
     }
     this.pointer.setVisible(Math.floor(this.time.now / 300) % 2 === 0);
+  }
+
+  /** Options over the pause menu; this menu comes back with input rebuilt for the new bindings. */
+  private options(): void {
+    const show = hideLabels(this, this.scene.get('Stage'));
+    const data: OptionsData = {
+      onClose: () => {
+        show();
+        this.controls.destroy();
+        this.controls = new GameInput(this, true);
+        this.scene.resume();
+      },
+    };
+    this.scene.pause();
+    this.scene.launch('Options', data);
   }
 
   private close(exit: boolean): void {

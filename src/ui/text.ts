@@ -94,3 +94,15 @@ export function fadeTo(scene: Phaser.Scene, key: string, data?: object, ms = 300
   fadeLabels(scene, 1, 0, ms);
   cam.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => scene.scene.start(key, data));
 }
+
+/**
+ * Hide every label of `scenes` (an overlay is opening: HTML text would show through its canvas
+ * panel). Returns the function that shows them again.
+ */
+export function hideLabels(...scenes: Phaser.Scene[]): () => void {
+  const hidden = scenes.flatMap((s) => s.children.list.filter((o): o is Label => o instanceof Label && o.visible));
+  for (const l of hidden) l.setVisible(false);
+  return () => {
+    for (const l of hidden) if (l.active) l.setVisible(true);
+  };
+}

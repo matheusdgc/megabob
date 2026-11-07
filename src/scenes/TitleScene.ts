@@ -3,8 +3,10 @@ import { GameAudio, loadMusic } from '../audio';
 import { actionKeys } from '../systems/bindings';
 import { GameInput } from '../systems/input';
 import { hasProgress, newSave } from '../systems/save';
-import { fadeIn, fadeTo, type Label, UI, uiText } from '../ui/text';
+import { fadeIn, fadeTo, hideLabels, type Label, UI, uiText } from '../ui/text';
+import type { OptionsData } from './OptionsScene';
 import { commitSave, getSave } from './progress';
+import { animateTitle } from './titleMotion';
 
 interface Item {
   label: string;
@@ -30,8 +32,8 @@ export class TitleScene extends Phaser.Scene {
     super('Title');
   }
 
-  init(): void {
-    this.cursor = 0;
+  init(data: { cursor?: number }): void {
+    this.cursor = data.cursor ?? 0;
     this.rows = [];
     this.confirming = false;
   }
@@ -42,30 +44,38 @@ export class TitleScene extends Phaser.Scene {
 
   create(): void {
     this.add.image(0, 0, 'title_background_wide').setOrigin(0);
-    this.add.image(16, 8, 'title_logo_night').setOrigin(0).setScale(2);
+    const logo = this.add.image(16, 8, 'title_logo_night').setOrigin(0).setScale(2);
+    animateTitle(this, logo);
     // dark bands so the menu reads over the busy skyline
-    this.add.rectangle(240, MENU_Y + ROW / 2 - 2, 168, 44, 0x000000, 0.6);
+    this.add.rectangle(240, MENU_Y + ROW - 2, 168, 58, 0x000000, 0.6);
     this.add.rectangle(240, 258, 480, 16, 0x000000, 0.6);
     this.controls = new GameInput(this, true);
     const keys = this.controls.bindings;
     uiText(this, 240, 258, `${actionKeys(keys, 'jump')} / ENTER  SELECT     ARROWS  MOVE     M  MUTE`, { color: UI.dim, origin: 0.5 });
     this.pointer = uiText(this, 0, 0, '>', { color: UI.warn });
-    this.mainMenu();
+    this.mainMenu(this.cursor);
     GameAudio.of(this.game)?.music.play('title', 400);
     fadeIn(this);
   }
 
-  private mainMenu(): void {
+  private mainMenu(cursor = 0): void {
     const save = getSave(this.registry);
     this.confirming = false;
+    const options = { label: 'OPTIONS', run: () => this.options() };
     this.show(
       hasProgress(save)
-        ? [
-            { label: 'CONTINUE', run: () => this.start() },
-            { label: 'NEW GAME', run: () => this.askErase() },
-          ]
-        : [{ label: 'START', run: () => this.start() }],
+        ? [{ label: 'CONTINUE', run: () => this.start() }, { label: 'NEW GAME', run: () => this.askErase() }, options]
+        : [{ label: 'START', run: () => this.start() }, options],
+      cursor,
     );
+  }
+
+  /** The options overlay; the title restarts after it, so hints and input use the new bindings. */
+  private options(): void {
+    hideLabels(this); // the title restarts on close, which rebuilds them
+    const data: OptionsData = { onClose: () => this.scene.restart({ cursor: this.cursor }) };
+    this.scene.pause();
+    this.scene.launch('Options', data);
   }
 
   private askErase(): void {
@@ -117,6 +127,7 @@ export class TitleScene extends Phaser.Scene {
       this.focus();
     } else if (this.controls.confirm) {
       this.items[this.cursor]!.run();
+      return; // the item may have opened an overlay: leave the cursor as it is
     } else if (this.confirming && this.controls.back) {
       this.mainMenu();
     }

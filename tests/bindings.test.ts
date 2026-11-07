@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { ACTIONS } from '../src/systems/actions';
-import { actionKeys, conflictFor, DEFAULT_BINDINGS, keyLabel, normalizeBindings, rebind } from '../src/systems/bindings';
+import {
+  actionKeys,
+  conflictFor,
+  DEFAULT_BINDINGS,
+  defaultBindings,
+  isLocked,
+  isReserved,
+  keyLabel,
+  keyNameFor,
+  normalizeBindings,
+  rebind,
+} from '../src/systems/bindings';
 
 describe('default bindings', () => {
   it('give every action a key and a pad button, with no input shared by two actions', () => {
@@ -82,5 +93,33 @@ describe('normalizeBindings', () => {
     expect(b.pad.jump).toEqual([3]);
     expect(b.pad.dash).toEqual([1, 7]);
     expect(Object.keys(b.keys)).toEqual([...ACTIONS]);
+  });
+});
+
+describe('controls screen rules', () => {
+  const codes = { A: 65, SHIFT: 16, CTRL: 17, ESC: 27, COMMA: 188 };
+
+  it('names a pressed key, with the side of a modifier', () => {
+    expect(keyNameFor(65, 0, codes)).toBe('A');
+    expect(keyNameFor(16, 1, codes)).toBe('SHIFT_LEFT');
+    expect(keyNameFor(17, 2, codes)).toBe('CTRL_RIGHT');
+    expect(keyNameFor(16, 0, codes)).toBe('SHIFT');
+    expect(keyNameFor(999, 0, codes)).toBeNull();
+  });
+
+  it('keeps system keys out of reach and Esc pinned to pause', () => {
+    for (const k of ['M', 'ENTER', 'ESC', 'F2', 'R', 'ONE']) expect(isReserved(k)).toBe(true);
+    expect(isReserved('K')).toBe(false);
+    expect(isLocked('keys', 'pause', 0)).toBe(true);
+    expect(isLocked('keys', 'pause', 1)).toBe(false);
+    expect(isLocked('pad', 'pause', 0)).toBe(false);
+    expect(DEFAULT_BINDINGS.keys.pause[0]).toBe('ESC');
+  });
+
+  it('reset gives back the defaults as a fresh table', () => {
+    const r = defaultBindings();
+    expect(r).toEqual(DEFAULT_BINDINGS);
+    r.keys.jump.push('K');
+    expect(DEFAULT_BINDINGS.keys.jump).toEqual(['SPACE']);
   });
 });

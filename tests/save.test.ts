@@ -11,6 +11,7 @@ import {
   recordClear,
   SAVE_KEY,
   serializeSave,
+  stepVolume,
   writeSave,
 } from '../src/systems/save';
 
@@ -30,7 +31,7 @@ class FakeStore implements KeyValueStore {
 describe('save data', () => {
   it('round-trips through text', () => {
     let s = recordClear(newSave(), 'memoryLeak');
-    s = { ...s, armor: 4, bindings: rebind(DEFAULT_BINDINGS, 'keys', 'jump', 0, 'K'), volume: { master: 0.5, music: 0.2, sfx: 1 } };
+    s = { ...s, armor: 4, bindings: rebind(DEFAULT_BINDINGS, 'keys', 'jump', 0, 'K'), volume: { master: 0.5, music: 0.2, sfx: 1 }, reduceMotion: true };
     expect(parseSave(serializeSave(s))).toEqual(s);
   });
 
@@ -128,5 +129,15 @@ describe('stage select', () => {
     expect(firstSlot(newSave(), () => true)).toBe('memoryLeak');
     expect(firstSlot(recordClear(newSave(), 'memoryLeak'), () => true)).toBe('raceCondition');
     expect(firstSlot(recordClear(newSave(), 'memoryLeak'), built)).toBe('memoryLeak');
+  });
+});
+
+describe('volume steps', () => {
+  it('moves in tenths and stays within 0..1', () => {
+    expect(stepVolume(0.7, 1)).toBe(0.8);
+    expect(stepVolume(0.1, -1)).toBe(0);
+    expect(stepVolume(1, 1)).toBe(1);
+    expect(stepVolume(0, -1)).toBe(0);
+    expect(stepVolume(0.30000000000000004, 1)).toBe(0.4);
   });
 });

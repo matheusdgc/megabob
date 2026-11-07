@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import { VOLUME } from '../audio/mixer';
+import { REDUCE_MOTION } from '../entities/feedback';
 import { BINDINGS } from '../systems/input';
 import { type KeyValueStore, loadSave, newSave, type SaveData, writeSave } from '../systems/save';
 
@@ -34,4 +35,5 @@ function publish(registry: Phaser.Data.DataManager, s: SaveData): void {
   if (s.bindings) registry.set(BINDINGS, s.bindings);
   else registry.remove(BINDINGS);
   if (s.volume) registry.set(VOLUME, s.volume);
+  registry.set(REDUCE_MOTION, !!s.reduceMotion);
 }

@@ -562,6 +562,8 @@ export class StageScene extends Phaser.Scene {
       armor: this.player.armor,
       onClose: (exit) => {
         this.audio?.mixer.unduck();
+        this.controls.destroy();
+        this.controls = new GameInput(this);
         this.scene.resume();
         this.pauseLock = 10; // a held or repeating pause key must not reopen it at once
         this.player.applyWeaponTint();

@@ -57,6 +57,15 @@ export class GameInput {
     }
   }
 
+  /** Drop this reader's keys (before building a new one with changed bindings). */
+  destroy(): void {
+    const kb = this.scene.input.keyboard;
+    if (!kb) return;
+    for (const [, key] of this.keys) kb.removeKey(key, true);
+    if (this.menuKeys) for (const key of Object.values(this.menuKeys)) kb.removeKey(key, true);
+    this.keys.length = 0;
+  }
+
   poll(): ActionState {
     this.held.clear();
     for (const [action, key, side] of this.keys) if (key.isDown && (side === 0 || key.location === side)) this.held.add(action);

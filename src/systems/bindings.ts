@@ -102,8 +102,30 @@ function pickList<T>(table: unknown, action: Action, ok: (v: unknown) => v is T)
   return Array.isArray(list) ? [...new Set(list.filter(ok))].slice(0, 2) : [];
 }
 
-/** Keys that are never bindable: M mutes, Enter confirms menus, and the dev keys. */
-export const RESERVED_KEYS: readonly string[] = ['M', 'ENTER', 'R', 'F2', 'H', 'G', 'ONE', 'TWO', 'THREE', 'FOUR'];
+/**
+ * Keys the controls screen never binds: M mutes, Enter and Backspace drive menus, and the dev
+ * keys. Esc is not bindable either: it is pinned to pause (see `isLocked`).
+ */
+export const RESERVED_KEYS: readonly string[] = ['M', 'ENTER', 'BACKSPACE', 'ESC', 'R', 'F2', 'H', 'G', 'ONE', 'TWO', 'THREE', 'FOUR'];
+
+export const isReserved = (key: string): boolean => RESERVED_KEYS.includes(key);
+
+/** Pause's first key is always Esc, so Esc always pauses (in play) and backs out (in menus). */
+export const isLocked = (device: Device, action: Action, slot: number): boolean => device === 'keys' && action === 'pause' && slot === 0;
+
+/** The defaults, as a fresh table ("reset controls"). */
+export const defaultBindings = (): Bindings => cloneBindings(DEFAULT_BINDINGS);
+
+/**
+ * The binding name of a pressed key, from its keyCode and DOM `location` (1 left, 2 right) and
+ * Phaser's KeyCodes table; null for keys the table does not know. Modifiers get their side.
+ */
+export function keyNameFor(code: number, location: number, codes: Readonly<Record<string, number>>): string | null {
+  const name = Object.keys(codes).find((k) => codes[k] === code);
+  if (!name) return null;
+  if ((name === 'SHIFT' || name === 'CTRL' || name === 'ALT') && (location === 1 || location === 2)) return `${name}_${location === 1 ? 'LEFT' : 'RIGHT'}`;
+  return name;
+}
 
 const KEY_LABELS: Record<string, string> = {
   SPACE: 'SPACE',

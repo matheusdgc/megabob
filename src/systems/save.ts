@@ -32,6 +32,8 @@ export interface SaveData {
   /** Rebound controls and volume sliders (T13b), when the player changed them. */
   bindings?: Bindings;
   volume?: Volumes;
+  /** Accessibility: no screen shake or flash. */
+  reduceMotion?: boolean;
 }
 
 export const newSave = (): SaveData => ({ version: SAVE_VERSION, cleared: [], weapons: [], armor: 0 });
@@ -82,6 +84,7 @@ export function parseSave(text: string | null): SaveData | null {
     const v = r.volume as Record<string, unknown>;
     s.volume = { master: slider(v.master, 0.8), music: slider(v.music, 0.7), sfx: slider(v.sfx, 0.8) };
   }
+  if (r.reduceMotion === true) s.reduceMotion = true;
   return s;
 }
 
@@ -114,3 +117,6 @@ export function writeSave(store: KeyValueStore | null, s: SaveData): boolean {
     return false;
   }
 }
+
+/** A volume slider moved one step (tenths), kept within 0..1. */
+export const stepVolume = (v: number, dir: 1 | -1): number => Math.round(Math.min(1, Math.max(0, v + dir * 0.1)) * 10) / 10;
