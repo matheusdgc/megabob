@@ -30,6 +30,14 @@ describe('skinTiles', () => {
     expect(f[3]).toEqual([-1, 12, 14, -1]);
   });
 
+  it('draws conveyors with their belt frame, and they collide like ground', () => {
+    const f = skin(['P..', '><#']);
+    expect(f[1]).toEqual([20, 20, 0]);
+    expect(solidFrames(STAGE_SKIN)).toEqual(expect.arrayContaining([20, 21]));
+    // a conveyor next to ground counts as solid for the ground's edges
+    expect(skin(['P..', '>#>'])[1]![1]).toBe(0);
+  });
+
   it('maps hazards and background walls, leaves empty cells blank', () => {
     expect(skin(['P^-.'])[0]).toEqual([-1, 16, 17, -1]);
   });

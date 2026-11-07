@@ -7,7 +7,25 @@ export const T = {
   wall: 1, // background, not solid
   spike: 2,
   platform: 3, // one-way: solid only from above
+  conveyorRight: 4, // solid; carries whoever stands on it
+  conveyorLeft: 5,
 } as const;
+
+/** Blocks movement from every side (ground, walls, conveyors). */
+export const isSolid = (t: number | undefined): boolean => t === T.solid || t === T.conveyorRight || t === T.conveyorLeft;
+
+/** Something Bob can stand on (solids and one-way platforms). */
+export const isFloor = (t: number | undefined): boolean => isSolid(t) || t === T.platform;
+
+/** Horizontal push of a conveyor cell (-1, 0 or 1). */
+export const conveyorDir = (t: number | undefined): -1 | 0 | 1 => (t === T.conveyorRight ? 1 : t === T.conveyorLeft ? -1 : 0);
+
+/**
+ * The belt push under a body standing with its feet from `left` to `right` at `bottom`: either
+ * foot on a belt is enough, so a belt carries Bob all the way off its end.
+ */
+export const conveyorUnder = (cellAt: (x: number, y: number) => number | undefined, left: number, right: number, bottom: number): -1 | 0 | 1 =>
+  conveyorDir(cellAt(left, bottom + 1)) || conveyorDir(cellAt(right - 0.01, bottom + 1));
 
 const LEGEND: Record<string, number> = {
   '.': T.empty,
@@ -16,6 +34,8 @@ const LEGEND: Record<string, number> = {
   '-': T.wall,
   '^': T.spike,
   '=': T.platform,
+  '>': T.conveyorRight,
+  '<': T.conveyorLeft,
   P: T.empty, // player spawn
 };
 

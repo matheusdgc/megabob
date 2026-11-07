@@ -1,5 +1,5 @@
-import { BOB_BODY_H, BOB_BODY_W, GRAVITY, MAX_FALL_SPEED } from '../data/tuning';
-import { type ParsedMap, T } from '../stages/map';
+import { BOB_BODY_H, BOB_BODY_W, CONVEYOR_SPEED, GRAVITY, MAX_FALL_SPEED } from '../data/tuning';
+import { conveyorUnder, isFloor, isSolid, type ParsedMap, T } from '../stages/map';
 import { type Action, ActionState } from './actions';
 import { newMotion, stepMotion } from './motion';
 
@@ -70,7 +70,7 @@ export class ReachSim {
     if (d && x < d.x + DOOR_W && x + w > d.x && y < d.y + DOOR_H && y + h > d.y) return { tx: d.x, ty: d.y };
     for (let r = Math.floor(y / TILE); r <= Math.floor((y + h - 0.001) / TILE); r++) {
       for (let c = Math.floor(x / TILE); c <= Math.floor((x + w - 0.001) / TILE); c++) {
-        if (this.tile(c, r) === T.solid) return { tx: c * TILE, ty: r * TILE };
+        if (isSolid(this.tile(c, r))) return { tx: c * TILE, ty: r * TILE };
       }
     }
     return null;
@@ -133,12 +133,18 @@ export class ReachSim {
       if (top < fromBottom - 0.001 || top > toBottom) continue;
       for (let c = Math.floor(x / TILE); c <= Math.floor((x + W - 0.001) / TILE); c++) {
         const t = this.tile(c, r);
-        if (t === T.solid || t === T.platform) return top;
+        if (isFloor(t)) return top;
       }
       const d = this.door;
       if (d && top === d.y && x < d.x + DOOR_W && x + W > d.x) return top;
     }
     return null;
+  }
+
+  /** A conveyor under either of Bob's feet pushes him along, like in the game. */
+  private carry(b: Box): number {
+    const at = (x: number, y: number) => this.tile(Math.floor(x / TILE), Math.floor(y / TILE));
+    return conveyorUnder(at, b.x, b.x + BOB_BODY_W, b.y + BOB_BODY_H) * CONVEYOR_SPEED;
   }
 
   private dead(b: Box): boolean {
@@ -174,7 +180,7 @@ export class ReachSim {
       if (!this.opts.dash) held.delete('dash');
       input.update(held);
       const out = stepMotion(motion, input, { onGround: b.down, vy: b.vy, wallLeft: b.left, wallRight: b.right });
-      b.vx = b.down ? out.vx : out.vx * air;
+      b.vx = b.down ? out.vx + this.carry(b) : out.vx * air;
       if (out.vy !== undefined) b.vy = out.vy;
       b.gravity = out.gravity;
       this.physics(b);

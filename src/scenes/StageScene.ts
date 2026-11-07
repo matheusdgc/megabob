@@ -1,22 +1,23 @@
 import Phaser from 'phaser';
 import { ARMOR_BITS, TILE } from '../data/assets';
+import { CONVEYOR_ANIM_FRAMES, CONVEYOR_SPEED } from '../data/tuning';
 import { MAX_LIVES, PICKUPS, rollDrop } from '../data/drops';
 import { BossDoor } from '../entities/BossDoor';
 import type { Boss } from '../entities/Boss';
-import { MemoryLeak, MEMORY_LEAK_CONTACT } from '../entities/bosses/MemoryLeak';
+import { createBoss } from '../entities/bosses';
 import { Checkpoint } from '../entities/Checkpoint';
 import { Enemy, type EnemyWorld } from '../entities/Enemy';
 import { EnemyShot } from '../entities/EnemyShot';
-import { playOnce } from '../entities/effects';
+import { loopAnim, playOnce } from '../entities/effects';
 import { Feedback } from '../entities/feedback';
 import { GameAudio, loadMusic } from '../audio';
 import type { SfxId } from '../data/sfx';
 import { createEnemy } from '../entities/enemies';
 import { Pickup } from '../entities/Pickup';
 import type { Projectile } from '../entities/Projectile';
-import { Player } from '../entities/Player';
+import { Player, type Special } from '../entities/Player';
 import { skinTiles, solidFrames } from '../stages/autotile';
-import { type MapEnemy, parseMap, T } from '../stages/map';
+import { conveyorDir, conveyorUnder, isFloor, isSolid, type MapEnemy, parseMap, T } from '../stages/map';
 import { bossRoomIndex, DEFAULT_STAGE, type StageDef, type StageId, STAGES } from '../stages/stages';
 import { type Action, ActionState } from '../systems/actions';
 import { cameraScroll, type Section, sectionAt, sectionOf, sectionsFromTiles } from '../systems/camera';
@@ -24,7 +25,7 @@ import { heal, loseLife } from '../systems/damage';
 import { gooTop, inGoo } from '../systems/goo';
 import { GameInput } from '../systems/input';
 import { grant, newArsenal, refill } from '../systems/weapons';
-import { BOSS_WEAPON, damageFor, WEAPON_MAX_ENERGY, WEAPONS } from '../data/weapons';
+import { BOSS_WEAPON, damageFor, freezeFrames, WEAPON_MAX_ENERGY, WEAPONS } from '../data/weapons';
 import { GcOrb } from '../entities/weapons/GarbageCollector';
 import type { PauseData } from './PauseScene';
 import { getSave } from './progress';
@@ -75,6 +76,9 @@ export class StageScene extends Phaser.Scene {
   private layer!: Phaser.Tilemaps.TilemapLayer;
   /** The logical map (`T` values): collision, hazards and enemy queries read this, never tile frames. */
   private grid!: number[][];
+  /** Conveyor tiles, animated on the logic tick. */
+  private conveyors!: Phaser.Tilemaps.Tile[];
+  private ticks!: number;
   private hud!: Hud;
   private fx!: Feedback;
   /** Ticks during which the pause button is ignored (right after the menu closes). */
@@ -126,6 +130,8 @@ export class StageScene extends Phaser.Scene {
     this.gooFrames = 0;
     this.pauseLock = 0;
     this.over = false;
+    this.conveyors = [];
+    this.ticks = 0;
   }
 
   preload(): void {
@@ -155,7 +161,12 @@ export class StageScene extends Phaser.Scene {
     this.layer = layer;
     layer.setCollision(solidFrames(this.def.skin));
     layer.forEachTile((tile) => {
-      if (this.grid[tile.y]?.[tile.x] === T.platform) tile.setCollision(false, false, true, false);
+      const t = this.grid[tile.y]?.[tile.x];
+      if (t === T.platform) tile.setCollision(false, false, true, false);
+      if (conveyorDir(t) !== 0) {
+        this.conveyors.push(tile);
+        tile.flipX = conveyorDir(t) < 0;
+      }
     });
 
     const goo = this.def.goo;
@@ -175,7 +186,7 @@ export class StageScene extends Phaser.Scene {
     this.player = new Player(this, this.respawnAt.x, this.respawnAt.y);
     this.physics.add.collider(this.player, layer);
     if (this.door) this.physics.add.collider(this.player, this.door);
-    this.player.solidAt = (x, y) => this.cellAt(x, y) === T.solid;
+    this.player.solidAt = (x, y) => isSolid(this.cellAt(x, y));
     this.player.on('deathDone', () => this.afterDeath());
     this.player.on('sfx', (id: SfxId) => this.sfx(id));
     this.player.on('hurt', () => {
@@ -225,9 +236,8 @@ export class StageScene extends Phaser.Scene {
     });
     this.physics.add.overlap(this.player, this.enemies, (a, b) => this.touchEnemy(pick(a, b, isEnemy)[0]));
     this.physics.add.overlap(this.player.specials, this.enemies, (a, b) => {
-      const [enemy, orb] = pick(a, b, isEnemy) as [Enemy, GcOrb];
-      // the orb passes through, hitting each enemy once
-      if (orb.active && enemy.active && orb.firstHit(enemy)) enemy.hurt(orb.damage);
+      const [enemy, special] = pick(a, b, isEnemy);
+      this.hitWithSpecial(special as Special, enemy);
     });
     this.physics.add.overlap(this.player, this.pickups, (a, b) =>
       this.collect(pick(a, b, (o): o is Pickup => o instanceof Pickup)[0]),
@@ -279,7 +289,13 @@ export class StageScene extends Phaser.Scene {
       this.openPause();
       return;
     }
-    p.step(input);
+    // a conveyor under Bob's feet carries him (only while he stands on it)
+    const b0 = p.body;
+    p.step(input, b0.blocked.down ? conveyorUnder((x, y) => this.cellAt(x, y), b0.left, b0.right, b0.bottom) * CONVEYOR_SPEED : 0);
+    if (++this.ticks % CONVEYOR_ANIM_FRAMES === 0 && this.conveyors.length) {
+      const [a, b] = this.def.skin.conveyor;
+      for (const t of this.conveyors) t.index = t.index === a ? b : a;
+    }
     for (const e of this.enemies.getChildren() as Enemy[]) e.step();
     for (const k of [...this.pickups.getChildren()] as Pickup[]) k.step();
     if (this.boss) {
@@ -349,6 +365,39 @@ export class StageScene extends Phaser.Scene {
     });
   }
 
+  /**
+   * A special-weapon shot meets an enemy or the boss: damage (weakness included for the boss),
+   * the Mutex Lock's freeze with its padlock shell, then the shot stops unless it pierces.
+   */
+  private hitWithSpecial(special: Special, target: Enemy | Boss): void {
+    if (!special.active || !target.active || !special.firstHit(target)) return;
+    const isBoss = target === this.boss;
+    const killed = target.hurt(isBoss ? damageFor(this.def.boss, special.weapon, special.damage) : special.damage);
+    if (special.weapon === 'mutexLock' && !killed && target.freeze(freezeFrames(isBoss)) !== false) {
+      this.lockShell(target, freezeFrames(isBoss));
+      this.sfx('freeze');
+    }
+    if (!special.pierces) special.disableBody(true, true);
+  }
+
+  /** The padlock shell drawn over a frozen target, sized to it, gone when it thaws. */
+  private lockShell(target: Enemy | Boss, frames: number): void {
+    const b = target.body;
+    const shell = this.add.sprite(b.center.x, b.center.y, 'fx_mutex_shell', 0).setDepth(3).setAlpha(0.85);
+    shell.setScale(Math.max(1, Math.max(b.width, b.height) / 26));
+    shell.play(loopAnim(this, 'fx_mutex_shell', [0, 1], 4));
+    const follow = () => {
+      if (!target.active || !target.isFrozen) {
+        this.events.off(Phaser.Scenes.Events.UPDATE, follow);
+        shell.destroy();
+        return;
+      }
+      shell.setPosition(target.body.center.x, target.body.center.y);
+    };
+    this.events.on(Phaser.Scenes.Events.UPDATE, follow);
+    this.time.delayedCall((frames / 60) * 1000 + 100, follow);
+  }
+
   /** Logical cell (`T`) at a world point; outside the map is empty. */
   private cellAt(x: number, y: number): number {
     return this.grid[Math.floor(y / TILE)]?.[Math.floor(x / TILE)] ?? T.empty;
@@ -369,8 +418,7 @@ export class StageScene extends Phaser.Scene {
     this.pickups.clear(true, true);
     const world: EnemyWorld = {
       floorAt: (x, y) => {
-        const t = this.cellAt(x, y);
-        return t === T.solid || t === T.platform;
+        return isFloor(this.cellAt(x, y));
       },
       bob: () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
       throwBlock: (x, y, vx, vy) => {
@@ -397,7 +445,7 @@ export class StageScene extends Phaser.Scene {
   }
 
   private touchEnemy(enemy: Enemy): void {
-    if (enemy.active && !this.player.isDead) this.player.takeHit(enemy.stats.contact, enemy.body.center.x);
+    if (enemy.active && !enemy.isFrozen && !this.player.isDead) this.player.takeHit(enemy.stats.contact, enemy.body.center.x);
   }
 
   private dropFrom(x: number, y: number): void {
@@ -458,17 +506,12 @@ export class StageScene extends Phaser.Scene {
     });
     // centre of the boss room, feet on its floor (the bottom two rows are ground)
     const room = this.sections[this.bossRoom]!;
-    const boss = new MemoryLeak(
-      this,
-      room.x + room.w / 2,
-      room.y + room.h - 2 * TILE,
-      this.worldHeight,
-      () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y }),
-    );
+    const bob = () => (this.player.isDead ? null : { x: this.player.body.center.x, y: this.player.body.center.y });
+    const boss = createBoss(this.def.boss, this, room.x + room.w / 2, room.y + room.h - 2 * TILE, this.worldHeight, bob);
     this.boss = boss;
     const track = (c: Phaser.Physics.Arcade.Collider) => this.bossColliders.push(c);
+    const isBoss = (o: unknown): o is Boss => o === boss;
     // Bob's shots hit the boss (pairs sorted by type: the old version disabled the boss itself)
-    const isBoss = (o: unknown): o is MemoryLeak => o === boss;
     track(this.physics.add.overlap(this.player.shots, boss, (a, b) => {
       const shot = pick(a, b, isBoss)[1] as Projectile;
       if (!shot.active || !boss.active) return;
@@ -476,33 +519,28 @@ export class StageScene extends Phaser.Scene {
       playOnce(this, shot.level === 3 ? 'fx_compiler_hit' : 'fx_hit', shot.x, shot.y, 20);
       if (!(killed && shot.level >= 2)) shot.disableBody(true, true);
     }));
-    // Garbage Collector orbs: hit the boss once each, swallow goo
-    const isOrb = (o: unknown): o is GcOrb => o instanceof GcOrb;
-    track(this.physics.add.overlap(this.player.specials, boss, (a, b) => {
-      const orb = pick(a, b, isOrb)[0];
-      if (orb.active && boss.active && orb.firstHit(boss)) boss.hurt(damageFor(this.def.boss, orb.weapon, orb.damage));
-    }));
-    track(this.physics.add.overlap(this.player.specials, boss.gooGroup, (a, b) => {
-      const goo = pick(a, b, isOrb)[1] as { active: boolean; deactivate(): void };
-      if (goo.active) goo.deactivate();
-    }));
-    // Goo blobs and puddles hurt Bob
+    // special weapons: each projectile hits the boss once (see hitWithSpecial)
+    track(this.physics.add.overlap(this.player.specials, boss, (a, b) => this.hitWithSpecial(pick(a, b, isBoss)[1] as Special, boss)));
+    // the boss's own projectiles: they hurt Bob, the Garbage Collector eats them, some land
     const isBob = (o: unknown): o is Player => o === this.player;
-    track(this.physics.add.overlap(this.player, boss.gooGroup, (a, b) => {
-      if (this.player.isDead) return;
-      const goo = pick(a, b, isBob)[1] as Parameters<typeof MemoryLeak.gooDamage>[0];
-      this.player.takeHit(MemoryLeak.gooDamage(goo), goo.body.center.x);
-    }));
-    // Boss body hurts Bob on contact
+    const isOrb = (o: unknown): o is GcOrb => o instanceof GcOrb;
+    for (const h of boss.hazards) {
+      track(this.physics.add.overlap(this.player, h.group, (a, b) => {
+        const child = pick(a, b, isBob)[1] as Phaser.Physics.Arcade.Sprite;
+        if (!this.player.isDead && child.active) this.player.takeHit(h.damage(child), child.x);
+      }));
+      track(this.physics.add.overlap(this.player.specials, h.group, (a, b) => {
+        const [orb, child] = pick(a, b, isOrb);
+        if (orb.active && (child as Phaser.GameObjects.GameObject).active) h.swallow(child as Phaser.GameObjects.GameObject);
+      }, (a, b) => isOrb(a) || isOrb(b)));
+      if (h.collidesWithTiles) track(this.physics.add.collider(h.group, this.layer, undefined, (c) => h.collidesWithTiles!(c as Phaser.GameObjects.GameObject), this));
+    }
+    // the boss's body hurts Bob on contact (not while the Mutex Lock holds it)
     track(this.physics.add.overlap(this.player, boss, () => {
-      if (!this.player.isDead && boss.phase === 'fight') {
-        this.player.takeHit(MEMORY_LEAK_CONTACT, boss.body.center.x);
-      }
+      if (!this.player.isDead && boss.phase === 'fight' && !boss.isFrozen) this.player.takeHit(boss.contactDamage, boss.body.center.x);
     }));
-    // Goo collides with the tile layer so it lands on the floor
-    track(this.physics.add.collider(boss.gooGroup, this.layer, undefined, (g) => !(g as unknown as { isPuddle: boolean }).isPuddle, this));
     boss.setArena(room.x, room.x + room.w);
-    this.bossHealthBar = new BossHealthBar(this, 'MEMORY LEAK');
+    this.bossHealthBar = new BossHealthBar(this, this.def.name);
     boss.startIntro();
   }
 

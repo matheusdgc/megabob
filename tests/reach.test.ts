@@ -65,8 +65,27 @@ describe('reachable', () => {
   });
 });
 
+describe('conveyors', () => {
+  it('carry a standing Bob along their direction', () => {
+    const map = parseMap(strip(0, (rows) => {
+      for (let c = 0; c < 30; c++) rows[8]![c] = '>';
+    }));
+    let x = map.spawn.x;
+    new ReachSim(map).play(map.spawn, (f) => (f < 60 ? ['down'] : []), (feet) => (x = feet.x));
+    expect(x).toBeGreaterThan(map.spawn.x + 40); // about 50 px/s for a second
+  });
+
+  it('carry a Bob who stands still off a ledge into a pit', () => {
+    const map = parseMap(strip(30, (rows) => {
+      for (let c = 0; c < 10; c++) rows[8]![c] = '>';
+    }));
+    expect(new ReachSim(map).play(map.spawn, (f) => (f < 200 ? ['down'] : [])).spot).toBeNull(); // down: hands off, nothing else
+  });
+});
+
 describe.each(Object.values(STAGES))('critical path of stage $id', (def) => {
-  it('goes from the spawn to the boss door by plain play, with slack and no dash', () => {
+  // a full search of a stage takes seconds
+  it('goes from the spawn to the boss door by plain play, with slack and no dash', { timeout: 30000 }, () => {
     expect(reachable(parseMap(def.map), { airControl: 0.75 }).door).toBe(true);
   });
 });

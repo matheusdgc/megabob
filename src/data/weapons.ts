@@ -47,3 +47,17 @@ export function damageFor(boss: BossId, weapon: WeaponId, base: number): number 
   const w = WEAKNESS[boss];
   return w.weapon === weapon ? base * w.multiplier : base;
 }
+
+// --- Mutex Lock: a padlock bolt that freezes what it hits ---
+/** Frames a common enemy stays frozen. */
+export const MUTEX_FREEZE_FRAMES = 150;
+/** Frames a boss stays frozen: much shorter, and it cannot be frozen again right away. */
+export const MUTEX_BOSS_FREEZE_FRAMES = 45;
+/** After thawing, a boss ignores the lock this long (no freeze-locking a boss to death). */
+export const MUTEX_BOSS_IMMUNE_FRAMES = 120;
+
+/** How long the Mutex Lock holds a target. */
+export const freezeFrames = (isBoss: boolean): number => (isBoss ? MUTEX_BOSS_FREEZE_FRAMES : MUTEX_FREEZE_FRAMES);
+
+/** Special-weapon shots allowed on screen at once. */
+export const SPECIALS_ON_SCREEN: Partial<Record<WeaponId, number>> = { garbageCollector: 1, mutexLock: 2 };

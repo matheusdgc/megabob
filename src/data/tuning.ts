@@ -75,6 +75,12 @@ export const BLINK_FRAMES = 3;
 /** From death until respawn at the checkpoint. */
 export const DEATH_FRAMES = 120;
 
+// --- Stage gimmicks ---
+/** A conveyor belt carries whoever stands on it at this speed, px/s. */
+export const CONVEYOR_SPEED = 50;
+/** Frames per conveyor animation frame (2 frames). */
+export const CONVEYOR_ANIM_FRAMES = 6;
+
 // --- Bob hitbox (inside the 48x48 sprite cell, feet on the bottom row) ---
 export const BOB_BODY_W = 14;
 export const BOB_BODY_H = 30;

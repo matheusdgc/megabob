@@ -90,3 +90,19 @@ describe('energy', () => {
     expect(refill(newArsenal(), 8)).toBe(0); // nothing to fill
   });
 });
+
+describe('Mutex Lock', () => {
+  it('freezes common enemies for a fixed time and bosses for less, with a re-lock cooldown', async () => {
+    const { freezeFrames, MUTEX_BOSS_IMMUNE_FRAMES, MUTEX_FREEZE_FRAMES } = await import('../src/data/weapons');
+    expect(freezeFrames(false)).toBe(MUTEX_FREEZE_FRAMES);
+    expect(freezeFrames(true)).toBeLessThan(freezeFrames(false) / 2);
+    expect(MUTEX_BOSS_IMMUNE_FRAMES).toBeGreaterThan(freezeFrames(true));
+  });
+
+  it('is the Memory Leak weakness, and Race Condition takes 3x from the Null Pointer', async () => {
+    const { damageFor, WEAPONS } = await import('../src/data/weapons');
+    expect(damageFor('memoryLeak', 'mutexLock', WEAPONS.mutexLock.damage)).toBe(3 * WEAPONS.mutexLock.damage);
+    expect(damageFor('raceCondition', 'nullPointer', 2)).toBe(6);
+    expect(damageFor('raceCondition', 'buster', 2)).toBe(2);
+  });
+});

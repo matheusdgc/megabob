@@ -1,4 +1,4 @@
-import { T } from './map';
+import { isSolid, T } from './map';
 
 /**
  * Which tileset frame draws each kind of cell. The map stays logical (`T` values, used for
@@ -18,6 +18,8 @@ export interface TileSkin {
   platform: readonly [number, number, number];
   hazard: number;
   wall: number;
+  /** Conveyor belt animation frames (the left-moving belt is drawn flipped). */
+  conveyor: readonly [number, number];
 }
 
 /** tiles_test: one frame per kind (0 solid, 1 wall, 2 spike, 3 platform). */
@@ -32,6 +34,7 @@ export const PLAIN_SKIN: TileSkin = {
   platform: [3, 3, 3],
   hazard: 2,
   wall: 1,
+  conveyor: [0, 0],
 };
 
 /** The stage tilesets from tools/art.py (tiles_memory_leak and siblings, 24 frames). */
@@ -46,10 +49,13 @@ export const STAGE_SKIN: TileSkin = {
   platform: [12, 13, 14],
   hazard: 16,
   wall: 17,
+  conveyor: [20, 21],
 };
 
 /** Every frame a skin uses for solid cells (they get full collision). */
-export const solidFrames = (s: TileSkin): number[] => [...new Set([s.top, s.fill, s.topLeft, s.topRight, s.bottomLeft, s.bottomRight, s.column])];
+export const solidFrames = (s: TileSkin): number[] => [
+  ...new Set([s.top, s.fill, s.topLeft, s.topRight, s.bottomLeft, s.bottomRight, s.column, ...s.conveyor]),
+];
 
 /** Tileset frames for a logical map (-1 = nothing drawn). Off-map neighbours count as solid. */
 export function skinTiles(tiles: readonly (readonly number[])[], skin: TileSkin): number[][] {
@@ -58,10 +64,10 @@ export function skinTiles(tiles: readonly (readonly number[])[], skin: TileSkin)
     row.map((t, c) => {
       switch (t) {
         case T.solid: {
-          const up = at(r - 1, c) !== T.solid;
-          const down = at(r + 1, c) !== T.solid;
-          const left = at(r, c - 1) !== T.solid;
-          const right = at(r, c + 1) !== T.solid;
+          const up = !isSolid(at(r - 1, c));
+          const down = !isSolid(at(r + 1, c));
+          const left = !isSolid(at(r, c - 1));
+          const right = !isSolid(at(r, c + 1));
           if (left && right) return skin.column;
           if (up) return left ? skin.topLeft : right ? skin.topRight : skin.top;
           if (down && left) return skin.bottomLeft;
@@ -73,6 +79,9 @@ export function skinTiles(tiles: readonly (readonly number[])[], skin: TileSkin)
           const rr = at(r, c + 1) === T.platform;
           return !l && rr ? skin.platform[0] : l && !rr ? skin.platform[2] : skin.platform[1];
         }
+        case T.conveyorRight:
+        case T.conveyorLeft:
+          return skin.conveyor[0];
         case T.spike:
           return skin.hazard;
         case T.wall:

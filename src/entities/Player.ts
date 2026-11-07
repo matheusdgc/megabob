@@ -22,8 +22,13 @@ import { type HitResult, hit, kill, newHealth, tickHealth } from '../systems/dam
 import { cornerNudge, type SolidAt } from '../systems/corner';
 import { newMotion, startHurt, stepMotion } from '../systems/motion';
 import { type Arsenal, cycleWeapon, newArsenal, spend } from '../systems/weapons';
-import { WEAPONS } from '../data/weapons';
-import { GC_MAX_ON_SCREEN, GcOrb } from './weapons/GarbageCollector';
+import { SPECIALS_ON_SCREEN, WEAPONS } from '../data/weapons';
+import { GcOrb } from './weapons/GarbageCollector';
+import { MutexBolt } from './weapons/MutexLock';
+
+/** A special-weapon shot (each class keeps its own behaviour; the stage reads these fields). */
+export type Special = GcOrb | MutexBolt;
+const SPECIAL_CLASS = { garbageCollector: GcOrb, mutexLock: MutexBolt } as const;
 import { fxAnim, Projectile } from './Projectile';
 
 /** Frames the muzzle flash stays on after a shot. */
@@ -93,7 +98,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // basic shots plus room for charged shots fired while they are still flying
     this.shots = scene.physics.add.group({ classType: Projectile, maxSize: MAX_SHOTS * 2, allowGravity: false });
-    this.specials = scene.physics.add.group({ classType: GcOrb, maxSize: GC_MAX_ON_SCREEN + 1, allowGravity: false });
+    this.specials = scene.physics.add.group({ allowGravity: false });
     this.aura = scene.add.sprite(x, y, AURA_SHEETS[1]).setVisible(false).setDepth(1);
     this.muzzle = scene.add.sprite(x, y, 'fx_muzzle').setVisible(false).setDepth(1);
     this.decompile = scene.add.sprite(x, y, 'fx_decompile').setVisible(false).setDepth(1);
@@ -161,8 +166,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.motion.airDashes = bits & ARMOR_BITS.legs ? AIR_DASHES_BOOTS : AIR_DASHES;
   }
 
-  /** Call once per frame, after the physics step, with this frame's input. */
-  step(input: ActionState): void {
+  /**
+   * Call once per frame, after the physics step, with this frame's input. `carry` is the ground's
+   * own horizontal speed under Bob (a conveyor belt), added to his.
+   */
+  step(input: ActionState, carry = 0): void {
     if (this.health.dead) {
       if (this.deathFrames > 0 && --this.deathFrames === 0) this.emit('deathDone');
       return;
@@ -180,7 +188,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       wallLeft: body.blocked.left,
       wallRight: body.blocked.right,
     });
-    body.setVelocityX(out.vx);
+    body.setVelocityX(out.vx + carry);
     if (out.vy !== undefined) body.setVelocityY(out.vy);
     body.setAllowGravity(out.gravity);
     const now = this.motion.state;
@@ -256,13 +264,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   private fireSpecial(): void {
-    if (this.arsenal.current !== 'garbageCollector') return; // the others arrive in T14/T15
-    if (this.specials.countActive(true) >= GC_MAX_ON_SCREEN || !spend(this.arsenal)) return;
+    const weapon = this.arsenal.current;
+    if (weapon !== 'garbageCollector' && weapon !== 'mutexLock') return; // Null Pointer arrives in T15
+    const Cls = SPECIAL_CLASS[weapon];
+    const mine = (this.specials.getChildren() as Special[]).filter((c) => c instanceof Cls);
+    if (mine.filter((c) => c.active).length >= (SPECIALS_ON_SCREEN[weapon] ?? 1) || !spend(this.arsenal)) return;
+    // reuse a spent shot of this weapon, or make one
+    let shot = mine.find((c) => !c.active);
+    if (!shot) {
+      shot = new Cls(this.scene, 0, 0, weapon === 'mutexLock' ? 'fx_mutex' : 'fx_gc');
+      this.specials.add(shot, true);
+    }
     const o = shotOrigin(this.motion);
-    const orb = this.specials.get() as GcOrb | null;
-    orb?.fire(this.body.center.x + o.dx, this.body.bottom + o.dy, o.dir);
+    shot.fire(this.body.center.x + o.dx, this.body.bottom + o.dy, o.dir);
     this.buster.pose = SHOOT_POSE_FRAMES;
-    this.emit('sfx', 'garbageCollector');
+    this.emit('sfx', weapon);
   }
 
   private fire(level: ShotLevel): void {

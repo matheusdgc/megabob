@@ -11,9 +11,25 @@ import {
   type BossPhase,
   type BossState,
 } from '../systems/boss';
+import { MUTEX_BOSS_IMMUNE_FRAMES } from '../data/weapons';
 import { playOnce } from './effects';
 
 export type { BossPhase };
+
+/**
+ * Something a boss throws at Bob: a physics group, wired once by the stage (it hurts Bob, the
+ * Garbage Collector swallows it, and it may land on the terrain).
+ */
+export interface BossHazards {
+  group: Phaser.Physics.Arcade.Group;
+  damage(child: Phaser.GameObjects.GameObject): number;
+  swallow(child: Phaser.GameObjects.GameObject): void;
+  /** Process callback for a collider with the tiles; omit for shots that fly through walls. */
+  collidesWithTiles?(child: Phaser.GameObjects.GameObject): boolean;
+}
+
+/** Tint of a boss held by the Mutex Lock. */
+const FROZEN_TINT = 0xf1c21b;
 
 /** Segments in the boss health bar. */
 export const BOSS_BAR_SEGMENTS = 28;
@@ -36,6 +52,14 @@ export { BOSS_INTRO_FRAMES, BOSS_INVULN_FRAMES };
  */
 export abstract class Boss extends Phaser.Physics.Arcade.Sprite {
   private readonly _bossState: BossState;
+  /** Damage to Bob on touching the boss's body. */
+  abstract readonly contactDamage: number;
+  /** Arena walls, in world x: the boss never leaves them. */
+  protected arenaLeft = -Infinity;
+  protected arenaRight = Infinity;
+  /** Frames left frozen by the Mutex Lock, then frames it shrugs the lock off. */
+  private frozen = 0;
+  private immune = 0;
 
   declare body: Phaser.Physics.Arcade.Body;
 
@@ -86,6 +110,32 @@ export abstract class Boss extends Phaser.Physics.Arcade.Sprite {
     return bossHpFraction(this._bossState);
   }
 
+  /** What the boss throws (empty for a boss that only charges). */
+  get hazards(): BossHazards[] {
+    return [];
+  }
+
+  setArena(left: number, right: number): void {
+    this.arenaLeft = left;
+    this.arenaRight = right;
+  }
+
+  get isFrozen(): boolean {
+    return this.frozen > 0;
+  }
+
+  /**
+   * The Mutex Lock: the boss stops acting for `frames` (it still takes damage). Returns false
+   * when the lock does not take (not fighting, or still immune from the last one).
+   */
+  freeze(frames: number): boolean {
+    if (this._bossState.phase !== 'fight' || this.immune > 0 || this.frozen > 0) return false;
+    this.frozen = frames;
+    this.body.setVelocity(0, 0);
+    this.setTint(FROZEN_TINT);
+    return true;
+  }
+
   /** Kick off the intro (call once after spawning). */
   startIntro(): void {
     resetBossState(this._bossState);
@@ -98,7 +148,17 @@ export abstract class Boss extends Phaser.Physics.Arcade.Sprite {
     if (this._bossState.flash === 0) this.clearTint();
     const result = tickBossState(this._bossState);
     if (result === 'dead') return;
-    if (this._bossState.phase === 'fight') this.think();
+    if (this._bossState.phase !== 'fight') return;
+    if (this.immune > 0) this.immune--;
+    if (this.frozen > 0) {
+      this.body.setVelocity(0, 0);
+      if (--this.frozen === 0) {
+        this.clearTint();
+        this.immune = MUTEX_BOSS_IMMUNE_FRAMES;
+      } else if (this._bossState.flash === 0) this.setTint(FROZEN_TINT);
+      return;
+    }
+    this.think();
   }
 
   /** Subclass AI — called once per fixed step while phase === 'fight'. */
@@ -126,6 +186,8 @@ export abstract class Boss extends Phaser.Physics.Arcade.Sprite {
   /** Restart the encounter (Bob died). Subclasses clean up their state then call super. */
   reset(): void {
     resetBossState(this._bossState);
+    this.frozen = 0;
+    this.immune = 0;
     this.setVisible(true);
     this.body.enable = true;
     this.clearTint();

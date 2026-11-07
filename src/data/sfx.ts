@@ -55,6 +55,18 @@ export const SFX = {
       { wave: 'triangle', from: 600, to: 200, dur: 0.2, vol: 0.12, at: 0.05 },
     ],
   },
+  mutexLock: {
+    voices: [
+      { wave: 'square', from: 1400, to: 900, dur: 0.06, vol: 0.14 },
+      { wave: 'square', from: 700, to: 700, dur: 0.08, vol: 0.12, at: 0.06 },
+    ],
+  },
+  freeze: {
+    voices: [
+      { wave: 'triangle', from: 2000, to: 600, dur: 0.18, vol: 0.14 },
+      { wave: 'noise', from: 6000, to: 2000, dur: 0.12, vol: 0.08 },
+    ],
+  },
   weaponSwitch: { voices: [{ wave: 'square', from: 1200, to: 1200, dur: 0.035, vol: 0.1 }] },
   hurt: { voices: [{ wave: 'square', from: 620, to: 150, dur: 0.18, vol: 0.22 }] },
   death: {

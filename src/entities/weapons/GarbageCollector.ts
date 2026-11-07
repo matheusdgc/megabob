@@ -15,6 +15,8 @@ const CULL_MARGIN = 24;
 export class GcOrb extends Phaser.Physics.Arcade.Sprite {
   readonly weapon = 'garbageCollector' as const;
   readonly damage = WEAPONS.garbageCollector.damage;
+  /** Passes through what it hits (each target once). */
+  readonly pierces = true;
   private readonly hits = new Set<object>();
 
   declare body: Phaser.Physics.Arcade.Body;

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Boss } from '../Boss';
+import { Boss, type BossHazards } from '../Boss';
 import { memoryLeakFrame, memoryGooFrame, type MemoryLeakArtState } from '../../systems/memoryLeakArt';
 
 // ---------------------------------------------------------------------------
@@ -148,8 +148,6 @@ export class MemoryLeak extends Boss {
   private diveTargetX = 0;
   private worldH = 0;
   /** Horizontal limits of the boss room; the emerge point is clamped inside it. */
-  private arenaLeft = -Infinity;
-  private arenaRight = Infinity;
 
   /** Callback to find Bob's position. */
   private readonly getBob: () => { x: number; y: number } | null;
@@ -169,12 +167,21 @@ export class MemoryLeak extends Boss {
   }
 
   /** Boss room x-range, so the boss never re-emerges outside it. */
-  setArena(left: number, right: number): void {
-    this.arenaLeft = left;
-    this.arenaRight = right;
+  readonly contactDamage = MEMORY_LEAK_CONTACT;
+
+  /** Goo bubbles and puddles: they hurt Bob, land on the floor, and the Garbage Collector eats them. */
+  override get hazards(): BossHazards[] {
+    return [
+      {
+        group: this.goo,
+        damage: (g) => MemoryLeak.gooDamage(g as GooBlob),
+        swallow: (g) => (g as GooBlob).deactivate(),
+        collidesWithTiles: (g) => !(g as GooBlob).isPuddle,
+      },
+    ];
   }
 
-  /** Expose the goo group so StageScene can set up overlaps with the player. */
+  /** Expose the goo group (tests and debugging). */
   get gooGroup(): Phaser.Physics.Arcade.Group {
     return this.goo;
   }

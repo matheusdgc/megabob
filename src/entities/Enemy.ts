@@ -24,6 +24,9 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
   /** Walkers collide with the terrain; flyers pass through it. */
   abstract readonly solid: boolean;
   private flash = 0;
+  /** Frames left frozen by the Mutex Lock, and whether gravity was on before. */
+  private frozen = 0;
+  private hadGravity = true;
 
   declare body: Phaser.Physics.Arcade.Body;
 
@@ -46,9 +49,30 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.body.setOffset((this.width - w) / 2, this.height - h);
   }
 
+  get isFrozen(): boolean {
+    return this.frozen > 0;
+  }
+
+  /** The Mutex Lock: stop dead, hang in place and do no contact damage for `frames`. */
+  freeze(frames: number): void {
+    if (this.frozen === 0) this.hadGravity = this.body.allowGravity;
+    this.frozen = Math.max(this.frozen, frames);
+    this.body.setVelocity(0, 0);
+    this.body.setAllowGravity(false);
+    this.anims.pause();
+  }
+
   /** One fixed logic step. */
   step(): void {
     if (this.flash > 0 && --this.flash === 0) this.clearTint();
+    if (this.frozen > 0) {
+      this.body.setVelocity(0, 0);
+      if (--this.frozen === 0) {
+        this.body.setAllowGravity(this.hadGravity);
+        this.anims.resume();
+      }
+      return;
+    }
     this.think();
   }
 
