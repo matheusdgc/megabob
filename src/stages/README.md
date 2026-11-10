@@ -51,7 +51,7 @@ freeze, the health bar, the despawn when Bob dies).
 
 ## 5. Design rules (gamedev `level-design` skill)
 
-- Size gaps and steps by Bob's jump: about 53 px (3.3 tiles) high and 63 px far. Mandatory
+- Size gaps and steps by Bob's jump: about 54 px (3.3 tiles) high and 56 px far with a running start. Mandatory
   jumps stay well inside that; edge-of-reach jumps are for optional paths.
 - Teach each hazard alone where failing is cheap (near a checkpoint), then combine it.
 - **A breather before the climax:** health in the last section and no enemy in the last 6 tiles

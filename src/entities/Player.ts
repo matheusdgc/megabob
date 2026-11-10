@@ -4,12 +4,12 @@ import {
   BLINK_FRAMES,
   BOB_BODY_H,
   BOB_BODY_W,
+  BOB_MAX_FALL_SPEED,
   SHOOT_POSE_FRAMES,
   DEATH_FRAMES,
   GRAVITY,
   HURT_FRAMES,
   HURT_FRAMES_PLATED,
-  MAX_FALL_SPEED,
   MAX_SHOTS,
   LAND_DUST_FRAMES,
   WALL_DUST_FRAMES,
@@ -19,7 +19,7 @@ import { BOB_LOOPS, type BobPose, bobPose, poseSheet, shotOrigin } from '../syst
 import { chargeLevel, newBuster, type ShotLevel, stepBuster } from '../systems/charge';
 import { type HitResult, hit, kill, newHealth, tickHealth } from '../systems/damage';
 import { cornerNudge, type SolidAt } from '../systems/corner';
-import { newMotion, startHurt, stepMotion } from '../systems/motion';
+import { bobGravity, newMotion, startHurt, stepMotion } from '../systems/motion';
 import { partEffects } from '../systems/upgrades';
 import { type Arsenal, cycleWeapon, newArsenal, spend } from '../systems/weapons';
 import { SPECIALS_ON_SCREEN, WEAPONS } from '../data/weapons';
@@ -99,7 +99,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.setSize(BOB_BODY_W, BOB_BODY_H);
     this.body.setOffset((BOB_FRAME - BOB_BODY_W) / 2, BOB_FRAME - BOB_BODY_H);
     this.body.setGravityY(GRAVITY);
-    this.body.setMaxVelocityY(MAX_FALL_SPEED);
+    this.body.setMaxVelocityY(BOB_MAX_FALL_SPEED);
 
     // basic shots plus room for charged shots fired while they are still flying
     this.shots = scene.physics.add.group({ classType: Projectile, maxSize: MAX_SHOTS * 2, allowGravity: false });
@@ -198,6 +198,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (out.vy !== undefined) body.setVelocityY(out.vy);
     body.setAllowGravity(out.gravity);
     const now = this.motion.state;
+    // The Arcade world has zero gravity. Bob's body supplies the full acceleration.
+    body.setGravityY(bobGravity(now, body.velocity.y));
     if (now !== before || (now === 'jump' && this.motion.stateFrames === 0)) {
       if (now === 'jump') this.emit('sfx', 'jump');
       else if (now === 'dash' || now === 'airdash') this.emit('sfx', 'dash');
@@ -210,7 +212,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     // a jump clipping a ceiling corner by a few px slides past it instead of stopping dead
     if (this.solidAt && body.velocity.y < 0) {
-      const dy = (body.velocity.y + (out.gravity ? GRAVITY / 60 : 0)) / 60;
+      const dy = (body.velocity.y + (out.gravity ? body.gravity.y / 60 : 0)) / 60;
       const dx = cornerNudge(this.solidAt, body.x, body.y, body.width, body.height, dy);
       if (dx !== 0) this.x += dx;
     }
@@ -254,6 +256,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.enable = true;
     this.body.reset(x, y);
     this.body.setAllowGravity(true);
+    this.body.setGravityY(GRAVITY);
     Object.assign(this.motion, newMotion(this.motion.airDashes), { facing: this.motion.facing });
     Object.assign(this.buster, newBuster());
   }

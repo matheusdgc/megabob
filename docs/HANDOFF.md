@@ -1,7 +1,14 @@
 # Handoff: estado do projeto
 
-> Atualizado em 07/11/2026: preparação da T23 para itch.io; integração final no `main` autorizada pelo usuário.
+> Atualizado em 10/11/2026: pulo assimétrico corrigido e pacote HTML5 regenerado.
 > Quem continuar: atualize este arquivo ao terminar cada tarefa.
+
+## Pulo assimétrico (T22)
+
+- O mundo Arcade usa gravidade zero. A tentativa anterior zerava a gravidade do corpo do Bob na subida e na saída do dash aéreo. Agora o corpo recebe 900 px/s² na subida e 1.530 px/s² em queda livre. O dash suspende a gravidade e a reativa ao sair. O simulador de alcance usa a mesma regra.
+- No sandbox do Edge, o pulo manteve 53,6 px de altura, o alcance correndo passou de 63 para 55,5 px e o dash aéreo completo manteve 20 quadros. A queda retomou no quadro seguinte à saída por duração, soltura do botão ou contato com parede.
+- Os testes de rota passaram com 75% do controle aéreo e sem dash. Os testes de upgrades mantêm a exigência das Turbo Boots para alcançar o Compiler Cannon. A partida humana completa segue pendente.
+- `npm test` passou com 708 testes e 2 ignorados. Typecheck, build e verificação do ZIP no iframe 960×540 passaram, com 275 recursos e sem erros de console ou rede. O pacote atualizado está em `release/megabob-html5.zip`.
 
 ## Entrega HTML5 (T23)
 

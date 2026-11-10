@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { COYOTE_FRAMES, JUMP_CUT_SPEED, JUMP_SPEED, LAND_FRAMES, RUN_SPEED } from '../src/data/tuning';
+import { BOB_FALL_GRAVITY, COYOTE_FRAMES, GRAVITY, JUMP_CUT_SPEED, JUMP_SPEED, LAND_FRAMES, RUN_SPEED } from '../src/data/tuning';
 import { type Action, ActionState } from '../src/systems/actions';
-import { newMotion, type Sensors, stepMotion } from '../src/systems/motion';
+import { bobGravity, newMotion, type Sensors, stepMotion } from '../src/systems/motion';
 
 /** Tiny harness: one call = one frame with these held actions and sensors. */
 function rig() {
@@ -43,12 +43,15 @@ describe('jumping', () => {
     const { m, frame } = rig();
     expect(frame(['jump']).vy).toBe(-JUMP_SPEED);
     expect(m.state).toBe('jump');
+    expect(bobGravity(m.state, -JUMP_SPEED)).toBe(GRAVITY);
     frame(['jump'], AIR_UP);
     expect(m.state).toBe('jump');
     frame(['jump'], AIR_DOWN);
     expect(m.state).toBe('fall');
+    expect(bobGravity(m.state, 100)).toBe(BOB_FALL_GRAVITY);
     frame([]);
     expect(m.state).toBe('land');
+    expect(bobGravity(m.state, 0)).toBe(GRAVITY);
     for (let i = 0; i < LAND_FRAMES; i++) frame([]);
     expect(m.state).toBe('idle');
   });

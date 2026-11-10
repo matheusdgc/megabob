@@ -1,10 +1,12 @@
 import {
   AIR_DASH_FRAMES,
+  BOB_FALL_GRAVITY,
   BRAKE_FRAMES,
   COYOTE_FRAMES,
   DASH_FRAMES,
   DASH_MIN_FRAMES,
   DASH_SPEED,
+  GRAVITY,
   JUMP_CUT_SPEED,
   JUMP_SPEED,
   LAND_FRAMES,
@@ -26,6 +28,11 @@ export type MoveState =
   | 'brake'
   | 'airdash'
   | 'hurt';
+
+/** Acceleration for the next physics step when gravity is enabled. */
+export function bobGravity(state: MoveState, vy: number): number {
+  return state === 'fall' && vy >= 0 ? BOB_FALL_GRAVITY : GRAVITY;
+}
 
 /** What the controller needs from input (ActionState satisfies it). */
 export interface MotionInput {
