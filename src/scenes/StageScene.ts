@@ -311,7 +311,7 @@ export class StageScene extends Phaser.Scene {
     this.events.on('bossSummon', (kind: EnemyKind, x: number, y: number) => {
       if (this.player.isDead || this.enemies.countActive(true) >= 2) return;
       const e = createEnemy(kind, this, x, y, this.enemyWorld());
-      e.once('destroyed', (ex: number, ey: number) => this.enemyDestroyed(ex, ey));
+      e.once('destroyed', (ex: number, ey: number, wasFrozen: boolean) => this.enemyDestroyed(ex, ey, wasFrozen));
       this.enemies.add(e);
     });
     // a second boss phase: a big beat, then its own music
@@ -593,7 +593,7 @@ export class StageScene extends Phaser.Scene {
     for (const m of this.mapEnemies) {
       if (m.section !== section) continue;
       const e = createEnemy(m.kind, this, m.x, m.y, world);
-      e.once('destroyed', (x: number, y: number) => this.enemyDestroyed(x, y));
+      e.once('destroyed', (x: number, y: number, wasFrozen: boolean) => this.enemyDestroyed(x, y, wasFrozen));
       this.enemies.add(e);
     }
   }
@@ -619,8 +619,11 @@ export class StageScene extends Phaser.Scene {
     if (enemy.active && !enemy.isFrozen && !this.player.isDead) this.player.takeHit(enemy.stats.contact, enemy.body.center.x);
   }
 
-  private dropFrom(x: number, y: number): void {
-    const kind = rollDrop(Math.random());
+  /** Bonus drop chance (+25 pp) when a frozen (Mutex-executed) enemy is destroyed. */
+  private static readonly FROZEN_DROP_BONUS = 0.25;
+
+  private dropFrom(x: number, y: number, wasFrozen = false): void {
+    const kind = rollDrop(Math.random(), wasFrozen ? StageScene.FROZEN_DROP_BONUS : 0);
     if (kind) this.pickups.add(new Pickup(this, x, y, kind));
   }
 
@@ -744,9 +747,9 @@ export class StageScene extends Phaser.Scene {
   }
 
   /** An enemy Bob destroyed: it counts for the records, and it may drop an item. */
-  private enemyDestroyed(x: number, y: number): void {
+  private enemyDestroyed(x: number, y: number, wasFrozen = false): void {
     if (!this.over) this.runKills++;
-    this.dropFrom(x, y);
+    this.dropFrom(x, y, wasFrozen);
   }
 
   /** Add this visit's counters (and a death) to the run in the save, which is written now. */

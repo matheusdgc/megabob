@@ -5,19 +5,21 @@ import { newDrone, stepDrone, stepMite } from '../src/systems/enemyAI';
 
 describe('rollDrop', () => {
   it('maps rolls to the table in order, and the rest to nothing', () => {
+    // healthSmall: 0–0.24, energySmall: 0.24–0.44, healthLarge: 0.44–0.52,
+    // energyLarge: 0.52–0.58, life: 0.58–0.59, rest: null
     expect(rollDrop(0)).toBe('healthSmall');
-    expect(rollDrop(0.159)).toBe('healthSmall');
-    expect(rollDrop(0.16)).toBe('energySmall');
-    expect(rollDrop(0.3)).toBe('healthLarge');
-    expect(rollDrop(0.34)).toBe('energyLarge');
-    expect(rollDrop(0.37)).toBe('life');
-    expect(rollDrop(0.38)).toBeNull();
+    expect(rollDrop(0.239)).toBe('healthSmall');
+    expect(rollDrop(0.24)).toBe('energySmall');
+    expect(rollDrop(0.44)).toBe('healthLarge');
+    expect(rollDrop(0.52)).toBe('energyLarge');
+    expect(rollDrop(0.581)).toBe('life');
+    expect(rollDrop(0.591)).toBeNull();
     expect(rollDrop(0.999)).toBeNull();
   });
 
   it('the table totals well under 100%', () => {
     const total = DROP_TABLE.reduce((s, [, p]) => s + p, 0);
-    expect(total).toBeLessThan(50);
+    expect(total).toBeLessThan(70);
   });
 });
 

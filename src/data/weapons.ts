@@ -23,7 +23,7 @@ export const WEAPON_ORDER: readonly WeaponId[] = ['buster', 'garbageCollector', 
 export const WEAPONS: Record<WeaponId, WeaponDef> = {
   buster: { name: 'BUSTER', tint: 0xffffff, color: 0x4589ff, icon: 'icon_buster', cost: 0, damage: 1 },
   garbageCollector: { name: 'GARBAGE COLLECTOR', tint: 0x9ef0f0, color: 0x08bdba, icon: 'icon_gc', cost: 2, damage: 2 },
-  mutexLock: { name: 'MUTEX LOCK', tint: 0xf1c21b, color: 0xf1c21b, icon: 'icon_mutex', cost: 3, damage: 1 },
+  mutexLock: { name: 'MUTEX LOCK', tint: 0xf1c21b, color: 0xf1c21b, icon: 'icon_mutex', cost: 3, damage: 2 },
   nullPointer: { name: 'NULL POINTER', tint: 0xa56eff, color: 0xa56eff, icon: 'icon_null', cost: 2, damage: 2 },
 };
 
@@ -55,7 +55,7 @@ export function damageFor(boss: BossId, weapon: WeaponId, base: number): number 
 /** Frames a common enemy stays frozen. */
 export const MUTEX_FREEZE_FRAMES = 150;
 /** Frames a boss stays frozen: much shorter, and it cannot be frozen again right away. */
-export const MUTEX_BOSS_FREEZE_FRAMES = 45;
+export const MUTEX_BOSS_FREEZE_FRAMES = 60;
 /** After thawing, a boss ignores the lock this long (no freeze-locking a boss to death). */
 export const MUTEX_BOSS_IMMUNE_FRAMES = 120;
 

@@ -22,19 +22,22 @@ export const PICKUP_BLINK_FRAMES = 90;
 
 /** Drop chances when an enemy is destroyed, in percent; the rest drops nothing. */
 export const DROP_TABLE: readonly (readonly [PickupKind, number])[] = [
-  ['healthSmall', 16],
-  ['energySmall', 12],
-  ['healthLarge', 5],
-  ['energyLarge', 4],
+  ['healthSmall', 24],   // was 16
+  ['energySmall', 20],   // was 12
+  ['healthLarge', 8],    // was 5
+  ['energyLarge', 6],    // was 4
   ['life', 1],
 ];
 
-/** Which pickup an enemy drops for a roll in [0, 1), or null for nothing. */
-export function rollDrop(roll: number): PickupKind | null {
+/** Which pickup an enemy drops for a roll in [0, 1), or null for nothing.
+ *  `bonus` shifts the roll left by that fraction, effectively raising every chance by that amount.
+ *  Pass 0.25 for frozen-enemy execution bonus (+25 pp on each tier). */
+export function rollDrop(roll: number, bonus = 0): PickupKind | null {
+  const r = Math.max(0, roll - bonus);
   let acc = 0;
   for (const [kind, pct] of DROP_TABLE) {
     acc += pct / 100;
-    if (roll < acc) return kind;
+    if (r < acc) return kind;
   }
   return null;
 }

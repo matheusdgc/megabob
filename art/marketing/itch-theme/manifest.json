@@ -1,0 +1,66 @@
+{
+  "generator": "Built-in image_gen; deterministic Pillow crops and approved logo",
+  "sourceHashes": {
+    "art\\marketing\\itch-theme\\source\\unified-scene-generated.png": "a19afa549dff2e1d8f44ef7e785ed1f8ca4d7df9737661c2ea1cd1b6bd98241c",
+    "art\\exports\\megabob-logo.png": "b2f91c22899dc6ed42d5720bd6483ea4770ed8d37932e7b7ef3c0013e30be790"
+  },
+  "canvas": [
+    1920,
+    1080
+  ],
+  "pixelScale": 2,
+  "contentColumnWidth": 960,
+  "headerHeight": 320,
+  "embedTopMargin": 20,
+  "continuity": "Exact reconstruction equals the same full scene plus the approved logo",
+  "files": [
+    {
+      "file": "01-background.png",
+      "role": "Background",
+      "size": [
+        1920,
+        1080
+      ],
+      "crop": [
+        0,
+        0,
+        1920,
+        1080
+      ],
+      "bytes": 1056743,
+      "sha256": "dd81e48a908d8ed6d5b70bce5aaf3effb988e0da6f20810f0750a1e3743df0e6"
+    },
+    {
+      "file": "02-banner.png",
+      "role": "Banner",
+      "size": [
+        960,
+        320
+      ],
+      "crop": [
+        480,
+        0,
+        1440,
+        320
+      ],
+      "bytes": 194207,
+      "sha256": "608e5bfcff708099b860846559d4015d1218dac2343bdc89270e6a2007af3613"
+    },
+    {
+      "file": "03-embed-bg.png",
+      "role": "Embed BG",
+      "size": [
+        960,
+        540
+      ],
+      "crop": [
+        480,
+        340,
+        1440,
+        880
+      ],
+      "bytes": 190028,
+      "sha256": "54267b66440cceb77395bf845cee61c227e9ac5f89e54951d7eec8adc49e2488"
+    }
+  ]
+}

@@ -1,49 +1,45 @@
-# Megabob
+# MegaBob
 
-Um jogo de plataforma e ação em **16 bits**, estrelado pelo **IBM Bob**. Explore um mundo de bugs de software, derrote chefes robóticos e transforme suas armas em novas maneiras de atravessar as fases.
+[![Logo do MegaBob](art/exports/megabob-logo.png)](https://matheusdgc.itch.io/megabob)
 
-## Telas do jogo
+Um jogo de plataforma e ação em **16 bits**, estrelado pelo **IBM Bob**, em uma cidade cyberpunk tomada por bugs de software. Explore as fases, enfrente chefes robóticos e use as armas conquistadas para descobrir novos caminhos.
 
-### 1. Menu inicial
+**[Jogue MegaBob no navegador](https://matheusdgc.itch.io/megabob)**
 
-![Menu inicial de Megabob](docs/screenshots/01-menu.png)
+Gratuito, sem instalação e com interface em português. Jogue com teclado ou gamepad; os controles podem ser remapeados no menu **Opções**.
 
-### 2. Gameplay
+## Como surgiu
 
-![IBM Bob enfrentando inimigos na fase Memory Leak](docs/screenshots/02-gameplay.png)
-
-### 3. Boss
-
-![Combate contra o chefe Memory Leak](docs/screenshots/03-boss.png)
+O MegaBob nasceu durante um workshop sobre o IBM Bob, a partir do desafio de criar um jogo em três dias. O mascote foi o ponto de partida para uma aventura inspirada nos clássicos de plataforma e ação, com cenários, inimigos e chefes próprios baseados em conceitos de programação.
 
 ## A aventura
 
-- **Memory Leak:** data center inundado, lodo crescente e o Garbage Collector.
-- **Race Condition:** esteiras, plataformas móveis e a arma Mutex Lock.
-- **Null Pointer:** blocos que desaparecem, passagens ocultas e tiros que atravessam paredes finas.
-- **Tech Debt:** a fortaleza final, liberada após vencer os três chefes.
-- Quatro peças de **Armadura Firmware**, armas com fraquezas entre chefes, checkpoints e progresso salvo no navegador.
-- Interface em português, controles remapeáveis, gamepad e ajustes de áudio e efeitos visuais.
+Bob precisa enfrentar três bugs para liberar a fortaleza de **Tech Debt**. Você escolhe a ordem das primeiras fases, ganha uma arma ao vencer cada chefe e pode voltar para explorar os caminhos que ficaram para trás.
 
-## Executar localmente
+| Fase | O que espera por você |
+|---|---|
+| **Memory Leak** | Um data center inundado, lodo crescente e a arma Garbage Collector. |
+| **Race Condition** | Esteiras, plataformas móveis e a arma Mutex Lock. |
+| **Null Pointer** | Blocos que desaparecem, passagens ocultas e tiros que atravessam paredes finas. |
+| **Tech Debt** | A fortaleza final, liberada após derrotar os três primeiros chefes. |
 
-Requer Node.js compatível com as versões do projeto; o ambiente de desenvolvimento usa Node.js 26.
+Durante a aventura, encontre as quatro peças da **Armadura Firmware**, explore as fraquezas entre chefes e combine pulo, dash e movimentos de parede para atravessar os obstáculos.
 
-```sh
-npm ci
-npm run dev
-```
+O jogo conta com checkpoints, progresso salvo no navegador, quadro de recordes local e ajustes de volume, tremor de tela e flashes. O dash no ar é liberado pelas **Turbo Boots**.
 
-Abra [localhost:5173](http://localhost:5173). Para gerar e conferir a versão de distribuição:
+## Telas do jogo
 
-```sh
-npm run build
-npm run preview
-```
+### Menu inicial
 
-O build estático fica em `dist/`. O progresso é salvo neste navegador; mudar de navegador ou limpar seus dados não transfere o save.
+![Menu inicial de MegaBob](docs/screenshots/01-menu.png)
 
-Para preparar o upload HTML5 no itch.io, execute `npm run package:itch`. O arquivo gerado é `release/megabob-html5.zip`; use embed de **960 × 540** e habilite tela cheia. Veja a [configuração e validação do deploy](docs/itchio.md).
+### Em ação
+
+![IBM Bob enfrentando inimigos na fase Memory Leak](docs/screenshots/02-gameplay.png)
+
+### Combate contra Memory Leak
+
+![Combate contra o chefe Memory Leak](docs/screenshots/03-boss.png)
 
 ## Controles padrão
 
@@ -58,11 +54,33 @@ Para preparar o upload HTML5 no itch.io, execute `npm run package:itch`. O arqui
 | Confirmar nos menus | Enter, pulo ou tiro |
 | Ativar / desativar som | M |
 
-O menu **Opções** permite remapear teclado e gamepad. O dash no ar é liberado pelas Turbo Boots.
+O menu **Opções**, acessível pelo título e pela pausa, permite remapear teclado e gamepad. O progresso e as configurações ficam salvos localmente: mudar de navegador ou limpar seus dados não transfere o save.
 
-## Desenvolvimento
+## Executar localmente
 
-Phaser **3.90**, TypeScript, Vite e Vitest. Resolução interna de **480 × 270**, com escala inteira para preservar o desenho dos sprites.
+O ambiente de desenvolvimento usa **Node.js 26** e npm. Com o repositório disponível na sua máquina:
+
+```sh
+npm ci
+npm run dev
+```
+
+Abra [http://localhost:5173](http://localhost:5173). Para gerar e conferir o build de produção:
+
+```sh
+npm run build
+npm run preview
+```
+
+O build estático fica em `dist/`.
+
+## Tecnologias e desenvolvimento
+
+O jogo usa **Phaser 3.90**, **TypeScript**, **Vite** e **Vitest**. A resolução interna é de **480 × 270**, com escala inteira para preservar o visual retrô.
+
+As regras de movimento, combate e progresso ficam em `src/systems/`; os dados e ajustes ficam em `src/data/`; as fases são declaradas em `src/stages/`. Cenas e entidades conectam essas regras à renderização e à física do Phaser.
+
+Para validar o projeto:
 
 ```sh
 npm test
@@ -70,7 +88,24 @@ npm run typecheck
 npm run build
 ```
 
-As regras de movimento, combate e progresso ficam em `src/systems/`; as fases são declaradas em `src/stages/`; cenas e entidades ligam essas regras ao Phaser. O padrão para construir fases está em [src/stages/README.md](src/stages/README.md).
+Para preparar o pacote HTML5 do itch.io:
+
+```sh
+npm run package:itch
+npm run check:release
+```
+
+O pacote é gerado em `release/megabob-html5.zip`. A página publicada usa um embed de **960 × 540**, com início por clique e opção de tela cheia. Os detalhes de configuração e verificação estão no [guia do itch.io](docs/itchio.md).
+
+## Documentação
+
+- [Especificação do jogo](SPEC.md)
+- [Plano de implementação](tasks/plan.md) e [tarefas](tasks/todo.md)
+- [Estado atual e próximos passos](docs/HANDOFF.md)
+- [Como construir fases](src/stages/README.md)
+- [Pipeline de arte](docs/art-pipeline.md) e [prompts das imagens](docs/art-prompts.md)
+- [Trilha sonora e licenças](docs/soundtrack.md)
+- [Tema integrado da página no itch.io](art/marketing/itch-theme/README.md)
 
 ## Créditos
 

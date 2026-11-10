@@ -28,6 +28,18 @@ O verificador `check:release` primeiro compara todos os arquivos do ZIP com `dis
 
 O save é local ao navegador e à origem do iframe. Um save do localhost não é transferido para o itch.io; configurações de privacidade do navegador podem impedir a persistência.
 
+## Arte do tema
+
+**Conjunto integrado recomendado:** `art/marketing/itch-theme/`. Substitua os três campos juntos: **Background** = `01-background.png` (1920×1080), **Banner** = `02-banner.png` (960×320), **Embed BG** = `03-embed-bg.png` (960×540). São recortes da mesma cena, com a logo MEGABOB aprovada no banner. Background centralizado, sem repetição, **Fixed desmarcado**; BG 2 com Alpha 0. Encaixe desktop preparado para coluna de 960 px e intervalo padrão de 20 px antes do embed. Guia, prévia, fonte e prompt em [README do tema integrado](../art/marketing/itch-theme/README.md). Reprodução: `py -3 tools/export_itch_theme.py`.
+
+Versões anteriores, mantidas como alternativas para [a página do Megabob](https://matheusdgc.itch.io/megabob), em `art/marketing/itch-background/` (não misturar com o conjunto integrado):
+
+- **Background:** `megabob-itch-background-wide.png` (1920×1080), centralizado, sem repetição e com Fixed marcado.
+- **Embed BG:** `megabob-itch-embed-bg.png` (960×540), recorte central discreto para não duplicar os prédios na área do jogo.
+- **Alternativa vertical para Background:** `megabob-itch-background-portrait.png` (1080×1920).
+
+O ZIP `megabob-itch-backgrounds.zip` reúne os PNGs e o guia. Originais de image_gen e prompts estão preservados em `source/`. Reprodução: `py -3 tools/export_itch_backgrounds.py`. Detalhes em [README dos fundos](../art/marketing/itch-background/README.md); `preview.html` mostra uma composição local de tema, e não modifica a página publicada.
+
 ## Atualizar com butler (opcional)
 
 Com uma página já criada e o butler instalado/autenticado, substitua `SEU_USUARIO` pelo subdomínio real da conta:

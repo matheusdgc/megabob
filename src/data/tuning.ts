@@ -11,11 +11,17 @@ export const STICK_DEADZONE = 0.4;
 // --- Bob movement (px/s, px/s², frames) ---
 export const RUN_SPEED = 90;
 export const GRAVITY = 900;
+/**
+ * Gravity applied while falling (vy > 0). Higher than GRAVITY so the arc is asymmetric:
+ * the rise is floaty and precise, the fall is fast and weighty. Classic platformer technique.
+ * Ratio 1.7× keeps the jump height unchanged while making descents feel decisive.
+ */
+export const FALL_GRAVITY = 1530;
 /** Initial jump speed: reaches ~3.5 tiles (56 px) when the button is held. */
 export const JUMP_SPEED = 318;
 /** Releasing jump while rising cuts the upward speed to at most this. */
 export const JUMP_CUT_SPEED = 60;
-export const MAX_FALL_SPEED = 360;
+export const MAX_FALL_SPEED = 420;
 /** Frames after walking off a ledge during which a jump still works. */
 export const COYOTE_FRAMES = 5;
 /** Landing pose duration when standing still. */
@@ -67,7 +73,7 @@ export const START_LIVES = 3;
 export const HURT_FRAMES = 24;
 export const HURT_FRAMES_PLATED = 12;
 /** Horizontal knockback speed, px/s. */
-export const HURT_SPEED = 60;
+export const HURT_SPEED = 90;
 /** Invulnerability after a hit, counted from the hit (includes the knockback). */
 export const INVULN_FRAMES = 90;
 /** Bob blinks every this many frames while invulnerable. */
@@ -98,7 +104,7 @@ export interface FeedbackTier {
 export type FeedbackEvent = 'land' | 'enemyKilled' | 'bossHit' | 'bobHurt' | 'bobDeath' | 'bossDefeated';
 export const FEEDBACK: Record<FeedbackEvent, FeedbackTier> = {
   land: { freeze: 0, shakeMs: 0, shake: 0, flashMs: 0 },
-  enemyKilled: { freeze: 0, shakeMs: 0, shake: 0, flashMs: 0 },
+  enemyKilled: { freeze: 1, shakeMs: 0, shake: 0, flashMs: 30 },
   bossHit: { freeze: 2, shakeMs: 0, shake: 0, flashMs: 0 },
   bobHurt: { freeze: 4, shakeMs: 120, shake: 0.004, flashMs: 0 },
   bobDeath: { freeze: 10, shakeMs: 200, shake: 0.006, flashMs: 0 },

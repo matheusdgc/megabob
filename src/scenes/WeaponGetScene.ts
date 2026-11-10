@@ -1,12 +1,25 @@
 import Phaser from 'phaser';
 import { bobKey } from '../data/assets';
-import { type BossId, WEAPONS, type WeaponId } from '../data/weapons';
+import { type BossId, WEAPONS, WEAKNESS, type WeaponId } from '../data/weapons';
 import { recordClear } from '../systems/save';
 import { commitSave, getSave } from './progress';
 import { GameAudio } from '../audio';
 import { actionKeys, keyLabel } from '../systems/bindings';
 import { GameInput } from '../systems/input';
 import { uiText } from '../ui/text';
+
+/** Which boss is weakened by the weapon just obtained, if any (Memory Leak → Mutex Lock, etc.). */
+function nextTarget(weapon: WeaponId): BossId | undefined {
+  return (Object.entries(WEAKNESS) as [BossId, { weapon: WeaponId }][])
+    .find(([, v]) => v.weapon === weapon)?.[0];
+}
+
+const BOSS_NAME: Partial<Record<BossId, string>> = {
+  memoryLeak: 'Memory Leak',
+  raceCondition: 'Race Condition',
+  nullPointer: 'Null Pointer',
+  techDebt: 'Tech Debt',
+};
 
 
 /** Earliest a key press may skip the screen, and when it moves on by itself. */
@@ -66,6 +79,16 @@ export class WeaponGetScene extends Phaser.Scene {
     this.controls = new GameInput(this, true);
     const keys = this.controls.bindings;
     uiText(this, w / 2 - 40, h / 2 + 18, `${actionKeys(keys, 'prevWeapon')}  /  ${actionKeys(keys, 'nextWeapon')}   trocar de arma`, { color: '#a8a8a8' }).setOrigin(0);
+
+    // Show which boss is weak to the weapon just acquired
+    const target = nextTarget(this.weapon);
+    if (target) {
+      const bossLabel = BOSS_NAME[target] ?? target;
+      uiText(this, w / 2 - 40, h / 2 + 34,
+        `EFICAZ CONTRA: ${bossLabel}`,
+        { size: 9, color: Phaser.Display.Color.IntegerToColor(def.color).rgba },
+      ).setOrigin(0);
+    }
     const prompt = uiText(this, w / 2, h / 2 + 48, `APERTE ${keyLabel(keys.keys.jump[0] ?? 'SPACE')}`, { origin: 0.5 }).setVisible(false);
 
     GameAudio.of(this.game)?.sfx.jingle('weaponGet');
