@@ -6,7 +6,6 @@ import {
   BOB_BODY_W,
   SHOOT_POSE_FRAMES,
   DEATH_FRAMES,
-  FALL_GRAVITY,
   GRAVITY,
   HURT_FRAMES,
   HURT_FRAMES_PLATED,
@@ -198,11 +197,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     body.setVelocityX(out.vx + carry);
     if (out.vy !== undefined) body.setVelocityY(out.vy);
     body.setAllowGravity(out.gravity);
-    // Asymmetric gravity: fall faster than rising for a decisive, weighty feel.
-    // body.gravity is added on top of world.gravity; we only need the extra delta.
-    if (out.gravity) {
-      body.setGravityY(body.velocity.y > 0 ? FALL_GRAVITY - GRAVITY : 0);
-    }
     const now = this.motion.state;
     if (now !== before || (now === 'jump' && this.motion.stateFrames === 0)) {
       if (now === 'jump') this.emit('sfx', 'jump');
@@ -260,7 +254,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.enable = true;
     this.body.reset(x, y);
     this.body.setAllowGravity(true);
-    this.body.setGravityY(0); // reset asymmetric-gravity delta
     Object.assign(this.motion, newMotion(this.motion.airDashes), { facing: this.motion.facing });
     Object.assign(this.buster, newBuster());
   }
