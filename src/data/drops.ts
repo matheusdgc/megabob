@@ -22,10 +22,10 @@ export const PICKUP_BLINK_FRAMES = 90;
 
 /** Drop chances when an enemy is destroyed, in percent; the rest drops nothing. */
 export const DROP_TABLE: readonly (readonly [PickupKind, number])[] = [
-  ['healthSmall', 16],
-  ['energySmall', 12],
-  ['healthLarge', 5],
-  ['energyLarge', 4],
+  ['healthSmall', 24],   // was 16
+  ['energySmall', 20],   // was 12
+  ['healthLarge', 8],    // was 5
+  ['energyLarge', 6],    // was 4
   ['life', 1],
 ];
 

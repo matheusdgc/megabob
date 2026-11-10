@@ -27,11 +27,11 @@ export const DRAWER_HIGH = 44;
 export const LASER_LOW = 22;
 export const LASER_HIGH = 46;
 
-const WALL_IDLE = [56, 36];
+const WALL_IDLE = [72, 48];    // was [56, 36] — more breathing room between attacks
 const DRAWER_WARN = [26, 18];
 const CARD_GAP = 14;
 const CARDS = 3;
-const SUMMON_FRAMES = 40;
+const SUMMON_FRAMES = 80;      // was 40 — bot spawns half as often
 const CORE_IDLE = [40, 26];
 export const LASER_CHARGE = [44, 32] as const;
 const LASER_FIRE = 34;
