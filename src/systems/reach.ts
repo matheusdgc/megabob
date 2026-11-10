@@ -1,7 +1,7 @@
-import { BOB_BODY_H, BOB_BODY_W, CONVEYOR_SPEED, GRAVITY, MAX_FALL_SPEED } from '../data/tuning';
+import { BOB_BODY_H, BOB_BODY_W, BOB_MAX_FALL_SPEED, CONVEYOR_SPEED } from '../data/tuning';
 import { conveyorUnder, isFloor, isSolid, type ParsedMap, T } from '../stages/map';
 import { type Action, ActionState } from './actions';
-import { newMotion, stepMotion } from './motion';
+import { bobGravity, type MoveState, newMotion, stepMotion } from './motion';
 
 /**
  * A headless Bob for level checks: the real controller (`stepMotion`) driving a small AABB
@@ -78,8 +78,10 @@ export class ReachSim {
     return null;
   }
 
-  private physics(b: Box): void {
-    if (b.gravity) b.vy = Math.min(MAX_FALL_SPEED, Math.max(-MAX_FALL_SPEED, b.vy + GRAVITY * DT));
+  private physics(b: Box, state: MoveState): void {
+    if (b.gravity) {
+      b.vy = Math.min(BOB_MAX_FALL_SPEED, Math.max(-BOB_MAX_FALL_SPEED, b.vy + bobGravity(state, b.vy) * DT));
+    }
     b.down = b.left = b.right = false;
     const W = BOB_BODY_W;
     const H = BOB_BODY_H;
@@ -185,7 +187,7 @@ export class ReachSim {
       b.vx = b.down ? out.vx + this.carry(b) : out.vx * air;
       if (out.vy !== undefined) b.vy = out.vy;
       b.gravity = out.gravity;
-      this.physics(b);
+      this.physics(b, motion.state);
       onFrame?.({ x: b.x + BOB_BODY_W / 2, y: b.y + BOB_BODY_H });
       if (this.dead(b)) return { spot: null, door };
       const feet = { x: b.x + BOB_BODY_W / 2, y: b.y + BOB_BODY_H };

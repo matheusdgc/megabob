@@ -1,16 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import {
   AIR_DASH_FRAMES,
+  BOB_FALL_GRAVITY,
   DASH_FRAMES,
   DASH_MIN_FRAMES,
   DASH_SPEED,
+  GRAVITY,
   RUN_SPEED,
   WALL_JUMP_SPEED,
   WALL_LOCK_FRAMES,
   WALL_SLIDE_SPEED,
 } from '../src/data/tuning';
 import { type Action, ActionState } from '../src/systems/actions';
-import { newMotion, type Sensors, stepMotion } from '../src/systems/motion';
+import { bobGravity, newMotion, type Sensors, stepMotion } from '../src/systems/motion';
 
 function rig(airDashes = 0) {
   const input = new ActionState();
@@ -79,6 +81,7 @@ describe('wall jump', () => {
     expect(kick.vy).toBe(-WALL_JUMP_SPEED);
     expect(kick.vx).toBe(-RUN_SPEED);
     expect(m.state).toBe('jump');
+    expect(bobGravity(m.state, kick.vy!)).toBe(GRAVITY);
     for (let i = 0; i < WALL_LOCK_FRAMES; i++) {
       expect(frame(['right', 'jump'], RISING).vx).toBe(-RUN_SPEED);
     }
@@ -162,8 +165,14 @@ describe('air dash (Turbo Boots)', () => {
     const out = frame(['dash'], FALLING);
     expect(m.state).toBe('airdash');
     expect(out).toMatchObject({ vx: DASH_SPEED, vy: 0, gravity: false });
-    for (let i = 0; i < AIR_DASH_FRAMES; i++) frame(['dash'], FALLING);
+    const suspended = { onGround: false, vy: 0 };
+    for (let i = 1; i < AIR_DASH_FRAMES; i++) {
+      expect(frame(['dash'], suspended)).toMatchObject({ vx: DASH_SPEED, vy: 0, gravity: false });
+    }
+    const exit = frame(['dash'], suspended);
     expect(m.state).toBe('fall');
+    expect(exit).toMatchObject({ vx: DASH_SPEED, vy: 0, gravity: true });
+    expect(bobGravity(m.state, exit.vy!)).toBe(BOB_FALL_GRAVITY);
     frame([], FALLING);
     frame(['dash'], FALLING); // second try in the same airtime
     expect(m.state).toBe('fall');

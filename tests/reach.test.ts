@@ -18,12 +18,12 @@ const EDGE = 10 * 16 + 8;
 const farthest = (map: string[], opts = {}) => Math.max(...reachable(parseMap(map), opts).spots.map((s) => s.x));
 
 describe('jumpMetrics', () => {
-  it('match the level metrics in AGENTS.md (about 53 px high, 63 px far)', () => {
+  it('keeps the jump height and matches the faster descent measured in Arcade', () => {
     const m = jumpMetrics();
     expect(m.height).toBeGreaterThanOrEqual(50);
     expect(m.height).toBeLessThanOrEqual(57);
-    expect(m.distance).toBeGreaterThanOrEqual(58);
-    expect(m.distance).toBeLessThanOrEqual(68);
+    expect(m.distance).toBeGreaterThanOrEqual(54);
+    expect(m.distance).toBeLessThanOrEqual(57);
   });
 });
 
