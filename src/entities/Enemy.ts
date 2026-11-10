@@ -100,7 +100,8 @@ export abstract class Enemy extends Phaser.Physics.Arcade.Sprite {
   private explode(): void {
     const { x, y } = this.body.center;
     playOnce(this.scene, 'fx_explosion', x, y);
-    this.emit('destroyed', x, y);
+    // Pass whether the enemy was frozen at death so the stage can apply the bonus drop.
+    this.emit('destroyed', x, y, this.frozen > 0);
     this.destroy();
   }
 }

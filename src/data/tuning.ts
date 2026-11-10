@@ -67,7 +67,7 @@ export const START_LIVES = 3;
 export const HURT_FRAMES = 24;
 export const HURT_FRAMES_PLATED = 12;
 /** Horizontal knockback speed, px/s. */
-export const HURT_SPEED = 60;
+export const HURT_SPEED = 90;
 /** Invulnerability after a hit, counted from the hit (includes the knockback). */
 export const INVULN_FRAMES = 90;
 /** Bob blinks every this many frames while invulnerable. */
@@ -98,7 +98,7 @@ export interface FeedbackTier {
 export type FeedbackEvent = 'land' | 'enemyKilled' | 'bossHit' | 'bobHurt' | 'bobDeath' | 'bossDefeated';
 export const FEEDBACK: Record<FeedbackEvent, FeedbackTier> = {
   land: { freeze: 0, shakeMs: 0, shake: 0, flashMs: 0 },
-  enemyKilled: { freeze: 0, shakeMs: 0, shake: 0, flashMs: 0 },
+  enemyKilled: { freeze: 1, shakeMs: 0, shake: 0, flashMs: 30 },
   bossHit: { freeze: 2, shakeMs: 0, shake: 0, flashMs: 0 },
   bobHurt: { freeze: 4, shakeMs: 120, shake: 0.004, flashMs: 0 },
   bobDeath: { freeze: 10, shakeMs: 200, shake: 0.006, flashMs: 0 },

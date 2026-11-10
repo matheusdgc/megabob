@@ -29,12 +29,15 @@ export const DROP_TABLE: readonly (readonly [PickupKind, number])[] = [
   ['life', 1],
 ];
 
-/** Which pickup an enemy drops for a roll in [0, 1), or null for nothing. */
-export function rollDrop(roll: number): PickupKind | null {
+/** Which pickup an enemy drops for a roll in [0, 1), or null for nothing.
+ *  `bonus` shifts the roll left by that fraction, effectively raising every chance by that amount.
+ *  Pass 0.25 for frozen-enemy execution bonus (+25 pp on each tier). */
+export function rollDrop(roll: number, bonus = 0): PickupKind | null {
+  const r = Math.max(0, roll - bonus);
   let acc = 0;
   for (const [kind, pct] of DROP_TABLE) {
     acc += pct / 100;
-    if (roll < acc) return kind;
+    if (r < acc) return kind;
   }
   return null;
 }

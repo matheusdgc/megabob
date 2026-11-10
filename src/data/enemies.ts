@@ -28,7 +28,7 @@ export const ENEMIES: Record<EnemyKind, EnemyStats> = {
   // E7 (Null Pointer): floats, opens its eye, shoots a cursor, blinks out and back. Frames: idle, wide, glitch, gone.
   voidEye: { sheet: 'enemy_void_eye', hp: 3, contact: 3, body: [18, 18], speed: 0 },
   // E8 (Null Pointer): a claw on a broken chain, swinging. Frames: left, center, right.
-  danglingRef: { sheet: 'enemy_dangling_ref', hp: 4, contact: 4, body: [18, 16], speed: 0 },
+  danglingRef: { sheet: 'enemy_dangling_ref', hp: 4, contact: 3, body: [18, 16], speed: 0 },
   // E9 (Tech Debt): a stationary cannon that aims and fires punched cards. Frames: idle, aim, fire.
   legacyTurret: { sheet: 'enemy_legacy_turret', hp: 5, contact: 3, body: [30, 26], speed: 0 },
   // E10 (Tech Debt): walks behind a shield that stops basic shots, then lowers it to punch.
